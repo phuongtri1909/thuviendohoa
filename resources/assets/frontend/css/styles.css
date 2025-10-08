@@ -1,8 +1,8 @@
 :root {
-    --primary-color: #3B5994;
-    --primary-color-2: #3B599499;
-    --primary-color-3: #4769C9;
-    --primary-color-4: #394B9B;
+    --primary-color: #FF3F40;
+    --primary-color-2: #FF3F4014;
+    --primary-color-3: #FF8686;
+    --primary-color-4: #2E2E2E;
     --primary-color-5: #7BA3DF;
     --primary-color-6: #37814B;
     --primary-color-7: #F2F5FC;
@@ -11,6 +11,7 @@
     --primary-color-10: #E1EAF8;
     --primary-color-11: #f6f6f8;
     --primary-color-12: #F8F8FF;
+    --bg-gradient: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
     --primary-hover: #444444;
     --secondary-color: #8C5E3B;
     --accent-color: #D1A66E;
@@ -64,7 +65,7 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 html {
@@ -177,12 +178,12 @@ html {
     font-size: var(--font-size-sm) !important;
 }
 
-.text-md {
-    font-size: var(--font-size-md) !important;
-}
-
 .text-lg {
     font-size: var(--font-size-lg) !important;
+}
+
+.text-1lg {
+    font-size: var(--font-size-1lg) !important;
 }
 
 .text-lg-2 {
@@ -195,6 +196,10 @@ html {
 
 .text-5xl {
     font-size: var(--font-size-5xl) !important;
+}
+
+.text-6xl{
+    font-size: var(--font-size-6xl) !important;
 }
 
 .text-6xl-6 {
@@ -236,6 +241,10 @@ html {
 
 .bg-primary-12 {
     background-color: var(--primary-color-12) !important;
+}
+
+.bg-gradient {
+    background: var(--bg-gradient) !important;
 }
 
 .color-primary {

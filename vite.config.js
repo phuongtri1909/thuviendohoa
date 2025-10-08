@@ -7,6 +7,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/assets/frontend/css/styles.css',
+                'resources/assets/frontend/css/styles-header.css',
                 'resources/assets/admin/css/styles_admin.css',
             ],
             refresh: true,
