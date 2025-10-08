@@ -123,8 +123,8 @@
                     </a>
                 </div>
 
-                <div class="d-flex align-items-center">
-                    <div class="header-search">
+                <div class="d-flex align-items-center" style="gap: 10px">
+                    <div class="header-search d-none d-xl-block">
                         <div class="search-container rounded-5 ps-3">
                             <div class="category-dropdown">
                                 <button class="category-btn rounded-5" type="button" id="categoryDropdownBtn">
@@ -141,7 +141,7 @@
                                                 <div class="vip-header">
                                                     <h5 class="mb-0 fs-6">Tài nguyên VIP</h5>
                                                 </div>
-                                                <div class="vip-content px-3 pb-3">
+                                                <div class="vip-content px-3 pb-3 bg-white">
                                                     <div class="row">
                                                         <div class="col-6 p-3 pb-0">
                                                             <img src="{{ asset('/images/svg/image.svg') }}"
@@ -174,7 +174,7 @@
                                                 <div class="free-header">
                                                     <h5 class="mb-0 fs-6">Tài nguyên MIỄN PHÍ</h5>
                                                 </div>
-                                                <div class="free-content px-3 pb-3">
+                                                <div class="free-content px-3 pb-3 bg-white">
                                                     <div class="row">
                                                         <div class="col-6 p-3 pb-0">
                                                             <img src="{{ asset('/images/svg/image.svg') }}"
@@ -215,7 +215,7 @@
                         </div>
                     </div>
 
-                    <div class="header-actions d-none d-lg-flex">
+                    <div class="header-actions d-none d-md-flex">
                         <button class="action-btn get-link-btn rounded-5 p-1">
                             <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
                             <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
@@ -322,7 +322,7 @@
 
                     @guest
                         <a href="{{ route('login') }}"
-                            class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none">
+                            class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none d-none d-sm-flex">
                             <img src="{{ asset('/images/svg/clock.svg') }}" alt="Login">
                             <span class="color-primary fw-semibold text-md">Đăng nhập</span>
                         </a>
@@ -378,21 +378,93 @@
             <li><a href="{{ route('home') }}"
                     class="text-md fw-medium {{ Route::currentRouteNamed('home') ? 'active' : '' }}">{{ __('home') }}</a>
             </li>
+            <li>
+                <div class="mobile-category-dropdown">
+                    <button class="mobile-category-btn" type="button" id="mobileCategoryDropdownBtn">
+                        <img src="{{ asset('/images/svg/category.svg') }}" alt="Category">
+                        <span>Chọn danh mục</span>
+                        <img src="{{ asset('/images/svg/dropdown.svg') }}" alt="Arrow Up" class="mobile-dropdown-arrow">
+                    </button>
+                    <div class="mobile-category-dropdown-menu" id="mobileCategoryDropdown">
+                        <div class="row g-1">
+                            <!-- VIP Resources Column -->
+                            <div class="col-12">
+                                <div class="vip-column h-100">
+                                    <div class="vip-header">
+                                        <h5 class="mb-0 fs-6">Tài nguyên VIP</h5>
+                                    </div>
+                                    <div class="vip-content px-3 pb-3">
+                                        <div class="row">
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
+                                                <span>Hộp quà đẹp 2016</span>
+                                            </div>
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/pttx.svg') }}" alt="Image">
+                                                <span>Chủ đề 20/11</span>
+                                            </div>
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/device.svg') }}" alt="Image">
+                                                <span>Thiết kế nổi bật 2026</span>
+                                            </div>
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
+                                                <span>Hộp quà đẹp 2016</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- FREE Resources Column -->
+                            <div class="col-12">
+                                <div class="free-column h-100">
+                                    <div class="free-header">
+                                        <h5 class="mb-0 fs-6">Tài nguyên MIỄN PHÍ</h5>
+                                    </div>
+                                    <div class="free-content px-3 pb-3">
+                                        <div class="row">
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
+                                                <span>Hộp quà đẹp 2016</span>
+                                            </div>
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/pttx.svg') }}" alt="Image">
+                                                <span>Chủ đề 20/11</span>
+                                            </div>
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/device.svg') }}" alt="Image">
+                                                <span>Thiết kế nổi bật 2026</span>
+                                            </div>
+                                            <div class="col-12 p-3 pb-0">
+                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
+                                                <span>Hộp quà đẹp 2016</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
         </ul>
 
         <div class="mobile-actions">
-            <button class="action-btn get-link-btn">
+            <button class="action-btn get-link-btn rounded-5 p-1">
                 <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
-                <span>Get Link</span>
+                <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
             </button>
-            <button class="action-btn blog-btn">
+            <button class="action-btn blog-btn rounded-5 p-1">
                 <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
-                <span>Vietfile Blog</span>
+                <span class="color-primary fw-semibold text-md pe-3">Vietfile Blog</span>
             </button>
-            <button class="action-btn login-btn">
-                <img src="{{ asset('/images/svg/clock.svg') }}" alt="Login">
-                <span>Đăng nhập</span>
-            </button>
+            @guest
+                <a href="{{ route('login') }}" class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none">
+                    <img src="{{ asset('/images/svg/clock.svg') }}" alt="Login">
+                    <span class="color-primary fw-semibold text-md">Đăng nhập</span>
+                </a>
+            @endguest
         </div>
     </div>
 
@@ -411,6 +483,11 @@
             // User Dropdown
             const userDropdownBtn = document.getElementById('userDropdownBtn');
             const userDropdown = document.getElementById('userDropdown');
+
+            // Mobile Category Dropdown
+            const mobileCategoryDropdownBtn = document.getElementById('mobileCategoryDropdownBtn');
+            const mobileCategoryDropdown = document.getElementById('mobileCategoryDropdown');
+            const mobileDropdownArrow = document.querySelector('.mobile-dropdown-arrow');
 
             mobileMenuToggle.addEventListener('click', function() {
                 mobileSideMenu.classList.add('active');
@@ -481,6 +558,28 @@
                 if (userDropdownBtn && userDropdown && !userDropdownBtn.contains(e.target) && !userDropdown
                     .contains(e.target)) {
                     userDropdown.classList.remove('active');
+                }
+            });
+
+            // Mobile Category Dropdown Toggle
+            if (mobileCategoryDropdownBtn && mobileCategoryDropdown) {
+                mobileCategoryDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    mobileCategoryDropdown.classList.toggle('active');
+                    if (mobileDropdownArrow) {
+                        mobileDropdownArrow.style.transform = mobileCategoryDropdown.classList.contains('active') ?
+                            'rotate(180deg)' : 'rotate(0deg)';
+                    }
+                });
+            }
+
+            // Close mobile dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (mobileCategoryDropdownBtn && mobileCategoryDropdown && !mobileCategoryDropdownBtn.contains(e.target) && !mobileCategoryDropdown.contains(e.target)) {
+                    mobileCategoryDropdown.classList.remove('active');
+                    if (mobileDropdownArrow) {
+                        mobileDropdownArrow.style.transform = 'rotate(0deg)';
+                    }
                 }
             });
         });

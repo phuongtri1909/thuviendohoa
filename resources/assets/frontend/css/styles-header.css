@@ -72,7 +72,6 @@
 .header-search {
     flex: 1;
     max-width: 600px;
-    margin: 0 20px;
 }
 
 .search-container {
@@ -160,7 +159,7 @@
 /* Action Buttons Styles */
 .header-actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-shrink: 0;
 }
 
@@ -281,6 +280,7 @@
 
 .mobile-search .search-container {
     border-radius: 20px;
+    height: 45px !important;
 }
 
 .mobile-nav-list {
@@ -319,6 +319,73 @@
 .mobile-actions .action-btn {
     width: 100%;
     justify-content: center;
+}
+
+/* Mobile Category Dropdown */
+.mobile-category-dropdown {
+    position: relative;
+}
+
+.mobile-category-btn {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.mobile-category-btn:hover {
+    background: #f8f9fa;
+    color: #dc3545;
+}
+
+.mobile-dropdown-arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.mobile-category-dropdown-menu {
+    display: none;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.mobile-category-dropdown-menu.active {
+    display: block;
+}
+
+.mobile-category-dropdown-menu .vip-column,
+.mobile-category-dropdown-menu .free-column {
+    margin: 10px;
+    border-radius: 8px;
+}
+
+.mobile-category-dropdown-menu .vip-header,
+.mobile-category-dropdown-menu .free-header {
+    padding: 6px 15px;
+    font-size: 14px;
+}
+
+.mobile-category-dropdown-menu .vip-content,
+.mobile-category-dropdown-menu .free-content {
+    padding: 10px 15px;
+}
+
+.mobile-category-dropdown-menu .col-12 {
+    padding: 5px;
+}
+
+.mobile-category-dropdown-menu .col-12 span {
+    font-size: 12px;
 }
 
 /* Category Dropdown Styles */
@@ -845,5 +912,11 @@
     
     .action-card span {
         text-align: left;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .register-download-section {
+        margin-top: -27px;
     }
 }
