@@ -1,0 +1,673 @@
+.desktop-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.desktop-base {
+    width: 100%;
+    height: auto;
+    display: block;
+    z-index: 1;
+}
+
+.desktop-screen-area {
+    position: absolute;
+    top: -7%;
+    left: 26%;
+    width: 48%;
+    height: 76%;
+    z-index: 2;
+}
+
+.desktop-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    transition: all 0.5s ease-in-out;
+}
+
+.desktop-screen-area.package-view .desktop-frame,
+.desktop-screen-area.package-view .desktop-button-container {
+    animation: slideOut 0.5s ease-in-out forwards;
+}
+
+.desktop-screen-area.package-view .desktop-package-overlay {
+    animation: slideIn 0.5s ease-in-out forwards;
+}
+
+.desktop-screen-area.package-view .desktop-package-content {
+    animation: slideIn 0.5s ease-in-out forwards;
+}
+
+.desktop-screen-area.package-closing .desktop-package-overlay {
+    animation: slideOut 0.5s ease-in-out forwards;
+}
+
+.desktop-screen-area.package-closing .desktop-package-content {
+    animation: slideOut 0.5s ease-in-out forwards;
+}
+
+.desktop-package-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 102%;
+    z-index: 10;
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: center;
+}
+
+.desktop-package-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0% 8%;
+    overflow: hidden;
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: center;
+}
+
+.package-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.package-item {
+    flex: 1;
+    width: 100%;
+    height: calc(25% - 3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.package-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.package-hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+.package-item:hover .package-img {
+    opacity: 0;
+}
+
+.package-item:hover .package-hover-img {
+    opacity: 1;
+}
+
+/* Package Content Styles */
+.package-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    box-sizing: border-box;
+    z-index: 3;
+}
+
+.package-bg-content {
+    opacity: 1;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.package-hover-content {
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.package-item:hover .package-bg-content {
+    opacity: 0;
+}
+
+.package-item:hover .package-hover-content {
+    opacity: 1;
+}
+
+.package-left {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.package-item:hover .package-left {
+    transform: translateY(-10px);
+}
+
+.package-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    position: relative;
+    text-align: center;
+}
+
+.package-feature {
+    font-size: clamp(6px, 0.8vw, 8px);
+    color: #666;
+    margin-bottom: 2px;
+    line-height: 1.2;
+    position: relative;
+}
+
+.package-feature:nth-child(1)::after,
+.package-feature:nth-child(2)::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: repeating-linear-gradient(
+        to right,
+        #ccc 0px,
+        #ccc 2px,
+        transparent 2px,
+        transparent 4px
+    );
+}
+
+.package-title {
+    font-size: clamp(17px, 1.2vw, 12px);
+    font-weight: bold;
+    color: white;
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.package-price {
+    font-size: clamp(35px, 1.5vw, 14px);
+    font-weight: bold;
+    color: white;
+    line-height: 1.2;
+}
+
+.package-register {
+    font-size: clamp(35px, 2vw, 16px);
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    margin-top: 10px;
+}
+
+.package-feature {
+    font-size: clamp(13px, 0.8vw, 8px);
+    color: #666;
+    margin-bottom: 2px;
+    line-height: 2;
+}
+
+.package-feature-colored-1 {
+    color: #CD8053;
+    font-weight: 500;
+}
+
+.package-feature-colored-2 {
+    color: #7E7E7E;
+    font-weight: 500;
+}
+
+.package-feature-colored-3 {
+    color: #E7B724;
+    font-weight: 500;
+}
+
+.package-feature-colored-4 {
+    color: #BE40E8;
+    font-weight: 500;
+}
+
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+.desktop-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 94%;
+    z-index: 4;
+}
+
+.desktop-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0% 5% 5% 5%;
+    overflow: hidden;
+    transform-origin: center center;
+}
+
+/* Desktop content responsive scaling */
+.desktop-content-logo {
+    max-width: 100%;
+    height: auto;
+    width: clamp(60px, 8vw, 120px);
+}
+
+.desktop-content h5 {
+    font-size: clamp(12px, 2vw, 18px);
+    margin: 10px 0;
+}
+
+.desktop-content p {
+    font-size: clamp(10px, 1.5vw, 14px);
+    margin: 8px 0;
+}
+
+.desktop-content .row {
+    margin: 0;
+}
+
+.desktop-feature-item {
+    padding: 5px;
+    text-align: center;
+}
+
+.desktop-feature-item img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+    background: #E3E3E3;
+    border-radius: 50%;
+    padding: 8px;
+    display: block;
+    margin: 0 auto 5px auto;
+}
+
+.desktop-feature-item p {
+    font-size: clamp(8px, 1.2vw, 12px);
+    margin: 2px 0;
+}
+
+/* Responsive scaling for different screen sizes */
+@media (max-width: 1350px) {
+    .package-feature {
+        font-size: clamp(10px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(14px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(31px, 1.5vw, 14px);
+    }
+}
+
+@media (max-width: 1250px) {
+    .desktop-content {
+        padding: 0% 4% 4% 4%;
+    }
+    
+    .desktop-content h5 {
+        font-size: clamp(11px, 1.8vw, 16px);
+    }
+    
+    .desktop-content p {
+        font-size: clamp(9px, 1.4vw, 13px);
+    }
+    
+    .desktop-feature-item p {
+        font-size: clamp(7px, 1.1vw, 11px);
+    }
+    
+    .desktop-feature-item img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .desktop-button {
+        height: 35px !important;
+    }
+
+    .package-register {
+        font-size: clamp(31px, 2vw, 16px);
+    }
+}
+
+@media (max-width: 1120px) {
+    .desktop-content {
+        padding: 2% 5% 5% 5%;
+    }
+
+    .desktop-button {
+        height: 30px !important;
+    }
+}
+
+@media (max-width: 1100px) {
+    .desktop-content {
+        padding: 2% 3% 5% 3%;
+    }
+}
+
+@media (max-width: 1050px) {
+    .desktop-content h5 {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: clamp(10px, 1.6vw, 14px);
+    }
+
+    .desktop-content p { 
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: clamp(8px, 1.2vw, 12px);
+    }
+
+    .package-feature {
+        font-size: clamp(8px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(12px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(29px, 1.5vw, 14px);
+    }
+
+    .package-register {
+        font-size: clamp(27px, 2vw, 16px);
+    }
+}
+
+@media (max-width: 992px) {
+    .desktop-content h5 {
+        font-size: clamp(10px, 1.6vw, 14px);
+    }
+    
+    .desktop-content p {
+        font-size: clamp(8px, 1.2vw, 12px);
+    }
+    
+    .desktop-feature-item p {
+        font-size: clamp(6px, 1vw, 10px);
+    }
+    
+    .desktop-feature-item img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .desktop-button {
+        height: 25px !important;
+    }
+
+    .package-feature {
+        font-size: clamp(7px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(10px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(25px, 1.5vw, 14px);
+    }
+
+    .package-register {
+        font-size: clamp(25px, 2vw, 16px);
+    }
+}
+
+@media (max-width: 800px) {
+
+    .package-feature {
+        font-size: clamp(6px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(8px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(21px, 1.5vw, 14px);
+    }
+
+    .package-register {
+        font-size: clamp(35px, 2vw, 16px);
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-base {
+        display: none;
+    }
+    
+    .desktop-screen-area {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        min-height: 500px;
+    }
+    
+    
+    .desktop-content {
+        padding: 0% 5% 5% 5%;
+    }
+
+    .desktop-content .desktop-content-logo{
+        width: clamp(120px, 8vw, 120px);
+    }
+    
+    .desktop-content h5 {
+        font-size: clamp(14px, 2vw, 18px);
+        margin: 10px 0;
+    }
+    
+    .desktop-content p {
+        font-size: clamp(13px, 1.5vw, 14px);
+        margin: 8px 0;
+    }
+    
+    .desktop-feature-item p {
+        font-size: clamp(12px, 1.2vw, 12px);
+        margin: 2px 0;
+    }
+    
+    .desktop-feature-item img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 5px;
+        background: #E3E3E3;
+        border-radius: 50%;
+        padding: 8px;
+        display: block;
+        margin: 0 auto 5px auto;
+    }
+
+    .desktop-button {
+        height: 40px !important;
+    }
+
+    .package-feature {
+        font-size: clamp(13px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(17px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(35px, 1.5vw, 14px);
+    }
+
+    .package-register {
+        font-size: clamp(30px, 2vw, 16px);
+    }
+}
+
+@media (max-width: 610px) {
+    .package-feature {
+        font-size: clamp(10px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(14px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(31px, 1.5vw, 14px);
+    }
+
+    .package-register {
+        font-size: clamp(28px, 2vw, 16px);
+    }
+
+}
+
+@media (max-width: 500px) {
+    .package-feature {
+        font-size: clamp(8px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(12px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(29px, 1.5vw, 14px);
+    }
+
+    .package-register {
+        font-size: clamp(23px, 2vw, 16px);
+    }
+}
+
+@media (max-width: 500px) {
+    .desktop-screen-area.package-view {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 400px) {
+    .package-feature {
+        font-size: clamp(6px, 0.8vw, 8px);
+    }
+
+    .package-title {
+        font-size: clamp(10px, 1.2vw, 12px);
+    }
+
+    .package-price {
+        font-size: clamp(25px, 1.5vw, 14px);
+    }
+
+}
+
+.desktop-button-container {
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    cursor: pointer;
+}
+
+.desktop-button {
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+.desktop-button-container:hover .button-bg {
+    fill: url(#buttonGradient);
+    stroke: url(#buttonGradient);
+}
+
+.desktop-button-container:hover .button-text {
+    fill: white;
+}
+
+.desktop-button-container:hover .button-arrow {
+    transition: all 0.3s ease;
+}
+
+.desktop-button-container:hover .button-arrow path {
+    fill: white;
+    transition: all 0.3s ease;
+}

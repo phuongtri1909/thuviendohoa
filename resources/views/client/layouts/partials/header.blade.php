@@ -11,7 +11,7 @@
         $seoTitle = 'Home - ' . config('app.name');
         $seoDescription = config('app.name');
         $seoKeywords = config('app.name') . ',thu vien';
-        $seoThumbnail = asset('images/dev/Thumbnail.png');
+        $seoThumbnail = asset('images/d/Thumbnail.png');
 
         if (isset($seoSetting) && $seoSetting) {
             $seoTitle =
@@ -81,7 +81,7 @@
             "@context": "https://schema.org",
             "@type": "Organization",
             "url": "{{ url('/') }}",
-            "logo": "{{ asset('/images/dev/Thumbnail.png') }}"
+            "logo": "{{ asset('/images/d/Thumbnail.png') }}"
         }
         </script>
     @endverbatim
@@ -103,14 +103,7 @@
     @vite('resources/assets/frontend/css/styles-header.css')
 
     @stack('styles')
-
-
     {{-- end styles --}}
-    <style>
-        body {
-            padding-top: 80px;
-        }
-    </style>
 </head>
 
 <body>

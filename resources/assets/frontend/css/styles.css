@@ -3,7 +3,7 @@
     --primary-color-2: #FF3F4014;
     --primary-color-3: #FF8686;
     --primary-color-4: #2E2E2E;
-    --primary-color-5: #7BA3DF;
+    --primary-color-5: #E09140;
     --primary-color-6: #37814B;
     --primary-color-7: #F2F5FC;
     --primary-color-8: #101828;
@@ -12,6 +12,7 @@
     --primary-color-11: #f6f6f8;
     --primary-color-12: #F8F8FF;
     --bg-gradient: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
+    --bg-gradient-2: linear-gradient(90deg, #FFF4F4 0%, #FFFFF3 20%, #F1FFED 40%, #EFFEFF 60%, #F3F1FF 80%, #FFF3FE 100%);
     --primary-hover: #444444;
     --secondary-color: #8C5E3B;
     --accent-color: #D1A66E;
@@ -66,6 +67,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
+    margin-top: 26px;
 }
 
 html {
@@ -102,6 +104,10 @@ html {
 
 .p-100 {
     padding: var(--spacing-xl);
+}
+
+.text-justify {
+    text-align: justify !important;
 }
 
 .text-xs {
@@ -153,6 +159,9 @@ html {
     font-size: var(--font-size-1lg) !important;
 }
 
+.text-xl {
+    font-size: var(--font-size-xl) !important;
+}
 
 .text-xl-2 {
     font-size: var(--font-size-xl) !important;
@@ -172,6 +181,10 @@ html {
 
 .text-2xl-4 {
     font-size: var(--font-size-2xl) !important;
+}
+
+.text-5xl {
+    font-size: var(--font-size-5xl) !important;
 }
 
 .text-sm {
@@ -198,7 +211,7 @@ html {
     font-size: var(--font-size-5xl) !important;
 }
 
-.text-6xl{
+.text-6xl {
     font-size: var(--font-size-6xl) !important;
 }
 
@@ -245,6 +258,10 @@ html {
 
 .bg-gradient {
     background: var(--bg-gradient) !important;
+}
+
+.bg-gradient-2 {
+    background: var(--bg-gradient-2) !important;
 }
 
 .color-primary {

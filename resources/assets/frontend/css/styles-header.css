@@ -581,9 +581,11 @@
 .register-download-section {
     background: transparent;
     padding: 8px 0;
-    margin-top: -12px;
-    position: relative;
-    z-index: 998;
+    position: fixed;
+    top: 69px;
+    left: 0;
+    right: 0;
+    z-index: 999;
 }
 
 .register-download-section .btn {
@@ -917,6 +919,12 @@
 
 @media (max-width: 1199.98px) {
     .register-download-section {
-        margin-top: -27px;
+        top: 55px !important;
+       
+    }
+
+    .register-download-section .btn{
+        min-height: 30px !important;
+        min-width: 186px !important;
     }
 }

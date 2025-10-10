@@ -46,7 +46,7 @@ class SeoSetting extends Model
         if ($this->thumbnail) {
             return asset('storage/' . $this->thumbnail);
         }
-        return asset('images/dev/Thumbnail.png'); 
+        return asset('images/d/Thumbnail.png'); 
     }
 
     /**
@@ -87,7 +87,7 @@ class SeoSetting extends Model
             'title' => $title,
             'description' => $description,
             'keywords' => $keywords,
-            'thumbnail' => $blog->image ? asset('storage/' . $blog->image) : ($baseSeo ? $baseSeo->thumbnail_url : asset('images/dev/Thumbnail.png'))
+            'thumbnail' => $blog->image ? asset('storage/' . $blog->image) : ($baseSeo ? $baseSeo->thumbnail_url : asset('images/d/Thumbnail.png'))
         ];
     }
 
@@ -111,7 +111,7 @@ class SeoSetting extends Model
             'title' => $title,
             'description' => $description,
             'keywords' => $keywords,
-            'thumbnail' => $project->hero_image ? asset('storage/' . $project->hero_image) : ($baseSeo ? $baseSeo->thumbnail_url : asset('images/dev/Thumbnail.png'))
+            'thumbnail' => $project->hero_image ? asset('storage/' . $project->hero_image) : ($baseSeo ? $baseSeo->thumbnail_url : asset('images/d/Thumbnail.png'))
         ];
     }
 }
