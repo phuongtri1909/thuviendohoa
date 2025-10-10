@@ -1,0 +1,164 @@
+.footer-section {
+    background: #2E2E2E;
+    color: #fff;
+    padding: 50px 0 0 0;
+}
+
+.social-bar {
+    background: var(--bg-gradient);
+    padding: 5px 0;
+    text-align: center;
+}
+
+.social-bar a {
+    color: white;
+    margin: 0 15px;
+    font-size: 24px;
+    transition: opacity 0.3s;
+}
+
+.social-bar a:hover {
+    opacity: 0.7;
+}
+
+.contribution-section {
+    padding: 30px 0 0 0;
+    background: #2E2E2E;
+    text-align: center;
+}
+
+.contribution-section h3 {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.input-group {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    color: #8E8E8E;
+    padding: 12px 20px;
+    border-radius: 25px !important;
+    padding-right: 100px !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #ddd;
+}
+
+.form-control::placeholder {
+    font-style: italic;
+}
+
+.btn-submit {
+    background: var(--bg-gradient);
+    padding: 12px 20px;
+    color: white;
+    font-weight: bold;
+    position: absolute !important;
+    right: 0px;
+    top: 0;
+    height: 100%;
+    border-radius: 25px !important;
+    border-left: none;
+    z-index: -1;
+    border-bottom: none !important;
+}
+
+.btn-submit:hover {
+    opacity: 0.9;
+}
+
+.footer-title {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center
+}
+
+.footer-content .col-footer:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: #555;
+}
+
+.footer-content .col-footer {
+    position: relative;
+}
+
+.footer-card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.footer-link {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+    text-align: center;
+}
+
+
+.footer-link:hover {
+    color: var(--primary-color-3);
+}
+
+.contact-info {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.partner-logos img {
+    max-width: 100px;
+    margin: 10px;
+    filter: brightness(0.8);
+    transition: filter 0.3s;
+}
+
+.footer-content .col-footer .row .col-6 img {
+    max-width: 60px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.partner-logos img:hover {
+    filter: brightness(1);
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #444;
+}
+
+.footer-bottom p {
+    color: #888;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.dmca-badge {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.dmca-badge img {
+    max-width: 120px;
+}

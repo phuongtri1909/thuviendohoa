@@ -101,6 +101,7 @@
 
     @vite('resources/assets/frontend/css/styles.css')
     @vite('resources/assets/frontend/css/styles-header.css')
+    @vite('resources/assets/frontend/css/footer.css')
 
     @stack('styles')
     {{-- end styles --}}

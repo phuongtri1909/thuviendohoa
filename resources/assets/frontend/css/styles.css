@@ -5,7 +5,7 @@
     --primary-color-4: #2E2E2E;
     --primary-color-5: #E09140;
     --primary-color-6: #37814B;
-    --primary-color-7: #F2F5FC;
+    --primary-color-7: #55C4FF;
     --primary-color-8: #101828;
     --primary-color-9: #394b9b99;
     --primary-color-10: #E1EAF8;
@@ -139,6 +139,10 @@ html {
 }
 
 .text-md-2 {
+    font-size: var(--font-size-md) !important;
+}
+
+.text-md-4 {
     font-size: var(--font-size-md) !important;
 }
 
@@ -389,6 +393,10 @@ html {
 
     .text-md-2 {
         font-size: var(--font-size-xl) !important;
+    }
+
+    .text-md-4 {
+        font-size: var(--font-size-lg) !important;
     }
 
     .text-1lg-3 {

@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/assets/admin/css/styles_admin.css',
                 'resources/assets/frontend/css/home.css',
                 'resources/assets/frontend/css/desktop.css',
+                'resources/assets/frontend/css/footer.css',
             ],
             refresh: true,
         }),
