@@ -42,6 +42,13 @@
             <div class="row">
                 <div class="col-12 col-md-7">
                     <img id="modalImage" src="" alt="" class="img-fluid rounded-4">
+
+                    <div class="mt-4">
+                        <x-client.social-share 
+                            :favorite-count="125"
+                            :is-favorited="true"
+                        />
+                    </div>
                 </div>
                 <div class="col-12 col-md-5">
                    
