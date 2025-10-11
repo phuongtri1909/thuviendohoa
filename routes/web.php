@@ -7,6 +7,11 @@ use App\Http\Controllers\Client\HomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/search', function () {
+    return view('client.pages.search');
+})->name('search');
+
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 });

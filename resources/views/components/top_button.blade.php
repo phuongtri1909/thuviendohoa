@@ -1,13 +1,14 @@
-<button id="topButton" class="btn btn-pry rounded-circle position-fixed bottom-0 end-0 m-4" 
+<button id="topButton" class="btn bg-white px-2 py-4 pb-5 border-1 rounded-5 position-fixed bottom-0 end-0 m-4" 
         style="display: none; z-index: 1000;">
-    <i class="fas fa-arrow-up text-white"></i>
+    <img src="{{ asset('images/svg/arrow-up.svg') }}" alt="Arrow Up">
 </button>
 
 <style>
     #topButton {
         width: 45px;
         height: 45px;
-        transition: all 0.3s ease;
+        transition: all 0.3s ease; 
+        border: 1px solid #8E8E8E;  
     }
     
     #topButton:hover {

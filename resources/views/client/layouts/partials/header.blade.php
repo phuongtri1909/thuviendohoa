@@ -201,10 +201,13 @@
                             <div class="search-separator"></div>
 
                             <div class="search-input-container">
-                                <input type="text" class="search-input" placeholder="Tìm trong thư viện đồ họa..">
-                                <button class="search-btn" type="button">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                <form class="search-form" method="GET" action="{{ route('search') }}">
+                                    <input type="text" class="search-input" name="q"
+                                        value="{{ request()->get('q') }}" placeholder="Tìm trong thư viện đồ họa..">
+                                    <button class="search-btn" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -232,13 +235,13 @@
 
                             <button class="user-profile-btn" id="userDropdownBtn">
                                 <div class="user-avatar-container">
-                                    @if(auth()->user() && auth()->user()->avatar)
+                                    @if (auth()->user() && auth()->user()->avatar)
                                         <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
                                     @else
                                         <img src="{{ asset('/images/svg/user.svg') }}" alt="User">
                                     @endif
                                 </div>
-                                <img src="{{ asset('/images/svg/arrow-up.svg') }}" alt="Arrow Up"
+                                <img src="{{ asset('/images/svg/arrow-down.svg') }}" alt="Arrow Up"
                                     class="dropdown-arrow">
                             </button>
 
@@ -246,7 +249,7 @@
                                 <div class="p-4 pb-2">
                                     <div class="user-info">
                                         <div class="user-avatar-large">
-                                            @if(auth()->user() && auth()->user()->avatar)
+                                            @if (auth()->user() && auth()->user()->avatar)
                                                 <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
                                             @else
                                                 <img src="{{ asset('/images/svg/user.svg') }}" alt="User">
@@ -359,12 +362,15 @@
 
         <div class="mobile-search">
             <div class="search-container">
-                <div class="search-input-container">
-                    <input type="text" class="search-input" placeholder="Tìm trong thư viện đồ họa..">
-                    <button class="search-btn" type="button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+                <form class="search-form" method="GET" action="{{ route('search') }}">
+                    <div class="search-input-container">
+                        <input type="text" class="search-input" name="q" value="{{ request()->get('q') }}"
+                            placeholder="Tìm trong thư viện đồ họa..">
+                        <button class="search-btn" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -377,7 +383,8 @@
                     <button class="mobile-category-btn" type="button" id="mobileCategoryDropdownBtn">
                         <img src="{{ asset('/images/svg/category.svg') }}" alt="Category">
                         <span>Chọn danh mục</span>
-                        <img src="{{ asset('/images/svg/dropdown.svg') }}" alt="Arrow Up" class="mobile-dropdown-arrow">
+                        <img src="{{ asset('/images/svg/dropdown.svg') }}" alt="Arrow Up"
+                            class="mobile-dropdown-arrow">
                     </button>
                     <div class="mobile-category-dropdown-menu" id="mobileCategoryDropdown">
                         <div class="row g-1">
@@ -561,7 +568,8 @@
                     e.stopPropagation();
                     mobileCategoryDropdown.classList.toggle('active');
                     if (mobileDropdownArrow) {
-                        mobileDropdownArrow.style.transform = mobileCategoryDropdown.classList.contains('active') ?
+                        mobileDropdownArrow.style.transform = mobileCategoryDropdown.classList.contains(
+                                'active') ?
                             'rotate(180deg)' : 'rotate(0deg)';
                     }
                 });
@@ -569,7 +577,8 @@
 
             // Close mobile dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (mobileCategoryDropdownBtn && mobileCategoryDropdown && !mobileCategoryDropdownBtn.contains(e.target) && !mobileCategoryDropdown.contains(e.target)) {
+                if (mobileCategoryDropdownBtn && mobileCategoryDropdown && !mobileCategoryDropdownBtn
+                    .contains(e.target) && !mobileCategoryDropdown.contains(e.target)) {
                     mobileCategoryDropdown.classList.remove('active');
                     if (mobileDropdownArrow) {
                         mobileDropdownArrow.style.transform = 'rotate(0deg)';
