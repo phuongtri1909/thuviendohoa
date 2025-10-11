@@ -44,7 +44,7 @@
     </div>
     <div class="bg-white rounded-4 p-2 p-md-4 mt-2">
         <div>
-            <span class="fw-semibold">tags phân loại: </span>
+            <span class="fw-semibold">Tags phân loại: </span>
             @for ($i = 0; $i < 10; $i++)
                 <span class="badge bg-primary-10 color-primary-11 p-2 p-md-3 rounded-4 mt-2">hasgtag Trung thu</span>
             @endfor
@@ -53,12 +53,12 @@
         <div class="result-wrapper" id="masonry-container">
             @php
                 $sampleImages = [
-                    ['url' => 'https://picsum.photos/300/400?random=1', 'title' => 'Hình ảnh 1', 'height' => 'tall'],
+                    ['url' => 'https://picsum.photos/700/400?random=1', 'title' => 'Hình ảnh 1', 'height' => 'tall'],
                     ['url' => 'https://picsum.photos/400/300?random=2', 'title' => 'Hình ảnh 2', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/350/500?random=3', 'title' => 'Hình ảnh 3', 'height' => 'tall'],
+                    ['url' => 'https://picsum.photos/850/900?random=3', 'title' => 'Hình ảnh 3', 'height' => 'tall'],
                     ['url' =>  asset("images/d/bancoytuong.png"), 'title' => 'Bạn có ý tưởng thiết kế của riêng mình?', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/300/300?random=4', 'title' => 'Hình ảnh 4', 'height' => 'square'],
-                    ['url' => 'https://picsum.photos/450/350?random=5', 'title' => 'Hình ảnh 5', 'height' => 'wide'],
+                    ['url' => 'https://picsum.photos/500/900?random=4', 'title' => 'Hình ảnh 4', 'height' => 'square'],
+                    ['url' => 'https://picsum.photos/650/1250?random=5', 'title' => 'Hình ảnh 5', 'height' => 'wide'],
                     ['url' => 'https://picsum.photos/320/450?random=6', 'title' => 'Hình ảnh 6', 'height' => 'tall'],
                     ['url' => 'https://picsum.photos/380/280?random=7', 'title' => 'Hình ảnh 7', 'height' => 'wide'],
                     ['url' => 'https://picsum.photos/300/350?random=8', 'title' => 'Hình ảnh 8', 'height' => 'medium'],
@@ -85,13 +85,10 @@
             @foreach($sampleImages as $index => $image)
                 <div class="masonry-item" data-height="{{ $image['height'] }}">
                     <div class="image-card">
-                        @if($image['title'] === 'Bạn có ý tưởng thiết kế của riêng mình?')
-                            <a href="#" class="image-link">
-                                <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy">
-                            </a>
-                        @else
-                            <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy">
-                        @endif
+                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy" 
+                             class="image-clickable" 
+                             data-image-url="{{ $image['url'] }}" 
+                             data-image-title="{{ $image['title'] }}">
                     </div>
                 </div>
             @endforeach
@@ -112,21 +109,17 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Xử lý color selection
             const colorBtns = document.querySelectorAll('.color-btn');
             let selectedColor = null;
 
             colorBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Xóa class active khỏi tất cả nút màu
                     colorBtns.forEach(b => b.classList.remove('active'));
 
                     if (this.classList.contains('color-clear')) {
-                        // Nếu click nút xóa
                         selectedColor = null;
                         console.log('Đã xóa màu đã chọn');
                     } else {
-                        // Nếu click nút màu
                         this.classList.add('active');
                         selectedColor = this.style.backgroundColor;
                         console.log('Đã chọn màu:', selectedColor);
@@ -134,27 +127,22 @@
                 });
             });
 
-            // Xử lý software selection
             const softwareBtns = document.querySelectorAll('.software-btn');
             let selectedSoftware = null;
 
             softwareBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Xóa class active khỏi tất cả nút software
                     softwareBtns.forEach(b => b.classList.remove('active'));
 
-                    // Thêm class active cho nút được click
                     this.classList.add('active');
                     selectedSoftware = this.title;
                     console.log('Đã chọn phần mềm:', selectedSoftware);
                 });
             });
 
-            // Xử lý masonry layout
             function initMasonry() {
                 const container = document.getElementById('masonry-container');
                 if (container) {
-                    // Đảm bảo tất cả ảnh đã load xong
                     const images = container.querySelectorAll('img');
                     let loadedImages = 0;
                     
@@ -164,7 +152,6 @@
                         img.addEventListener('load', () => {
                             loadedImages++;
                             if (loadedImages === images.length) {
-                                // Tất cả ảnh đã load, refresh layout
                                 refreshMasonry();
                             }
                         });
@@ -175,37 +162,49 @@
             function refreshMasonry() {
                 const container = document.getElementById('masonry-container');
                 if (container) {
-                    // Force reflow để masonry layout được tính toán lại
                     container.style.display = 'none';
-                    container.offsetHeight; // Trigger reflow
+                    container.offsetHeight;
                     container.style.display = '';
                 }
             }
 
-            // Xử lý click cho image link (bancoytuong)
-            const imageLinks = document.querySelectorAll('.image-link');
-            imageLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const imageTitle = this.querySelector('img').alt;
+            const imageClickables = document.querySelectorAll('.image-clickable');
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const closeModal = document.getElementById('closeModal');
+
+            imageClickables.forEach(img => {
+                img.addEventListener('click', function() {
+                    const imageUrl = this.getAttribute('data-image-url');
                     
-                    console.log(`Click vào: ${imageTitle}`);
+                    modalImage.src = imageUrl;
                     
-                    // Thêm hiệu ứng click
-                    this.style.transform = 'scale(0.98)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 150);
-                    
-                    // Có thể thêm logic redirect hoặc modal ở đây
-                    // window.location.href = 'your-link-here';
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
                 });
             });
 
-            // Khởi tạo masonry
+            function closeImageModal() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            closeModal.addEventListener('click', closeImageModal);
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeImageModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    closeImageModal();
+                }
+            });
+
             initMasonry();
 
-            // Refresh masonry khi resize window
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
