@@ -10,7 +10,7 @@
 
 <!-- Contribution Section -->
 <div class="contribution-section ">
-    <div class="container-xxl">
+    <div class="container-custom">
         <h3 class="text-md-4">Đóng góp của bạn sẽ giúp tôi hoàn thiện hơn</h3>
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Góp ý của bạn về trang...">
@@ -23,7 +23,7 @@
 
 <!-- Footer Content -->
 <div class="footer-section">
-    <div class="container-xxl">
+    <div class="container-custom">
         <div class="footer-content">
             <div class="row">
                 <!-- About Section -->
@@ -82,7 +82,7 @@
 
     <!-- Footer Bottom -->
     <div class="footer-bottom">
-        <div class="container-xxl">
+        <div class="container-custom">
             <div class="row align-items-center">
                 <div class="col-12 col-xl-10">
                     <p><strong>{{ config('app.name') }}</strong> - Bản quyền {{ date('Y') }}. Mọi hành vi sao chép

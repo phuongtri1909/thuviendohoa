@@ -71,6 +71,36 @@ body {
     margin-top: 64px;
 }
 
+/* Custom Container */
+.container-custom {
+    width: 100%;
+    padding-left: 114px;
+    padding-right: 114px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 1200px) {
+    .container-custom {
+        padding-left: 60px;
+        padding-right: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-custom {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-custom {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
 @media (min-width: 1200px) {
     body {
         margin-top: 77px;

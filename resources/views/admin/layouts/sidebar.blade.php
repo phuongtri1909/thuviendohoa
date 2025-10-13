@@ -83,12 +83,12 @@
         <div class="main-content">
             <div class="content-wrapper">
                 <div class="content-header">
-                    <div class="container-fluid">
+                    <div class="container-custom">
                         <h1 class="page-title">@yield('title', 'Dashboard')</h1>
                     </div>
                 </div>
                 <div class="content">
-                    <div class="container-fluid">
+                    <div class="container-custom">
                         @yield('main-content')
                     </div>
                 </div>

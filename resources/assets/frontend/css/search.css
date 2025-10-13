@@ -132,7 +132,7 @@
     position: relative;
 }
 
-.banner-static .container-xxl {
+.banner-static .container-banner-static {
     position: absolute;
     top: 0;
     left: 0;
@@ -383,4 +383,18 @@
         display: flex;
         justify-content: space-between;
     }
+}
+
+.underline-first {
+    position: relative;
+}
+
+.underline-first::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #FF3F40;
 }

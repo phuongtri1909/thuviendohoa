@@ -56,7 +56,11 @@
                     ['url' => 'https://picsum.photos/700/400?random=1', 'title' => 'Hình ảnh 1', 'height' => 'tall'],
                     ['url' => 'https://picsum.photos/400/300?random=2', 'title' => 'Hình ảnh 2', 'height' => 'wide'],
                     ['url' => 'https://picsum.photos/850/900?random=3', 'title' => 'Hình ảnh 3', 'height' => 'tall'],
-                    ['url' =>  asset("images/d/bancoytuong.png"), 'title' => 'Bạn có ý tưởng thiết kế của riêng mình?', 'height' => 'wide'],
+                    [
+                        'url' => asset('images/d/bancoytuong.png'),
+                        'title' => 'Bạn có ý tưởng thiết kế của riêng mình?',
+                        'height' => 'wide',
+                    ],
                     ['url' => 'https://picsum.photos/500/900?random=4', 'title' => 'Hình ảnh 4', 'height' => 'square'],
                     ['url' => 'https://picsum.photos/650/1250?random=5', 'title' => 'Hình ảnh 5', 'height' => 'wide'],
                     ['url' => 'https://picsum.photos/320/450?random=6', 'title' => 'Hình ảnh 6', 'height' => 'tall'],
@@ -78,17 +82,15 @@
                     ['url' => 'https://picsum.photos/350/300?random=22', 'title' => 'Hình ảnh 10', 'height' => 'wide'],
                     ['url' => 'https://picsum.photos/300/500?random=23', 'title' => 'Hình ảnh 11', 'height' => 'tall'],
                     ['url' => 'https://picsum.photos/420/320?random=24', 'title' => 'Hình ảnh 12', 'height' => 'wide'],
-                    
                 ];
             @endphp
-            
-            @foreach($sampleImages as $index => $image)
+
+            @foreach ($sampleImages as $index => $image)
                 <div class="masonry-item" data-height="{{ $image['height'] }}">
                     <div class="image-card">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy" 
-                             class="image-clickable" 
-                             data-image-url="{{ $image['url'] }}" 
-                             data-image-title="{{ $image['title'] }}">
+                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy"
+                            class="image-clickable" data-image-url="{{ $image['url'] }}"
+                            data-image-title="{{ $image['title'] }}">
                     </div>
                 </div>
             @endforeach
@@ -145,9 +147,9 @@
                 if (container) {
                     const images = container.querySelectorAll('img');
                     let loadedImages = 0;
-                    
+
                     if (images.length === 0) return;
-                    
+
                     images.forEach(img => {
                         img.addEventListener('load', () => {
                             loadedImages++;
@@ -176,9 +178,9 @@
             imageClickables.forEach(img => {
                 img.addEventListener('click', function() {
                     const imageUrl = this.getAttribute('data-image-url');
-                    
+
                     modalImage.src = imageUrl;
-                    
+
                     modal.style.display = 'flex';
                     document.body.style.overflow = 'hidden';
                 });

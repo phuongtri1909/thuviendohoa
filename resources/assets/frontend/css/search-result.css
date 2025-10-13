@@ -186,7 +186,7 @@
 .result-wrapper {
     margin-top: 20px;
     column-count: 4;
-    column-gap: 15px;
+    column-gap: 20px;
     column-fill: balance;
 }
 
@@ -195,6 +195,7 @@
     margin-bottom: 20px;
     display: inline-block;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .image-card {
@@ -267,21 +268,21 @@
 @media (min-width: 577px) and (max-width: 768px) {
     .result-wrapper {
         column-count: 2;
-        column-gap: 10px;
+        column-gap: 15px;
     }
 }
 
 @media (min-width: 769px) and (max-width: 1199px) {
     .result-wrapper {
         column-count: 3;
-        column-gap: 15px;
+        column-gap: 20px;
     }
 }
 
 @media (min-width: 1200px) {
     .result-wrapper {
         column-count: 4;
-        column-gap: 15px;
+        column-gap: 20px;
     }
 }
 

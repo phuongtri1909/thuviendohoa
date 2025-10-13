@@ -109,7 +109,7 @@
 
 <body>
     <header class="header-main" id="header">
-        <div class="container-xxl">
+        <div class="container-custom">
             <div class="header-custom py-2">
                 <div class="header-logo">
                     <a href="{{ route('home') }}" class="logo-link">
@@ -337,7 +337,7 @@
 
     <!-- Register Download Package Button -->
     <div class="register-download-section">
-        <div class="container-xxl">
+        <div class="container-custom">
             <div class="d-flex justify-content-end">
                 <button class="btn btn-danger px-4 py-2 fw-bold text-uppercase">
                     <img src="{{ asset('/images/svg/user.svg') }}" alt="User" class="me-2" width="16"
