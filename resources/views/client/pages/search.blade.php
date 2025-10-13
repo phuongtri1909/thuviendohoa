@@ -146,6 +146,20 @@
                     </div>
                 </div>
 
+                <div class="mt-3 d-flex align-items-start">
+                    <span class="tags-product p-1 me-2">
+                        <img src="{{ asset('images/svg/search-results/tag.svg') }}" alt="">
+                        Tags sản phẩm:
+                    </span>
+                    <div class="tags-product-list">
+                        @for ($i = 0; $i < 20; $i++)
+                            <span class="tags-product-item p-2">
+                                Backgroup
+                            </span>
+                        @endfor
+                    </div>
+                </div>
+
                 <hr class="my-3">
 
                 <div>

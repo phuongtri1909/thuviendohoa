@@ -292,6 +292,25 @@
     border-top: 1px solid #eee;
 }
 
+/* Tags product layout */
+.tags-product {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+
+.tags-product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tags-product-item {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
 /* Modal info items alignment */
 .modal-info-item {
     display: flex;
@@ -397,4 +416,24 @@
     width: 100%;
     height: 2px;
     background-color: #FF3F40;
+}
+
+.tags-product{
+    color: #8E8E8E;
+    font-size: 16px;
+    border-radius: 5px;
+    background: #EEE;
+}
+
+.tags-product-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.tags-product-item{
+    color: #8E8E8E;
+    font-size: 16px;
+    border-radius: 0 10px 10px 10px;
+    background: #EEE;
 }
