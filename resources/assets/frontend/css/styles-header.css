@@ -592,6 +592,7 @@
     left: 0;
     right: 0;
     z-index: 999;
+    pointer-events: none;
 }
 
 .register-download-section .btn {
@@ -600,6 +601,7 @@
     justify-content: center;
     border-radius: 0 0 30px 30px;
     border: 1px solid #FFF;
+    pointer-events: auto;
     background: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
     color: white;
     font-size: 14px;

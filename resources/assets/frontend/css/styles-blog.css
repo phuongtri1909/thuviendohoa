@@ -1,0 +1,253 @@
+.blog-container .blog-featured {
+    background: linear-gradient(90deg, rgba(255, 244, 244, 0.6) 0%, rgba(255, 255, 243, 0.6) 20%, rgba(241, 255, 237, 0.6) 40%, rgba(239, 254, 255, 0.6) 60%, rgba(243, 241, 255, 0.6) 80%, rgba(255, 243, 254, 0.6) 100%);
+    display: flex;
+    align-items: flex-start;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1.5rem;
+    gap: 1.5rem;
+}
+
+.blog-container .image-vertical {
+    flex: 0 0 20%;
+    max-width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+}
+
+.blog-container .blog-featured-content {
+    flex: 0 0 77%;
+    max-width: 77%;
+}
+
+.blog-container .blog-featured-info {
+    display: flex;
+    gap: 10px;
+}
+
+.blog-container .image-vertical img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Fixed height for content image */
+#contentImage {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .blog-container .blog-featured {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .blog-container .image-vertical,
+    .blog-container .blog-featured-content {
+        flex: 1;
+        max-width: 100%;
+    }
+
+    #contentImage {
+        height: 150px;
+    }
+}
+
+.blog-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.pagination-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.pagination-dot.active {
+    width: 40px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: #999;
+}
+
+.pagination-dot:hover {
+    background-color: #999;
+}
+
+.blog-featured.grabbing {
+    cursor: grabbing;
+}
+
+/* Touch and drag improvements */
+#blogCarousel {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#blogCarousel:active {
+    cursor: grabbing;
+}
+
+/* Smooth transitions for content updates */
+#blogCarousel * {
+    transition: opacity 0.3s ease;
+}
+
+/* Prevent text selection during drag */
+#blogCarousel.dragging {
+    cursor: grabbing;
+}
+
+#blogCarousel.dragging * {
+    pointer-events: none;
+}
+
+/* Text truncation for blog title and description */
+#blogTitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    height: 2.8em;
+    /* 2 lines * 1.4 line-height */
+    margin-bottom: 0;
+}
+
+#blogDesc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    height: 4.2em;
+    /* 3 lines * 1.4 line-height */
+    margin-bottom: 0;
+}
+
+/* Fallback for browsers that don't support -webkit-line-clamp */
+@supports not (-webkit-line-clamp: 2) {
+    #blogTitle {
+        max-height: 2.8em;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #blogTitle::after {
+        content: '...';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: white;
+        padding-left: 5px;
+    }
+}
+
+@supports not (-webkit-line-clamp: 3) {
+    #blogDesc {
+        max-height: 4.2em;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #blogDesc::after {
+        content: '...';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: white;
+        padding-left: 5px;
+    }
+}
+
+.blogs-knowledge .title-blog-knowledge {
+    flex-direction: column;
+}
+
+.blogs-knowledge .search-box {
+    width: 100%;
+}
+
+.blogs-knowledge .search-input {
+    border-radius: 10px !important;
+    border: 1px solid #8E8E8E !important;
+    padding: 10px !important;
+}
+
+.blogs-knowledge .search-btn {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    border-radius: 10px;
+    border: 1px solid #8E8E8E;
+    background: #2E2E2E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.blogs-knowledge .search-btn:hover {
+    background-color: #FF3F40;
+}
+
+@media(min-width:600px) {
+    .blogs-knowledge .title-blog-knowledge {
+        flex-direction: unset;
+        justify-content: space-between;
+    }
+
+    .blogs-knowledge .search-box {
+        width: 300px;
+    }
+}
+
+.blogs-knowledge-items .blogs-knowledge-item-info {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.blogs-knowledge-items .blog-item {
+    border-radius: 10px;
+    background: #F8F8F8;
+}
+
+.blogs-knowledge-items .img-blog-item{
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.blogs-knowledge-items .blog-item p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5em;
+    height: calc(1.5em * 3); /* cố định 3 dòng thực tế */
+}

@@ -11,6 +11,13 @@ Route::get('/search', function () {
     return view('client.pages.search');
 })->name('search');
 
+Route::get('/blog', function () {
+    return view('client.pages.blog');
+})->name('blog');
+
+Route::get('/blog/{blog}', function () {
+    return view('client.pages.blog-item');
+})->name('blog.item');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');

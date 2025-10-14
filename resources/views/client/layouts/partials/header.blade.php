@@ -217,10 +217,10 @@
                             <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
                             <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
                         </button>
-                        <button class="action-btn blog-btn rounded-5 p-1">
+                        <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
                             <span class="color-primary fw-semibold text-md pe-3">Vietfile Blog</span>
-                        </button>
+                        </a>
 
                     </div>
                 </div>
@@ -456,10 +456,10 @@
                 <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
                 <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
             </button>
-            <button class="action-btn blog-btn rounded-5 p-1">
+            <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
                 <span class="color-primary fw-semibold text-md pe-3">Vietfile Blog</span>
-            </button>
+            </a>
             @guest
                 <a href="{{ route('login') }}" class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none">
                     <img src="{{ asset('/images/svg/clock.svg') }}" alt="Login">
