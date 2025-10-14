@@ -60,6 +60,7 @@
                         'url' => asset('images/d/bancoytuong.png'),
                         'title' => 'Bạn có ý tưởng thiết kế của riêng mình?',
                         'height' => 'wide',
+                        'link' => url('/y-tuong-thiet-ke'),
                     ],
                     ['url' => 'https://picsum.photos/500/900?random=4', 'title' => 'Hình ảnh 4', 'height' => 'square'],
                     ['url' => 'https://picsum.photos/650/1250?random=5', 'title' => 'Hình ảnh 5', 'height' => 'wide'],
@@ -88,9 +89,15 @@
             @foreach ($sampleImages as $index => $image)
                 <div class="masonry-item" data-height="{{ $image['height'] }}">
                     <div class="image-card">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy"
-                            class="image-clickable" data-image-url="{{ $image['url'] }}"
-                            data-image-title="{{ $image['title'] }}">
+                        @if (!empty($image['link']))
+                            <a href="{{ $image['link'] }}" class="text-decoration-none">
+                                <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy">
+                            </a>
+                        @else
+                            <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy"
+                                class="image-clickable" data-image-url="{{ $image['url'] }}"
+                                data-image-title="{{ $image['title'] }}">
+                        @endif
                     </div>
                 </div>
             @endforeach
