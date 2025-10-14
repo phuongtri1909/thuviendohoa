@@ -38,7 +38,7 @@
     <div id="imageModal" class="modal-overlay py-2" style="display: none;">
         <div class="container-custom">
 
-            <div class="modal-content p-4 rounded-4">
+            <div class="modal-content p-2 p-md-4 rounded-4">
                 <button class="modal-close" id="closeModal">&times;</button>
 
                 <div class="row">
@@ -146,14 +146,15 @@
                     </div>
                 </div>
 
-                <div class="mt-3 d-flex align-items-start">
-                    <span class="tags-product p-1 me-2">
-                        <img src="{{ asset('images/svg/search-results/tag.svg') }}" alt="">
-                        Tags sản phẩm:
-                    </span>
-                    <div class="tags-product-list">
+                <div class="mt-3">
+                    
+                    <div class="tags-product-list align-items-center">
+                        <span class="tags-product p-1 me-2 text-xs-2">
+                            <img src="{{ asset('images/svg/search-results/tag.svg') }}" alt="">
+                            Tags sản phẩm:
+                        </span>
                         @for ($i = 0; $i < 20; $i++)
-                            <span class="tags-product-item p-2">
+                            <span class="tags-product-item p-1 p-md-2 text-xs-2">
                                 Backgroup
                             </span>
                         @endfor

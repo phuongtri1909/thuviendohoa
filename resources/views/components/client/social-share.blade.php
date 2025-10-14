@@ -15,67 +15,93 @@
 
 @push('styles')
     <style>
+        .social-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .social-btn {
             display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 20px;
+            align-items: stretch;
+            padding: 0;
             border: none;
             border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
         }
 
         .social-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .social-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Facebook */
+        .facebook {
+            background-color: #1877F2;
+        }
+
+        .facebook:hover {
+            background-color: #166fe5;
+        }
+
+        /* Twitter */
+        .twitter {
+            background-color: #1DA1F2;
+        }
+
+        .twitter:hover {
+            background-color: #1a8cd8;
+        }
+
+        /* Pinterest */
+        .pinterest {
+            background-color: #E60023;
+        }
+
+        .pinterest:hover {
+            background-color: #cc001a;
+        }
+
+        /* LinkedIn */
+        .linkedin {
+            background-color: #0A66C2;
+        }
+
+        .linkedin:hover {
+            background-color: #085196;
         }
 
         .social-btn i {
-            font-size: 16px;
+            font-size: 18px;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.2);
         }
 
-        .social-btn-facebook {
-            background-color: #3b5998;
-        }
-
-        .social-btn-facebook:hover {
-            background-color: #2d4373;
-        }
-
-        .social-btn-twitter {
-            background-color: #1da1f2;
-        }
-
-        .social-btn-twitter:hover {
-            background-color: #0c85d0;
-        }
-
-        .social-btn-pinterest {
-            background-color: #e60023;
-        }
-
-        .social-btn-pinterest:hover {
-            background-color: #bd001c;
-        }
-
-        .social-btn-linkedin {
-            background-color: #0077b5;
-        }
-
-        .social-btn-linkedin:hover {
-            background-color: #005885;
+        .social-btn span {
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
         }
 
         .favorite-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             padding: 5px 20px;
             border: 2px solid #ddd;
             border-radius: 10px;
@@ -105,7 +131,6 @@
         }
 
         .favorite-btn i {
-            font-size: 18px;
             color: #999;
             transition: color 0.3s ease;
         }
@@ -114,54 +139,50 @@
             color: #e60023;
         }
 
-        @media (max-width: 576px) {
-            .social-btn {
-                padding: 8px 16px;
-                font-size: 13px;
+        .social-share-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (min-width: 1350px) {
+            .social-share-wrapper {
+                flex-direction: row;
+                justify-content: space-between;
             }
 
-            .social-btn i {
-                font-size: 14px;
-            }
-
-            .favorite-btn {
-                padding: 8px 16px;
-                font-size: 13px;
-            }
-
-            .favorite-btn i {
-                font-size: 16px;
+            .social-buttons {
+                justify-content: normal;
+                flex-wrap: nowrap;
+                text-align: center
             }
         }
     </style>
 @endpush
 
-<div class="social-share-wrapper d-flex justify-content-between">
-    <div>
-        {{-- Facebook --}}
-        <a href="https://www.facebook.com/sharer/sharer.php?u={{ $encodedUrl }}" target="_blank"
-            rel="noopener noreferrer" class="social-btn social-btn-facebook">
+<div class="social-share-wrapper">
+    <div class="social-buttons">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://example.com" target="_blank"
+            class="social-btn facebook text-xs-1" title="Chia sẻ trên Facebook">
             <i class="fab fa-facebook-f"></i>
             <span>Facebook</span>
         </a>
 
-        {{-- Twitter --}}
-        <a href="https://twitter.com/intent/tweet?url={{ $encodedUrl }}&text={{ $encodedTitle }}" target="_blank"
-            rel="noopener noreferrer" class="social-btn social-btn-twitter">
+        <a href="https://twitter.com/intent/tweet?url=https://example.com&text=Check%20this%20out" target="_blank"
+            class="social-btn twitter text-xs-1" title="Chia sẻ trên Twitter">
             <i class="fab fa-twitter"></i>
             <span>Twitter</span>
         </a>
 
-        {{-- Pinterest --}}
-        <a href="https://pinterest.com/pin/create/button/?url={{ $encodedUrl }}&description={{ $encodedTitle }}"
-            target="_blank" rel="noopener noreferrer" class="social-btn social-btn-pinterest">
+        <a href="https://www.pinterest.com/pin/create/button/?url=https://example.com" target="_blank"
+            class="social-btn pinterest text-xs-1" title="Chia sẻ trên Pinterest">
             <i class="fab fa-pinterest-p"></i>
             <span>Pinterest</span>
         </a>
 
-        {{-- LinkedIn --}}
-        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ $encodedUrl }}" target="_blank"
-            rel="noopener noreferrer" class="social-btn social-btn-linkedin">
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://example.com" target="_blank"
+            class="social-btn linkedin text-xs-1" title="Chia sẻ trên LinkedIn">
             <i class="fab fa-linkedin-in"></i>
             <span>LinkedIn</span>
         </a>
@@ -169,13 +190,10 @@
 
     {{-- Favorite Button --}}
     @if ($showFavorite)
-        <button type="button" class="favorite-btn {{ $isFavorited ? 'favorited' : '' }}"
+        <button type="button" class="favorite-btn {{ $isFavorited ? 'favorited' : '' }} text-xs-1"
             onclick="toggleFavorite(this)">
             <i class="{{ $isFavorited ? 'fas' : 'far' }} fa-heart"></i>
             <span>Yêu thích</span>
-            @if ($favoriteCount)
-                <span class="favorite-count">({{ $favoriteCount }})</span>
-            @endif
         </button>
     @endif
 </div>
