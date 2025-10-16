@@ -17,6 +17,7 @@ export default defineConfig({
                 'resources/assets/frontend/css/styles-blog.css',
                 'resources/assets/frontend/css/blog-sidebar.css',
                 'resources/assets/frontend/css/get-link.css',
+                'resources/assets/frontend/css/styles-auth.css'
             ],
             refresh: true,
         }),

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,69 +25,93 @@
 
     <!-- Custom CSS -->
     @vite('resources/assets/frontend/css/styles.css')
+    @vite('resources/assets/frontend/css/styles-auth.css')
 
 </head>
-<body class="d-flex align-items-center justify-content-center min-vh-100">
-    <div class="login-page-container ">
-        <div class="login-container">
-            <div class="login-card card">
-                <div class="login-header text-center">
-                    <img src="{{ asset('images/logo/logo-site.webp') }}" alt="{{ config('app.name') }}" class="img-fluid">
-                    <h4>Đăng nhập</h4>
+
+<body>
+    <div class="login-wrapper rounded-5">
+        <div class="login-banner">
+            <div class="banner-content">
+                <h2>
+                    Chào mừng trở lại<br>
+                    <span class="highlight">{{ config('app.name') }}</span>
+                </h2>
+                <p>Các file ảnh chất lượng đang chờ bạn</p>
+            </div>
+            <div class="banner-image">
+                <img src="{{ asset('images/d/login.jpg') }}" alt="Login Banner">
+            </div>
+        </div>
+
+        <div class="login-form-section">
+            <button class="close-btn" onclick="window.history.back()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="login-header">
+                <h4>Bạn cần đăng nhập bằng:</h4>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button class="social-btn facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </button>
+                <button class="social-btn twitter">
+                    <i class="fab fa-twitter"></i>
+                </button>
+            </div>
+
+            <div class="divider">
+                <span>Hoặc</span>
+            </div>
+
+            @include('components.toast-main')
+            @include('components.toast')
+
+            <form method="POST" action="{{ route('login.post') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label for="email">Số Phone hoặc Gmail của bạn</label>
+                    <input type="email" class="form-input @error('email') is-invalid @enderror" id="email"
+                        name="email" value="{{ old('email') }}" placeholder="admin@example.com" required autofocus>
+                    @error('email')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
-                <div class="login-body">
-                    @include('components.toast-main')
-                    @include('components.toast')
-
-                    <form method="POST" action="{{ route('login.post') }}">
-                        @csrf
-
-                        <div class="mb-4">
-                            <label for="email" class="form-label">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="admin@example.com" required autofocus>
-                            </div>
-                            @error('email')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                            @enderror
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" class="form-input @error('password') is-invalid @enderror" id="password"
+                        name="password" placeholder="••••••••" required>
+                    @error('password')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
                         </div>
+                    @enderror
+                </div>
 
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Mật khẩu</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="••••••••" required>
-                                <span class="input-group-text password-toggle" style="border-left: none; cursor: pointer;" onclick="togglePassword()">
-                                    <i class="fas fa-eye" id="password-icon"></i>
-                                </span>
-                            </div>
-                            @error('password')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="mt-4 text-center">
-                        <p class="form-text">© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                <div class="form-check-group">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                        <label for="remember">Nhớ đăng nhập</label>
                     </div>
+                    <a href="#" class="forgot-password">Bạn quên mật khẩu?</a>
                 </div>
+
+                <button type="submit" class="btn-login">
+                    Đăng nhập
+                </button>
+            </form>
+
+            <div class="signup-link">
+                Bạn chưa có tài khoản? <a href="#">Đăng ký ngay</a>
             </div>
         </div>
     </div>
@@ -94,21 +119,6 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const passwordIcon = document.getElementById('password-icon');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordIcon.classList.remove('fa-eye');
-                passwordIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                passwordIcon.classList.remove('fa-eye-slash');
-                passwordIcon.classList.add('fa-eye');
-            }
-        }
-    </script>
 </body>
+
 </html>
