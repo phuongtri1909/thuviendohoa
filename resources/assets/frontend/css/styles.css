@@ -11,6 +11,7 @@
     --primary-color-10: #EEE;
     --primary-color-11: #2E2E2EEE;
     --primary-color-12: #2E2E2E;
+    --primary-color-13: #8E8E8E;
     --bg-gradient: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
     --bg-gradient-2: linear-gradient(90deg, #FFF4F4 0%, #FFFFF3 20%, #F1FFED 40%, #EFFEFF 60%, #F3F1FF 80%, #FFF3FE 100%);
     --bg-gradient-3: linear-gradient(90deg, #F0B00C 0%, #EF9016 100%);
@@ -360,6 +361,10 @@ html {
 
 .color-primary-12{
     color: var(--primary-color-12) !important;
+}
+
+.color-primary-13{
+    color: var(--primary-color-13);
 }
 
 .font-light {

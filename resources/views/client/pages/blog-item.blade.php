@@ -18,11 +18,96 @@
         </div>
 
         <div class="row">
-            <div class="col-12 col-lg-9">
+            <div class="col-12 col-lg-9 mt-5">
+                <div class="bg-blog-item p-4 position-relative">
+                    <div class="blog-layout d-flex">
+                        <div class="blog-button-wrap">
+                            <x-client.button-blog-item />
+                        </div>
+                
+                        <div class="blog-main flex-grow-1 ps-md-4">
+                            <div class="text-center">
+                                <h2 class="color-primary-12 fs-4 fw-semibold title-blog-item">
+                                    Xu hướng thiết kế đồ họa năm 2020: Phá vỡ mọi quy tắc
+                                </h2>
+                
+                                <div class="my-2 d-flex justify-content-center align-items-center info-blog">
+                                    <span class="color-primary-13">By <span class="fw-semibold">Nam Phương</span></span>
+                                    <span class="color-primary-13 fs-3">•</span>
+                                    <span class="d-flex align-items-center">
+                                        <img class="img-info-blog me-1" src="{{ asset('images/svg/blogs/time-blue.svg') }}" alt="time">
+                                        <span id="blogDate">02/10/2025</span>
+                                    </span>
+                                    <span class="d-flex align-items-center">
+                                        <img class="img-info-blog me-1" src="{{ asset('images/svg/blogs/view-blue.svg') }}" alt="view">
+                                        <span id="blogViews">232</span>
+                                    </span>
+                                </div>
+                            </div>
+                
+                            <p class="fst-italic color-primary-12 text-md">
+                                Xu hướng 3D đã đạt đến đỉnh điểm vào năm 2019 và chắc chắn xu hướng này sẽ không “giảm nhiệt” trong năm nay...
+                            </p>
+                
+                            <div class="px-md-5">
+                                <div class="menu-content-main px-5 py-2">
+                                    <span class="fw-semibold">
+                                        <img class="me-3" src="{{ asset('images/svg/blogs/menu-main.svg') }}" alt="">
+                                        Nội dung chính bài viết
+                                    </span>
+                                    <div class="mt-3">
+                                        <ol class="blog-list mb-0">
+                                            <li>3D và chủ nghĩa hiện thực</li>
+                                            <li>Sử dụng màu đơn sắc</li>
+                                            <li>Hiệu ứng kim loại sáng bóng</li>
+                                            <li>Cơn sốt Typography</li>
+                                            <li>Tạo Mask cho hình ảnh và văn bản</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
 
+                <div class="mt-4 ps-md-5 pe-md-2">
+                    <x-client.about-content :content="'Xu hướng 3D đã đạt đến đỉnh điểm vào năm 2019 và chắc chắn xu hướng này sẽ không “giảm nhiệt” trong năm nay. Các công nghệ hiện đại và các phần mềm mang lại nhiều cơ hội cho xu hướng 3D phát triển, chúng ta sẽ tiếp tục thấy nhiều tác phẩm thiết kế đồ họa 3D tuyệt vời hơn vào năm 2020. Để tăng sự sáng tạo, các nhà thiết kế thường kết hợp chúng với các yếu tố khác, chẳng hạn như hình ảnh và các yếu tố 2D. Số lượt tìm kiếm “quần áo giá rẻ” bắt đầu giảm mạnh, trong khi cùng thời điểm này, số lượt tìm kiếm “quần áo bền vững” tăng mạnh. Trong cuốn Thế giới không rác thải, tác giả Ron Gonen cho rằng sự chú ý vào xu hướng phát triển bền vững trong ngành thời trang đang tăng đột phá.'" />
+
+                    <div class="mt-4 tag-share-blog">
+                        <div class="d-flex align-items-start">
+                            <span class="tags-blog-item px-1 me-2 text-xs-2">
+                                <img class="me-1" src="{{ asset('images/svg/search-results/tag.svg') }}" alt="">
+                                Tags:
+                            </span>
+                            <div class="color-primary-13">
+                                <span>Xu hướng thiết kế</span> ,
+                                <span>Chiến lược thương hiệu</span> ,
+                                <span>Bài học kinh doanh</span>
+                            </div>
+                        </div>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}"
+                            target="_blank" rel="noopener noreferrer" class="btn rounded-0 btn-share-fb p-1 fw-semibold mt-2 mt-lg-0">
+                            <div class="d-flex align-items-center">
+                                <img class="me-1" src="{{ asset('images/d/blogs/logo-facebook.png') }}"
+                                    alt="logo-facebook">
+                                Chia sẻ
+                            </div>
+                        </a>
+
+                    </div>
+
+                    <div class="mt-4"> 
+                        <x-client.related-blogs />
+                    </div>
+                </div>
             </div>
             <div class="col-12 col-lg-3 mt-4">
                 <x-blog-sidebar />
+
+                <div>
+                    <img class="img-fluid w-100 img-banner-blog-item" src="{{ asset('/images/d/dev/blogs/banner1.png') }}" alt="banner1">
+                </div>
             </div>
         </div>
 
@@ -40,174 +125,6 @@
 @endsection
 
 @push('scripts')
-    <script>
-        const slides = [{
-                title: 'Khi các thương hiệu Việt Nam mừng 80 năm Quốc khánh- Sáng tạo lan tỏa niềm tự hào dân tộc',
-                category: 'Kiến thức thú vị',
-                date: '02/10/2025',
-                views: 232,
-                image: '{{ asset('/images/d/dev/blogs/vertical.png') }}',
-                contentImage: '{{ asset('/images/d/dev/blogs/blog-content.png') }}',
-                description: 'Một năm mới nữa đã đến và chắc hẳn mọi người sẽ tự hỏi xu hướng thiết kế đồ họa trong năm 2020 sẽ như thế nào? Đồ họa luôn là một lĩnh vực quan trọng trong thời đại công nghệ số và là nguồn cảm hứng lớn đối với nhiều người. Vì vậy hãy cùng Printon khám phá những xu hướng mới sẽ lên ngôi trong năm nay nhé!'
-            },
-            {
-                title: 'Xu hướng thiết kế web 2025 - Những điểm sáng mới trong công nghiệp digital',
-                category: 'Thiết kế',
-                date: '05/10/2025',
-                views: 456,
-                image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=400&fit=crop',
-                contentImage: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=300&fit=crop',
-                description: 'Năm 2025 mang đến những thay đổi lớn trong cách mà các nhà thiết kế tiếp cận công việc của họ. Các xu hướng mới không chỉ tập trung vào thẩm mỹ mà còn chú trọng đến trải nghiệm người dùng.'
-            },
-            {
-                title: 'Tối ưu hóa SEO - Bí quyết để website của bạn lên top Google',
-                category: 'SEO',
-                date: '10/10/2025',
-                views: 521,
-                image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=400&fit=crop',
-                contentImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=300&fit=crop',
-                description: 'SEO không chỉ là về từ khóa. Đó là một quá trình toàn diện để cải thiện khả năng hiển thị của website bạn trên các công cụ tìm kiếm như Google, Bing và Yahoo.'
-            }
-        ];
-
-        let currentSlide = 0;
-        let autoSlideTimer;
-        let isDragging = false;
-        let dragStart = 0;
-
-        const carousel = document.getElementById('blogCarousel');
-        const pagination = document.getElementById('blogPagination');
-
-        function initPagination() {
-            pagination.innerHTML = '';
-            slides.forEach((_, index) => {
-                const dot = document.createElement('button');
-                dot.className = `pagination-dot ${index === currentSlide ? 'active' : ''}`;
-                dot.addEventListener('click', () => goToSlide(index));
-                pagination.appendChild(dot);
-            });
-        }
-
-        function updateSlide() {
-            const slide = slides[currentSlide];
-            document.getElementById('featuredImage').src = slide.image;
-            document.getElementById('contentImage').src = slide.contentImage;
-            document.getElementById('blogTitle').textContent = slide.title;
-            document.getElementById('blogCategory').textContent = slide.category;
-            document.getElementById('blogDate').textContent = slide.date;
-            document.getElementById('blogViews').textContent = slide.views;
-            document.getElementById('blogDesc').textContent = slide.description;
-
-            document.querySelectorAll('.pagination-dot').forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-
-            // Don't reset auto slide on every update, only when needed
-        }
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateSlide();
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            updateSlide();
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            updateSlide();
-        }
-
-        function startAutoSlide() {
-            clearInterval(autoSlideTimer);
-            autoSlideTimer = setInterval(nextSlide, 5000);
-        }
-
-        function resetAutoSlide() {
-            clearInterval(autoSlideTimer);
-            startAutoSlide();
-        }
-
-        carousel.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            dragStart = e.clientX;
-            carousel.classList.add('grabbing');
-            clearInterval(autoSlideTimer);
-        });
-
-        carousel.addEventListener('mouseup', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            carousel.classList.remove('grabbing');
-
-            const dragEnd = e.clientX;
-            const diff = dragStart - dragEnd;
-
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
-            }
-
-            startAutoSlide();
-        });
-
-        carousel.addEventListener('mouseleave', () => {
-            if (isDragging) {
-                isDragging = false;
-                carousel.classList.remove('grabbing');
-                startAutoSlide();
-            }
-        });
-
-        // Touch events for mobile swipe
-        let touchStart = 0;
-        let touchEnd = 0;
-
-        carousel.addEventListener('touchstart', (e) => {
-            touchStart = e.touches[0].clientX;
-            clearInterval(autoSlideTimer);
-        });
-
-        carousel.addEventListener('touchend', (e) => {
-            touchEnd = e.changedTouches[0].clientX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const swipeDistance = touchStart - touchEnd;
-
-            if (Math.abs(swipeDistance) > swipeThreshold) {
-                if (swipeDistance > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
-            }
-
-            startAutoSlide();
-        }
-
-        // Pause auto slide on hover
-        carousel.addEventListener('mouseenter', () => {
-            clearInterval(autoSlideTimer);
-        });
-
-        carousel.addEventListener('mouseleave', () => {
-            if (!isDragging) {
-                startAutoSlide();
-            }
-        });
-
-        initPagination();
-        updateSlide();
-        startAutoSlide();
-    </script>
 @endpush
 
 @push('styles')

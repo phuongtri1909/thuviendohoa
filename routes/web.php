@@ -19,6 +19,10 @@ Route::get('/blog/{blog}', function () {
     return view('client.pages.blog-item');
 })->name('blog.item');
 
+Route::get('get-link', function () {
+    return view('client.pages.get-link');
+})->name('get.link');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 });

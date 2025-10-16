@@ -213,10 +213,10 @@
                     </div>
 
                     <div class="header-actions d-none d-md-flex">
-                        <button class="action-btn get-link-btn rounded-5 p-1">
+                        <a href="{{ route('get.link') }}" class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
                             <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
-                        </button>
+                        </a>
                         <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
                             <span class="color-primary fw-semibold text-md pe-3">Vietfile Blog</span>
@@ -452,10 +452,10 @@
         </ul>
 
         <div class="mobile-actions">
-            <button class="action-btn get-link-btn rounded-5 p-1">
+            <a href="{{ route('get.link') }}" class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
                 <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
-            </button>
+            </a>
             <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
                 <span class="color-primary fw-semibold text-md pe-3">Vietfile Blog</span>

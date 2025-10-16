@@ -94,13 +94,6 @@
                 font-size: 16px;
                 min-width: 70px;
             }
-
-            .custom-badge-label {
-                padding: 0 35px 0 16px;
-                font-size: 16px;
-                min-width: 120px;
-                clip-path: polygon(0 0, calc(100% - 16px) 0, 70% 50%, calc(100% - 16px) 100%, 0 100%);
-            }
         }
 
         @media (max-width: 576px) {
@@ -116,10 +109,9 @@
             }
 
             .custom-badge-label {
-                padding: 0 30px 0 12px;
+                padding: 0 30px 0 5px;
                 font-size: 14px;
                 min-width: 100px;
-                clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
             }
         }
     </style>

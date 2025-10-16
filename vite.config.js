@@ -15,7 +15,8 @@ export default defineConfig({
                 'resources/assets/frontend/css/search.css',
                 'resources/assets/frontend/css/search-result.css',
                 'resources/assets/frontend/css/styles-blog.css',
-                'resources/assets/frontend/css/blog-sidebar.css'
+                'resources/assets/frontend/css/blog-sidebar.css',
+                'resources/assets/frontend/css/get-link.css',
             ],
             refresh: true,
         }),
