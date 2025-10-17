@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\HomeController;
-
+use App\Http\Controllers\Client\UserController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -25,6 +26,11 @@ Route::get('get-link', function () {
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
+        Route::get('profile', [UserController::class, 'userProfile'])->name('profile');
+
+    });
 });
 
 

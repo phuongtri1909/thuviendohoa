@@ -283,7 +283,7 @@
 
                                     <ul class="user-menu mt-2">
                                         <li>
-                                            <a href="#">
+                                            <a href="{{ route('user.profile') }}">
                                                 <img src="{{ asset('/images/svg/user.svg') }}" alt="User"
                                                     style="filter: contrast(0);">
                                                 <span>Thông tin tài khoản</span>
