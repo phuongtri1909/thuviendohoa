@@ -110,9 +110,9 @@
                 <a href="{{ route('login.google') }}" class="social-btn google text-decoration-none">
                     <i class="fab fa-google"></i>
                 </a>
-                <button class="social-btn facebook">
+                <a href="{{ route('login.facebook') }}" class="social-btn facebook text-decoration-none">
                     <i class="fab fa-facebook-f"></i>
-                </button>
+                </a>
                 <button class="social-btn twitter">
                     <i class="fab fa-twitter"></i>
                 </button>
