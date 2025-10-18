@@ -56,6 +56,7 @@ class FacebookController extends Controller
                 return redirect()->route('home');
             }
         } catch (Exception $e) {
+            Log::error('Facebook login error:', ['error' => $e->getMessage()]);
             return redirect()->route('login')->with('error', 'Đăng nhập Facebook thất bại!');
         }
     }
