@@ -236,9 +236,9 @@
                             <button class="user-profile-btn" id="userDropdownBtn">
                                 <div class="user-avatar-container">
                                     @if (auth()->user() && auth()->user()->avatar)
-                                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
+                                        <img class="avatar" src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
                                     @else
-                                        <img src="{{ asset('/images/svg/user.svg') }}" alt="User">
+                                        <img class="avatar-default" src="{{ asset('/images/svg/user.svg') }}" alt="User">
                                     @endif
                                 </div>
                                 <img src="{{ asset('/images/svg/arrow-down.svg') }}" alt="Arrow Up"
@@ -250,9 +250,9 @@
                                     <div class="user-info">
                                         <div class="user-avatar-large">
                                             @if (auth()->user() && auth()->user()->avatar)
-                                                <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
+                                                <img class="avatar" src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
                                             @else
-                                                <img src="{{ asset('/images/svg/user.svg') }}" alt="User">
+                                                <img class="avatar-default" src="{{ asset('/images/svg/user.svg') }}" alt="User">
                                             @endif
                                         </div>
                                         <div class="user-details">

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->nullable();
-            $table->boolean('active')->default(true);
+            $table->boolean('active')->default(false);
             $table->string('key_active')->nullable();
             $table->string('key_reset_password')->nullable();
             $table->timestamp('reset_password_at')->nullable();

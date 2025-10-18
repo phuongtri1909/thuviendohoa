@@ -19,6 +19,7 @@ export default defineConfig({
                 'resources/assets/frontend/css/get-link.css',
                 'resources/assets/frontend/css/styles-auth.css',
                 'resources/assets/frontend/css/information.css',
+                'resources/assets/frontend/js/script.js'
             ],
             refresh: true,
         }),

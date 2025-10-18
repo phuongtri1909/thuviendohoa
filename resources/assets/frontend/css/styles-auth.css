@@ -1,13 +1,4 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Nunito', sans-serif;
-    background: #f5f5f5;
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,14 +17,13 @@ body {
 /* Banner bên trái */
 .login-banner {
     flex: 1;
-    background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+    background: #0988bb;
     padding: 3rem;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     color: white;
     position: relative;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .banner-content h2 {
@@ -75,7 +65,6 @@ body {
 }
 
 .login-header {
-    text-align: center;
     margin-bottom: 2rem;
 }
 
@@ -89,23 +78,20 @@ body {
 /* Social Login Buttons */
 .social-login {
     display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
+    justify-content: space-between;
 }
 
 .social-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid #e0e0e0;
-    background: white;
+    width: 80px;
+    height: 80px;
+    border-radius: 30px;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 1.3rem;
+    font-size: 2rem;
 }
 
 .social-btn:hover {
@@ -115,14 +101,17 @@ body {
 
 .social-btn.google {
     color: #db4437;
+    background: #FCEDEA;
 }
 
 .social-btn.facebook {
     color: #4267B2;
+    background: #EDF2F8;
 }
 
 .social-btn.twitter {
     color: #1DA1F2;
+    background: #E9F6FE;
 }
 
 .divider {
@@ -137,8 +126,7 @@ body {
     position: absolute;
     top: 50%;
     width: 42%;
-    height: 1px;
-    background: #e0e0e0;
+    border-top: 1px dashed #e0e0e0;
 }
 
 .divider::before {
@@ -152,8 +140,9 @@ body {
 .divider span {
     background: white;
     padding: 0 1rem;
-    color: #999;
+    color: #8E8E8E;
     font-size: 0.9rem;
+    font-style: italic;
 }
 
 /* Form Inputs */
@@ -164,7 +153,7 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #666;
+    color: #8E8E8E;
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -172,15 +161,16 @@ body {
 .form-input {
     width: 100%;
     padding: 0.9rem 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 30px;
+    border: 0.5px solid #8E8E8E;
+    background: #F8F8F8;
     font-size: 0.95rem;
     transition: all 0.3s ease;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #1e88e5;
+    border-color: #797979;
     box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
 }
 
@@ -198,7 +188,6 @@ body {
 }
 
 .forgot-password {
-    color: #1e88e5;
     text-decoration: none;
     font-size: 0.9rem;
 }
@@ -211,12 +200,11 @@ body {
 .btn-login {
     width: 100%;
     padding: 0.9rem;
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    background: var(--bg-gradient);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 35px;
     font-size: 1rem;
-    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -227,14 +215,15 @@ body {
 }
 
 .signup-link {
+    display: flex;
+    flex-direction: column;
     text-align: center;
     margin-top: 1.5rem;
-    color: #666;
     font-size: 0.95rem;
 }
 
 .signup-link a {
-    color: #ee5a6f;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
 }
@@ -244,18 +233,16 @@ body {
 }
 
 .close-btn {
+    border-radius: 45px;
+    border: none;
+    background: #D9D9D9;
     position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    width: 35px;
-    height: 35px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: -1rem;
+    right: -1rem;
+    width: 80px;
+    height: 80px;
     cursor: pointer;
-    color: #333;
+    color: #fff;
     font-size: 1.2rem;
     opacity: 0.8;
     transition: opacity 0.3s;
@@ -263,6 +250,13 @@ body {
 
 .close-btn:hover {
     opacity: 1;
+}
+
+.close-btn i {
+    font-size: 2rem;
+    position: absolute;
+    top: 40%;
+    right: 40%;
 }
 
 /* Responsive */

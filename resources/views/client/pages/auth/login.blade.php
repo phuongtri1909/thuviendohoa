@@ -1,35 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>Đăng nhập trang quản trị</title>
-
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom CSS -->
-    @vite('resources/assets/frontend/css/styles.css')
-    @vite('resources/assets/frontend/css/styles-auth.css')
-
-</head>
-
-<body>
+@extends('client.layouts.main')
+@section('title', 'Tạo tài khoản')
+@section('description', 'Tạo tài khoản . ' . config('app.name'))
+@section('keywords', 'Tạo tài khoản . ' . config('app.name'))
+@section('content-main')
     <div class="login-wrapper rounded-5">
         <div class="login-banner">
             <div class="banner-content">
@@ -44,7 +17,7 @@
             </div>
         </div>
 
-        <div class="login-form-section">
+        <div class="login-form-section position-relative">
             <button class="close-btn" onclick="window.history.back()">
                 <i class="fas fa-times"></i>
             </button>
@@ -54,9 +27,9 @@
             </div>
 
             <div class="social-login">
-                <button class="social-btn google">
+                <a href="{{ route('login.google') }}" class="social-btn google text-decoration-none">
                     <i class="fab fa-google"></i>
-                </button>
+                </a>
                 <button class="social-btn facebook">
                     <i class="fab fa-facebook-f"></i>
                 </button>
@@ -76,7 +49,7 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="email">Số Phone hoặc Gmail của bạn</label>
+                    <label class="ms-3" for="email">Gmail của bạn</label>
                     <input type="email" class="form-input @error('email') is-invalid @enderror" id="email"
                         name="email" value="{{ old('email') }}" placeholder="admin@example.com" required autofocus>
                     @error('email')
@@ -87,7 +60,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Mật khẩu</label>
+                    <label class="ms-3" for="password">Mật khẩu</label>
                     <input type="password" class="form-input @error('password') is-invalid @enderror" id="password"
                         name="password" placeholder="••••••••" required>
                     @error('password')
@@ -100,9 +73,9 @@
                 <div class="form-check-group">
                     <div class="remember-me">
                         <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <label for="remember">Nhớ đăng nhập</label>
+                        <label class="color-primary-13 fst-italic" for="remember">Nhớ đăng nhập</label>
                     </div>
-                    <a href="#" class="forgot-password">Bạn quên mật khẩu?</a>
+                    <a href="#" class="forgot-password color-primary-13 fst-italic">Bạn quên mật khẩu?</a>
                 </div>
 
                 <button type="submit" class="btn-login">
@@ -111,14 +84,8 @@
             </form>
 
             <div class="signup-link">
-                Bạn chưa có tài khoản? <a href="#">Đăng ký ngay</a>
+                Bạn chưa có tài khoản? <a href="{{ route('register') }}">Đăng ký ngay</a>
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</body>
-
-</html>
+@endsection

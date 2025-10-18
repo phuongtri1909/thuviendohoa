@@ -707,9 +707,21 @@
     border: 1px solid var(--primary-color);
 }
 
-.user-profile-btn img {
+.user-profile-btn img.avatar-default {
    filter: contrast(0);
    object-fit: cover;
+}
+
+.user-profile-btn img.avatar {
+    object-fit: cover;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .user-avatar {
@@ -761,7 +773,21 @@
     justify-content: center;
 }
 
-.user-avatar-large img {
+.user-avatar-large .avatar {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: cover;
+}
+
+.user-avatar-large img.avatar-default {
     width: 100%;
     height: 100%;
     object-fit: cover;

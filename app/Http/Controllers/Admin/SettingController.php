@@ -14,9 +14,11 @@ class SettingController extends Controller
     public function index()
     {
         $smtpSetting = SMTPSetting::first() ?? new SMTPSetting();
-
+        $googleSetting = GoogleSetting::first() ?? new GoogleSetting();
+        
         return view('admin.pages.settings.index', compact(
-            'smtpSetting',
+            'smtpSetting', 
+            'googleSetting', 
         ));
     }
 
@@ -44,6 +46,30 @@ class SettingController extends Controller
 
         return redirect()->route('admin.setting.index', ['tab' => 'smtp'])
             ->with('success', 'Cài đặt SMTP đã được cập nhật thành công.');
+    }
+
+    public function updateGoogle(Request $request)
+    {
+        $request->validate([
+            'google_client_id' => 'required|string',
+            'google_client_secret' => 'required|string',
+        ],
+        [
+            'google_client_id.required' => 'Vui lòng nhập Google Client ID.',
+            'google_client_secret.required' => 'Vui lòng nhập Google Client Secret.',
+        ]);
+        
+        $googleSetting = GoogleSetting::first();
+        if (!$googleSetting) {
+            $googleSetting = new GoogleSetting();
+        }
+        
+
+        $googleSetting->fill($request->all());
+        $googleSetting->save();
+
+        return redirect()->route('admin.setting.index', ['tab' => 'google'])
+            ->with('success', 'Cài đặt Google đã được cập nhật thành công.');
     }
 
 

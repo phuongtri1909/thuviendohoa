@@ -29,7 +29,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         Route::get('profile', [UserController::class, 'userProfile'])->name('profile');
-
     });
 });
 
@@ -40,4 +39,13 @@ Route::group(['middleware' => 'guest'], function () {
     })->name('login');
 
     Route::post('login', [AuthController::class, 'login'])->name('login.post');
+
+    Route::get('register', function () {
+        return view('client.pages.auth.register');
+    })->name('register');
+
+    Route::post('register', [AuthController::class, 'register'])->name('register.post');
+
+    Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });

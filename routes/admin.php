@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\LogoSiteController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SeoController;
-use App\Http\Controllers\Admin\GoogleSettingController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -30,7 +29,7 @@ Route::group(['as' => 'admin.'], function () {
 
         Route::get('setting', [SettingController::class, 'index'])->name('setting.index');
         Route::put('setting/smtp', [SettingController::class, 'updateSMTP'])->name('setting.update.smtp');
-        Route::put('setting/google', [GoogleSettingController::class, 'updateGoogle'])->name('setting.update.google');
+        Route::put('setting/google', [SettingController::class, 'updateGoogle'])->name('setting.update.google');
 
         Route::resource('seo', SeoController::class)->except(['show', 'create', 'store', 'destroy']);
     });
