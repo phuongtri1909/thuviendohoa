@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Client;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 
 class FacebookController extends Controller
@@ -59,5 +62,28 @@ class FacebookController extends Controller
             Log::error('Facebook login error:', ['error' => $e->getMessage()]);
             return redirect()->route('login')->with('error', 'Đăng nhập Facebook thất bại!');
         }
+    }
+
+    private function processAndSaveAvatar($imageFile)
+    {
+        $now = Carbon::now();
+        $yearMonth = $now->format('Y/m');
+        $timestamp = $now->format('YmdHis');
+        $randomString = Str::random(8);
+        $fileName = "{$timestamp}_{$randomString}";
+
+        Storage::disk('public')->makeDirectory("avatars/{$yearMonth}/original");
+        Storage::disk('public')->makeDirectory("avatars/{$yearMonth}/thumbnail");
+
+        $originalImage = Image::make($imageFile);
+        $originalImage->encode('webp', 90);
+        Storage::disk('public')->put(
+            "avatars/{$yearMonth}/original/{$fileName}.webp",
+            $originalImage->stream()
+        );
+
+        return [
+            'original' => "avatars/{$yearMonth}/original/{$fileName}.webp",
+        ];
     }
 }
