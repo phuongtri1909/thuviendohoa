@@ -75,7 +75,7 @@
                         <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
                         <label class="color-primary-13 fst-italic" for="remember">Nhớ đăng nhập</label>
                     </div>
-                    <a href="#" class="forgot-password color-primary-13 fst-italic">Bạn quên mật khẩu?</a>
+                    <a href="{{ route('forgot-password') }}" class="forgot-password color-primary-13 fst-italic">Bạn quên mật khẩu?</a>
                 </div>
 
                 <button type="submit" class="btn-login">

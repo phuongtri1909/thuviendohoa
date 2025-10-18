@@ -46,6 +46,11 @@ Route::group(['middleware' => 'guest'], function () {
 
     Route::post('register', [AuthController::class, 'register'])->name('register.post');
 
+    Route::get('/forgot-password', function () {
+        return view('client.pages.auth.forgot-password');
+    })->name('forgot-password');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot.password');
+
     Route::get('auth/google', [AuthController::class, 'redirectToGoogle'])->name('login.google');
     Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });
