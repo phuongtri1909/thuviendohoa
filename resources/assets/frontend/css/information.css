@@ -332,20 +332,6 @@
 }
 
 /* Content Section */
-.user-content {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  animation: slideUp 0.6s ease-out;
-  transition: all 0.4s ease;
-}
-
-.user-content:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-
 .content-header {
   position: relative;
   padding: 1.5rem 2rem;
@@ -594,20 +580,20 @@
     position: static;
     margin-bottom: 2rem;
   }
-  
+
   .user-header-content {
     padding: 1.25rem 1rem;
   }
-  
+
   .user-avatar-wrapper {
     width: 70px;
     height: 70px;
   }
-  
+
   .content-body {
     padding: 1.5rem;
   }
-  
+
   .profile-avatar {
     width: 120px;
     height: 120px;
@@ -618,30 +604,149 @@
   .user-container {
     margin-top: 5rem;
   }
-  
+
   .content-header {
     padding: 1.25rem 1.5rem;
   }
-  
+
   .content-title {
     font-size: 1.25rem;
   }
-  
+
   .profile-info-card {
     padding: 1.25rem;
   }
-  
+
   .profile-info-label span {
     display: none;
   }
-  
+
   .otp-digit {
     width: 45px;
     height: 50px;
     font-size: 1.25rem;
   }
-  
+
   .otp-input-container {
     gap: 0.5rem;
   }
+}
+
+.modal {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-dialog {
+  transform: none !important;
+  transition: transform 0.3s ease-out !important;
+}
+
+.modal-content {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  border-bottom: 2px solid rgba(255, 63, 64, 0.1);
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.btn-close {
+  transition: transform 0.2s ease;
+}
+
+.btn-close:hover {
+  transform: rotate(90deg);
+}
+
+/* Fix for input fields inside modal */
+.modal .form-control {
+  height: 45px;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 63, 64, 0.2);
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.modal .form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 63, 64, 0.1);
+}
+
+/* Fix for OTP inputs in modal */
+.modal .otp-input-container {
+  margin-top: 1rem;
+}
+
+.modal .otp-digit {
+  width: 45px;
+  height: 50px;
+  font-size: 1.25rem;
+  border: 2px solid rgba(255, 63, 64, 0.2);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.modal .otp-digit:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 63, 64, 0.1);
+}
+
+/* Fix modal buttons */
+.modal .btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.modal .btn-outline-secondary {
+  border: 2px solid #dee2e6;
+}
+
+.modal .btn-outline-success {
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.modal .btn-outline-success:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Fix modal animation */
+.modal.fade .modal-dialog {
+  transform: translate(0, -50px) !important;
+}
+
+.modal.show .modal-dialog {
+  transform: none !important;
+}
+
+/* Fix spinner position */
+.modal .spinner-border {
+  margin: 1rem auto;
+  display: block;
+}
+
+/* Fix Modal Padding Issue */
+
+.modal {
+  padding-right: 0 !important;
+}
+
+body.modal-open {
+  padding-right: 0 !important;
 }

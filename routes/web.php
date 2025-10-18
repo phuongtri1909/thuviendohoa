@@ -29,6 +29,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         Route::get('profile', [UserController::class, 'userProfile'])->name('profile');
+        Route::post('update-profile/update-name', [UserController::class, 'updateName'])->name('update.name');
+        Route::post('update-avatar', [UserController::class, 'updateAvatar'])->name('update.avatar');
+        Route::post('update-password', [UserController::class, 'updatePassword'])->name('update.password');
     });
 });
 
