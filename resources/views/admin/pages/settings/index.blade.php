@@ -39,6 +39,14 @@
                                 </a>
                             </li>
                         @endif
+                        @if (auth()->user()->hasRole('admin'))
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link {{ request('tab') == 'facebook' ? 'active' : '' }}" id="facebook-tab"
+                                    data-toggle="tab" href="#facebook" role="tab">
+                                    <i class="fab fa-facebook"></i> Facebook
+                                </a>
+                            </li>
+                        @endif
                     </ul>
 
                     <div class="tab-content mt-4" id="settingsTabContent">
@@ -154,11 +162,60 @@
                                         required>
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="facebook_redirect">Redirect URI</label>
+                                    <p class="form-control-plaintext">
+                                        {{ route($googleSetting->google_redirect ?? 'auth.google.callback') }}
+                                    </p>
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-info-circle"></i> Đường dẫn callback cho Google OAuth
+                                    </small>
+                                </div>
+
 
 
                                 <div class="form-actions">
                                     <button type="submit" class="action-button">
                                         <i class="fas fa-save"></i> Lưu cài đặt Google
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+
+                        <div class="tab-pane fade {{ request('tab') == 'facebook' ? 'show active' : '' }}" id="facebook"
+                            role="tabpanel">
+                            <form action="{{ route('admin.setting.update.facebook') }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="form-group">
+                                    <label for="facebook_client_id">Client ID</label>
+                                    <input type="text" id="facebook_client_id" name="facebook_client_id"
+                                        class="form-control" value="{{ $facebookSetting->facebook_client_id ?? '' }}"
+                                        required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="facebook_client_secret">Client Secret</label>
+                                    <input type="password" id="facebook_client_secret" name="facebook_client_secret"
+                                        class="form-control" value="{{ $facebookSetting->facebook_client_secret ?? '' }}"
+                                        required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="facebook_redirect">Redirect URI</label>
+                                    <p class="form-control-plaintext">
+                                        {{ route($facebookSetting->facebook_redirect ?? 'auth.facebook.callback') }}
+                                    </p>
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-info-circle"></i> Đường dẫn callback cho Facebook OAuth
+                                    </small>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="action-button">
+                                        <i class="fas fa-save"></i> Lưu cài đặt Facebook
                                     </button>
                                 </div>
                             </form>

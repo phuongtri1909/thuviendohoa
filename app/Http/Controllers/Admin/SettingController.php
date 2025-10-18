@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\OrderSetting;
 use App\Models\SMTPSetting;
 use App\Models\GoogleSetting;
+use App\Models\FacebookSetting;
 use App\Models\PaypalSetting;
 
 class SettingController extends Controller
@@ -15,10 +16,12 @@ class SettingController extends Controller
     {
         $smtpSetting = SMTPSetting::first() ?? new SMTPSetting();
         $googleSetting = GoogleSetting::first() ?? new GoogleSetting();
+        $facebookSetting = FacebookSetting::first() ?? new FacebookSetting();
         
         return view('admin.pages.settings.index', compact(
             'smtpSetting', 
-            'googleSetting', 
+            'googleSetting',
+            'facebookSetting'
         ));
     }
 
@@ -72,5 +75,27 @@ class SettingController extends Controller
             ->with('success', 'Cài đặt Google đã được cập nhật thành công.');
     }
 
+    public function updateFacebook(Request $request)
+    {
+        $request->validate([
+            'facebook_client_id' => 'required|string',
+            'facebook_client_secret' => 'required|string',
+        ],
+        [
+            'facebook_client_id.required' => 'Vui lòng nhập Facebook Client ID.',
+            'facebook_client_secret.required' => 'Vui lòng nhập Facebook Client Secret.',
+        ]);
+        
+        $facebookSetting = FacebookSetting::first();
+        if (!$facebookSetting) {
+            $facebookSetting = new FacebookSetting();
+        }
+        
+        $facebookSetting->fill($request->all());
+        $facebookSetting->save();
+
+        return redirect()->route('admin.setting.index', ['tab' => 'facebook'])
+            ->with('success', 'Cài đặt Facebook đã được cập nhật thành công.');
+    }
 
 }

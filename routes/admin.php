@@ -30,6 +30,7 @@ Route::group(['as' => 'admin.'], function () {
         Route::get('setting', [SettingController::class, 'index'])->name('setting.index');
         Route::put('setting/smtp', [SettingController::class, 'updateSMTP'])->name('setting.update.smtp');
         Route::put('setting/google', [SettingController::class, 'updateGoogle'])->name('setting.update.google');
+        Route::put('setting/facebook', [SettingController::class, 'updateFacebook'])->name('setting.update.facebook');
 
         Route::resource('seo', SeoController::class)->except(['show', 'create', 'store', 'destroy']);
     });

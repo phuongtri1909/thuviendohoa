@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\FacebookSetting;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -17,12 +18,38 @@ class FacebookController extends Controller
 {
     public function redirectToFacebook()
     {
+        $facebookSettings = FacebookSetting::first();
+
+        if (!$facebookSettings) {
+            return redirect()->route('login')
+                ->with('error', 'Đăng nhập bằng Facebook hiện không khả dụng. Vui lòng thử lại sau.');
+        }
+
+        config([
+            'services.facebook.client_id' => $facebookSettings->facebook_client_id,
+            'services.facebook.client_secret' => $facebookSettings->facebook_client_secret,
+            'services.facebook.redirect' => route($facebookSettings->facebook_redirect)
+        ]);
+
         return Socialite::driver('facebook')->redirect();
     }
 
     public function handleFacebookCallback()
     {
         try {
+            $facebookSettings = FacebookSetting::first();
+
+            if (!$facebookSettings) {
+                return redirect()->route('login')
+                    ->with('error', 'Đăng nhập bằng Facebook hiện không khả dụng. Vui lòng thử lại sau.');
+            }
+
+            config([
+                'services.facebook.client_id' => $facebookSettings->facebook_client_id,
+                'services.facebook.client_secret' => $facebookSettings->facebook_client_secret,
+                'services.facebook.redirect' => route($facebookSettings->facebook_redirect)
+            ]);
+
             $facebookUser = Socialite::driver('facebook')->user();
             $existingUser = User::where('facebook_id', $facebookUser->id)->first();
 
