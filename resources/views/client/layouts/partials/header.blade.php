@@ -283,6 +283,12 @@
 
                                     <ul class="user-menu mt-2">
                                         <li>
+                                            <a href="{{ route('admin.dashboard') }}">
+                                                <i class="fas fa-user-shield"></i>
+                                                <span>Quản trị viên</span>
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a href="{{ route('user.profile') }}">
                                                 <img src="{{ asset('/images/svg/user.svg') }}" alt="User"
                                                     style="filter: contrast(0);">

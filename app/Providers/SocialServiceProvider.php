@@ -22,7 +22,7 @@ class SocialServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer(
-            ['client.layouts.partials.footer', 'components.contact_widget'],
+            ['client.layouts.partials.footer'],
             function ($view) {
                 $view->with('socials', SocialController::getSocials());
             }

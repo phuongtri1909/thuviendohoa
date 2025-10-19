@@ -1,11 +1,8 @@
 <!-- Social Media Bar -->
 <div class="social-bar">
-    <a href="#"><i class="fab fa-facebook-f"></i></a>
-    <a href="#"><i class="fab fa-instagram"></i></a>
-    <a href="#"><i class="fab fa-twitter"></i></a>
-    <a href="#"><i class="fab fa-youtube"></i></a>
-    <a href="#"><i class="fab fa-google"></i></a>
-    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    @foreach ($socials as $social)
+    <a href="{{ $social->url }}"><i class="{{ $social->icon }}"></i></a>
+    @endforeach
 </div>
 
 <!-- Contribution Section -->
