@@ -47,6 +47,14 @@
                                 </a>
                             </li>
                         @endif
+                        @if (auth()->user()->hasRole('admin'))
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link {{ request('tab') == 'twitter' ? 'active' : '' }}" id="twitter-tab"
+                                    data-toggle="tab" href="#twitter" role="tab">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </a>
+                            </li>
+                        @endif
                     </ul>
 
                     <div class="tab-content mt-4" id="settingsTabContent">
@@ -216,6 +224,45 @@
                                 <div class="form-actions">
                                     <button type="submit" class="action-button">
                                         <i class="fas fa-save"></i> Lưu cài đặt Facebook
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+
+                        <div class="tab-pane fade {{ request('tab') == 'twitter' ? 'show active' : '' }}" id="twitter"
+                            role="tabpanel">
+                            <form action="{{ route('admin.setting.update.twitter') }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="form-group">
+                                    <label for="twitter_client_id">Client ID</label>
+                                    <input type="text" id="twitter_client_id" name="twitter_client_id"
+                                        class="form-control" value="{{ $twitterSetting->twitter_client_id ?? '' }}"
+                                        required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="twitter_client_secret">Client Secret</label>
+                                    <input type="password" id="twitter_client_secret" name="twitter_client_secret"
+                                        class="form-control" value="{{ $twitterSetting->twitter_client_secret ?? '' }}"
+                                        required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="twitter_redirect">Redirect URI</label>
+                                    <p class="form-control-plaintext">
+                                        {{ route($twitterSetting->twitter_redirect ?? 'auth.twitter.callback') }}
+                                    </p>
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-info-circle"></i> Đường dẫn callback cho Twitter OAuth
+                                    </small>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="action-button">
+                                        <i class="fas fa-save"></i> Lưu cài đặt Twitter
                                     </button>
                                 </div>
                             </form>

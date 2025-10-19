@@ -5,6 +5,7 @@ use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\UserController;
+use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -60,4 +61,7 @@ Route::group(['middleware' => 'guest'], function () {
 
     Route::get('login/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
     Route::get('login/facebook/callback', [FacebookController::class, 'handleFacebookCallback'])->name('auth.facebook.callback');
+
+    Route::get('auth/twitter', [TwitterController::class, 'redirectToTwitter'])->name('login.twitter');
+    Route::get('auth/twitter/callback', [TwitterController::class, 'handleTwitterCallback'])->name('auth.twitter.callback');
 });

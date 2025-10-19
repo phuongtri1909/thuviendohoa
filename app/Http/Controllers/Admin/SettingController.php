@@ -8,6 +8,7 @@ use App\Models\OrderSetting;
 use App\Models\SMTPSetting;
 use App\Models\GoogleSetting;
 use App\Models\FacebookSetting;
+use App\Models\TwitterSetting;
 use App\Models\PaypalSetting;
 
 class SettingController extends Controller
@@ -17,11 +18,13 @@ class SettingController extends Controller
         $smtpSetting = SMTPSetting::first() ?? new SMTPSetting();
         $googleSetting = GoogleSetting::first() ?? new GoogleSetting();
         $facebookSetting = FacebookSetting::first() ?? new FacebookSetting();
+        $twitterSetting = TwitterSetting::first() ?? new TwitterSetting();
         
         return view('admin.pages.settings.index', compact(
             'smtpSetting', 
             'googleSetting',
-            'facebookSetting'
+            'facebookSetting',
+            'twitterSetting'
         ));
     }
 
@@ -96,6 +99,29 @@ class SettingController extends Controller
 
         return redirect()->route('admin.setting.index', ['tab' => 'facebook'])
             ->with('success', 'Cài đặt Facebook đã được cập nhật thành công.');
+    }
+
+    public function updateTwitter(Request $request)
+    {
+        $request->validate([
+            'twitter_client_id' => 'required|string',
+            'twitter_client_secret' => 'required|string',
+        ],
+        [
+            'twitter_client_id.required' => 'Vui lòng nhập Twitter Client ID.',
+            'twitter_client_secret.required' => 'Vui lòng nhập Twitter Client Secret.',
+        ]);
+        
+        $twitterSetting = TwitterSetting::first();
+        if (!$twitterSetting) {
+            $twitterSetting = new TwitterSetting();
+        }
+        
+        $twitterSetting->fill($request->all());
+        $twitterSetting->save();
+
+        return redirect()->route('admin.setting.index', ['tab' => 'twitter'])
+            ->with('success', 'Cài đặt Twitter đã được cập nhật thành công.');
     }
 
 }

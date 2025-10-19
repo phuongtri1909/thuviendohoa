@@ -98,9 +98,9 @@
                 <a href="{{ route('login.facebook') }}" class="social-btn facebook text-decoration-none">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <button class="social-btn twitter">
+                <a href="{{ route('login.twitter') }}" class="social-btn twitter text-decoration-none">
                     <i class="fab fa-twitter"></i>
-                </button>
+                </a>
             </div>
 
             <div class="divider">
