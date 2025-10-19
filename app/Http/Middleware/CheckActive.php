@@ -7,25 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckRole
+class CheckActive
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, ...$roles): Response
+    public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
         $user = Auth::user();
-
-        if (!$user->hasAnyRole($roles)) {
-            return redirect()->route('home')->with('error', 'Thao tác không hợp lệ, vui lòng thử lại!');
+        if ($user && $user->active == false && $user->active != true) {
+            if($request->ajax()){
+                return response()->json(['message' => 'Thao tác không hợp lệ, vui lòng thử lại!'], 403);
+            }
+            abort(403, 'Thao tác không hợp lệ, vui lòng thử lại!');
         }
-
         return $next($request);
     }
 }

@@ -24,12 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->web([
-          
+            \App\Http\Middleware\SecureFileUpload::class,
+            \App\Http\Middleware\CheckActive::class,
         ]);
 
-        $middleware->validateCsrfTokens(except: [
-
-        ]);
+        $middleware->validateCsrfTokens(except: []);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // ...
