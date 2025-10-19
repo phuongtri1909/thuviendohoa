@@ -66,7 +66,6 @@ class TwitterController extends Controller
                 $user = new User();
                 $user->full_name = $twitterUser->name;
                 $user->twitter_id = $twitterUser->id;
-                $user->email = $twitterUser->email ?? $twitterUser->nickname . '@twitter.com';
                 $user->password = bcrypt(Str::random(16));
                 $user->active = true;
                 
