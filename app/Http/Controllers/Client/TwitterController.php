@@ -25,12 +25,12 @@ class TwitterController extends Controller
         }
 
         config([
-            'services.twitter.client_id' => $twitterSettings->twitter_client_id,
-            'services.twitter.client_secret' => $twitterSettings->twitter_client_secret,
-            'services.twitter.redirect' => route($twitterSettings->twitter_redirect)
+            'services.twitter-oauth-2.client_id' => $twitterSettings->twitter_client_id,
+            'services.twitter-oauth-2.client_secret' => $twitterSettings->twitter_client_secret,
+            'services.twitter-oauth-2.redirect' => route($twitterSettings->twitter_redirect)
         ]);
 
-        return Socialite::driver('twitter')->redirect();
+        return Socialite::driver('twitter-oauth-2')->redirect();
     }
 
     /**
@@ -47,12 +47,12 @@ class TwitterController extends Controller
             }
 
             config([
-                'services.twitter.client_id' => $twitterSettings->twitter_client_id,
-                'services.twitter.client_secret' => $twitterSettings->twitter_client_secret,
-                'services.twitter.redirect' => route($twitterSettings->twitter_redirect)
+                'services.twitter-oauth-2.client_id' => $twitterSettings->twitter_client_id,
+                'services.twitter-oauth-2.client_secret' => $twitterSettings->twitter_client_secret,
+                'services.twitter-oauth-2.redirect' => route($twitterSettings->twitter_redirect)
             ]);
 
-            $twitterUser = Socialite::driver('twitter')->user();
+            $twitterUser = Socialite::driver('twitter-oauth-2')->user();
             
             $existingUser = User::where('twitter_id', $twitterUser->id)->first();
             
