@@ -36,19 +36,19 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             if (!$user) {
                 return redirect()->back()->withInput()->withErrors([
-                    'email' => 'Invalid credentials. Please try again.',
+                    'email' => 'Thông tin xác thực không hợp lệ. Vui lòng thử lại.',
                 ]);
             }
 
             if ($user->active == false) {
                 return redirect()->back()->withInput()->withErrors([
-                    'email' => 'Invalid credentials. Please try again.',
+                    'email' => 'Thông tin xác thực không hợp lệ. Vui lòng thử lại.',
                 ]);
             }
 
             if (!password_verify($request->password, $user->password)) {
                 return redirect()->back()->withInput()->withErrors([
-                    'email' => 'Invalid credentials. Please try again.',
+                    'email' => 'Thông tin xác thực không hợp lệ. Vui lòng thử lại.',
                 ]);
             }
 
