@@ -115,11 +115,18 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="description" class="form-label-custom">Mô tả <span class="required-mark">*</span></label>
                                 <textarea id="description" name="description" rows="4" class="custom-input {{ $errors->has('description') ? 'input-error' : '' }}" required>{{ old('description', $set->description) }}</textarea>
                                 <div class="error-message" id="error-description">@error('description') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="drive_url" class="form-label-custom">URL Drive <span class="required-mark">*</span></label>
+                                <input type="url" id="drive_url" name="drive_url" class="custom-input {{ $errors->has('drive_url') ? 'input-error' : '' }}" value="{{ old('drive_url', $set->drive_url) }}" required>
+                                <div class="error-message" id="error-drive_url">@error('drive_url') {{ $message }} @enderror</div>
                             </div>
                         </div>
                     </div>
