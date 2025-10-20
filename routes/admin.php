@@ -2,11 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\SeoController;
+use App\Http\Controllers\Admin\ColorController;
+use App\Http\Controllers\Admin\SoftwareController;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\SocialController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoSiteController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\SeoController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -34,11 +39,15 @@ Route::group(['as' => 'admin.'], function () {
         Route::put('setting/twitter', [SettingController::class, 'updateTwitter'])->name('setting.update.twitter');
 
         Route::resource('seo', SeoController::class)->except(['show', 'create', 'store', 'destroy']);
-    });
 
-    Route::group(['middleware' => 'guest'], function () {
-        Route::get('login', function () {
-            return view('admin.pages.auth.login');
-        })->name('login');
+        Route::resource('categories', CategoryController::class);
+
+        Route::resource('colors', ColorController::class);
+
+        Route::resource('software', SoftwareController::class);
+
+        Route::resource('tags', TagController::class);
+
+        Route::resource('albums', AlbumController::class);
     });
 });

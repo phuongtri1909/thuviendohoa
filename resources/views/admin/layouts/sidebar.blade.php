@@ -28,6 +28,46 @@
                         </a>
                     </li>
 
+                    <!-- Quản lý danh mục -->
+                    <li class="{{ Route::currentRouteNamed('admin.categories.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.categories.index') }}">
+                            <i class="fas fa-folder"></i>
+                            <span>Danh mục</span>
+                        </a>
+                    </li>
+
+                    <!-- Quản lý album -->
+                    <li class="{{ Route::currentRouteNamed('admin.albums.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.albums.index') }}">
+                            <i class="fas fa-images"></i>
+                            <span>Album</span>
+                        </a>
+                    </li>
+
+                    <!-- Quản lý màu sắc -->
+                    <li class="{{ Route::currentRouteNamed('admin.colors.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.colors.index') }}">
+                            <i class="fas fa-palette"></i>
+                            <span>Màu sắc</span>
+                        </a>
+                    </li>
+
+                    <!-- Quản lý tag -->
+                    <li class="{{ Route::currentRouteNamed('admin.tags.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.tags.index') }}">
+                            <i class="fas fa-tags"></i>
+                            <span>Tag</span>
+                        </a>
+                    </li>
+
+                    <!-- Quản lý phần mềm -->
+                    <li class="{{ Route::currentRouteNamed('admin.software.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.software.index') }}">
+                            <i class="fas fa-code"></i>
+                            <span>Phần mềm</span>
+                        </a>
+                    </li>
+
                     <!-- Cấu hình hệ thống -->
                     <li
                         class="has-submenu {{ Route::currentRouteNamed(['admin.socials.*', 'admin.logo-site.*', 'admin.languages.*', 'admin.seo.*', 'admin.setting.*']) ? 'open' : '' }}">
