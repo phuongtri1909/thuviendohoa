@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('type');
+            $table->string('type')->default('free');
             $table->text('description');
             $table->string('image');
             $table->boolean('status')->default(false);
             $table->json('keywords')->nullable();
             $table->json('formats')->nullable();
             $table->decimal('size', 10, 2);
-            $table->integer('price');
+            $table->integer('price')->nullable();
             $table->timestamps();
         });
     }

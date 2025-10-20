@@ -44,6 +44,14 @@
                         </a>
                     </li>
 
+                    <!-- Quản lý set -->
+                    <li class="{{ Route::currentRouteNamed('admin.sets.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.sets.index') }}">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Set</span>
+                        </a>
+                    </li>
+
                     <!-- Quản lý màu sắc -->
                     <li class="{{ Route::currentRouteNamed('admin.colors.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.colors.index') }}">

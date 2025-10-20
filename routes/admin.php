@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\SoftwareController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\AlbumController;
+use App\Http\Controllers\Admin\SetController;
 use App\Http\Controllers\Admin\SocialController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -49,5 +50,7 @@ Route::group(['as' => 'admin.'], function () {
         Route::resource('tags', TagController::class);
 
         Route::resource('albums', AlbumController::class);
+
+        Route::resource('sets', SetController::class);
     });
 });
