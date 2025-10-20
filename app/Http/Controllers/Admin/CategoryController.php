@@ -24,7 +24,7 @@ class CategoryController extends Controller
 
         $categories = $query->paginate(15)->withQueryString();
 
-        return view('Admin.pages.categories.index', compact('categories'));
+        return view('admin.pages.categories.index', compact('categories'));
     }
 
     /**
@@ -32,7 +32,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('Admin.pages.categories.create');
+        return view('admin.pages.categories.create');
     }
 
     /**
@@ -74,7 +74,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category->loadCount('sets');
-        return view('Admin.pages.categories.show', compact('category'));
+        return view('admin.pages.categories.show', compact('category'));
     }
 
     /**
@@ -83,7 +83,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         $category->loadCount('sets');
-        return view('Admin.pages.categories.edit', compact('category'));
+        return view('admin.pages.categories.edit', compact('category'));
     }
 
     /**

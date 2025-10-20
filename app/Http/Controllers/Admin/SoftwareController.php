@@ -19,12 +19,12 @@ class SoftwareController extends Controller
 
         $software = $query->orderByDesc('id')->paginate(15)->withQueryString();
 
-        return view('Admin.pages.software.index', compact('software'));
+        return view('admin.pages.software.index', compact('software'));
     }
 
     public function create()
     {
-        return view('Admin.pages.software.create');
+        return view('admin.pages.software.create');
     }
 
     public function store(Request $request)
@@ -70,12 +70,12 @@ class SoftwareController extends Controller
 
     public function show(Software $software)
     {
-        return view('Admin.pages.software.show', compact('software'));
+        return view('admin.pages.software.show', compact('software'));
     }
 
     public function edit(Software $software)
     {
-        return view('Admin.pages.software.edit', compact('software'));
+        return view('admin.pages.software.edit', compact('software'));
     }
 
     public function update(Request $request, Software $software)

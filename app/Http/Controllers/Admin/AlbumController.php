@@ -31,7 +31,7 @@ class AlbumController extends Controller
 
         $albums = $query->paginate(15)->withQueryString();
 
-        return view('Admin.pages.albums.index', compact('albums'));
+        return view('admin.pages.albums.index', compact('albums'));
     }
 
     /**
@@ -39,7 +39,7 @@ class AlbumController extends Controller
      */
     public function create()
     {
-        return view('Admin.pages.albums.create');
+        return view('admin.pages.albums.create');
     }
 
     /**
@@ -95,7 +95,7 @@ class AlbumController extends Controller
     public function show(Album $album)
     {
         $album->load(['featuredType', 'trendingType']);
-        return view('Admin.pages.albums.show', compact('album'));
+        return view('admin.pages.albums.show', compact('album'));
     }
 
     /**
@@ -104,7 +104,7 @@ class AlbumController extends Controller
     public function edit(Album $album)
     {
         $album->load(['featuredType', 'trendingType']);
-        return view('Admin.pages.albums.edit', compact('album'));
+        return view('admin.pages.albums.edit', compact('album'));
     }
 
     /**

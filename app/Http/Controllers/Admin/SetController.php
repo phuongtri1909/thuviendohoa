@@ -38,7 +38,7 @@ class SetController extends Controller
 
         $sets = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
-        return view('Admin.pages.sets.index', compact('sets'));
+        return view('admin.pages.sets.index', compact('sets'));
     }
 
     public function create()
@@ -48,7 +48,7 @@ class SetController extends Controller
         $colors = Color::orderBy('name')->get(['id','name','value']);
         $software = Software::orderBy('name')->get(['id','name']);
         $tags = Tag::orderBy('name')->get(['id','name']);
-        return view('Admin.pages.sets.create', compact('albums','categories','colors','software','tags'));
+        return view('admin.pages.sets.create', compact('albums','categories','colors','software','tags'));
     }
 
     public function store(Request $request)
@@ -144,7 +144,7 @@ class SetController extends Controller
 
     public function show(Set $set)
     {
-        return view('Admin.pages.sets.show', compact('set'));
+        return view('admin.pages.sets.show', compact('set'));
     }
 
     public function edit(Set $set)
@@ -155,7 +155,7 @@ class SetController extends Controller
         $software = Software::orderBy('name')->get(['id','name']);
         $tags = Tag::orderBy('name')->get(['id','name']);
         $set->load(['albums','categories','colors','software','tags','photos']);
-        return view('Admin.pages.sets.edit', compact('set','albums','categories','colors','software','tags'));
+        return view('admin.pages.sets.edit', compact('set','albums','categories','colors','software','tags'));
     }
 
     public function update(Request $request, Set $set)

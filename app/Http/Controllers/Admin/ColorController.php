@@ -22,12 +22,12 @@ class ColorController extends Controller
 
         $colors = $query->paginate(15)->withQueryString();
 
-        return view('Admin.pages.colors.index', compact('colors'));
+        return view('admin.pages.colors.index', compact('colors'));
     }
 
     public function create()
     {
-        return view('Admin.pages.colors.create');
+        return view('admin.pages.colors.create');
     }
 
     public function store(Request $request)
@@ -55,12 +55,12 @@ class ColorController extends Controller
     public function show(Color $color)
     {
         $color->loadCount('sets');
-        return view('Admin.pages.colors.show', compact('color'));
+        return view('admin.pages.colors.show', compact('color'));
     }
 
     public function edit(Color $color)
     {
-        return view('Admin.pages.colors.edit', compact('color'));
+        return view('admin.pages.colors.edit', compact('color'));
     }
 
     public function update(Request $request, Color $color)

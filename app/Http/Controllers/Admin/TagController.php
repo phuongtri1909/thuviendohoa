@@ -23,12 +23,12 @@ class TagController extends Controller
 
         $tags = $query->paginate(15)->withQueryString();
 
-        return view('Admin.pages.tags.index', compact('tags'));
+        return view('admin.pages.tags.index', compact('tags'));
     }
 
     public function create()
     {
-        return view('Admin.pages.tags.create');
+        return view('admin.pages.tags.create');
     }
 
     public function store(Request $request)
@@ -53,13 +53,13 @@ class TagController extends Controller
     public function show(Tag $tag)
     {
         $tag->loadCount('sets');
-        return view('Admin.pages.tags.show', compact('tag'));
+        return view('admin.pages.tags.show', compact('tag'));
     }
 
     public function edit(Tag $tag)
     {
         $tag->loadCount('sets');
-        return view('Admin.pages.tags.edit', compact('tag'));
+        return view('admin.pages.tags.edit', compact('tag'));
     }
 
     public function update(Request $request, Tag $tag)
