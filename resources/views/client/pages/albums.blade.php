@@ -8,7 +8,13 @@
 @endphp
 
 @section('content')
-    <x-albums-static-banner :searchQuery="request('search', '')" />
+    <!-- Albums Banner -->
+    <x-albums-static-banner 
+        :banners="$banners" 
+        :hasBanners="$has_banners" 
+        :searchQuery="request('search', '')" 
+        :interval="4000" 
+    />
 
     <div class="albums-section-positioned">
         <div class="container-custom">

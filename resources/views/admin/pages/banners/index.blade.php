@@ -37,6 +37,9 @@
                                 <option value="{{ \App\Models\Banner::PAGE_SEARCH }}"
                                     {{ request('page_filter') === \App\Models\Banner::PAGE_SEARCH ? 'selected' : '' }}>
                                     Search</option>
+                                <option value="{{ \App\Models\Banner::PAGE_ALBUMS }}"
+                                    {{ request('page_filter') === \App\Models\Banner::PAGE_ALBUMS ? 'selected' : '' }}>
+                                    Albums</option>
                             </select>
                         </div>
                         <div class="col-6">
@@ -67,7 +70,7 @@
                         @if (request('page_filter'))
                             <span class="filter-tag">
                                 <span>Trang:
-                                    {{ request('page_filter') === \App\Models\Banner::PAGE_HOME ? 'Home' : 'Search' }}</span>
+                                    {{ request('page_filter') === \App\Models\Banner::PAGE_HOME ? 'Home' : (request('page_filter') === \App\Models\Banner::PAGE_SEARCH ? 'Search' : 'Albums') }}</span>
                                 <a href="{{ request()->url() }}?{{ http_build_query(request()->except('page_filter')) }}"
                                     class="remove-filter">×</a>
                             </span>
@@ -131,8 +134,8 @@
                                         </td>
                                         <td>
                                             <span
-                                                class="badge text-bg-{{ $banner->key_page === \App\Models\Banner::PAGE_HOME ? 'primary' : 'info' }}">
-                                                {{ $banner->key_page === \App\Models\Banner::PAGE_HOME ? 'Home' : 'Search' }}
+                                                class="badge text-bg-{{ $banner->key_page === \App\Models\Banner::PAGE_HOME ? 'primary' : ($banner->key_page === \App\Models\Banner::PAGE_SEARCH ? 'info' : 'success') }}">
+                                                {{ $banner->key_page === \App\Models\Banner::PAGE_HOME ? 'Home' : ($banner->key_page === \App\Models\Banner::PAGE_SEARCH ? 'Search' : 'Albums') }}
                                             </span>
                                         </td>
                                         <td class="text-center">

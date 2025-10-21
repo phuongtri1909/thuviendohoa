@@ -15,6 +15,7 @@ class Banner extends Model
 
     const PAGE_HOME = 'home';
     const PAGE_SEARCH = 'search';
+    const PAGE_ALBUMS = 'albums';
 
     const STATUS_ACTIVE = true;
     const STATUS_INACTIVE = false;

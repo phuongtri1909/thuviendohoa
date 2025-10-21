@@ -50,6 +50,9 @@
                                         <option value="{{ \App\Models\Banner::PAGE_SEARCH }}"
                                             {{ old('key_page') === \App\Models\Banner::PAGE_SEARCH ? 'selected' : '' }}>
                                             Search</option>
+                                        <option value="{{ \App\Models\Banner::PAGE_ALBUMS }}"
+                                            {{ old('key_page') === \App\Models\Banner::PAGE_ALBUMS ? 'selected' : '' }}>
+                                            Albums</option>
                                     </select>
                                     <div class="error-message" id="error-key_page">
                                         @error('key_page')

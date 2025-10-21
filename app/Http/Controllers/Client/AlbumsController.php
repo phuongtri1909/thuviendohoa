@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Client;
 
 use App\Models\Album;
+use App\Models\Banner;
+use App\Helpers\BannerHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -10,6 +12,8 @@ class AlbumsController extends Controller
 {
     public function index(Request $request)
     {
+        $bannerData = BannerHelper::getBannersDataForView('albums');
+        
         $query = Album::query();
         
         if ($request->filled('search')) {
@@ -26,6 +30,6 @@ class AlbumsController extends Controller
             ]);
         }
         
-        return view('client.pages.albums', compact('albums'));
+        return view('client.pages.albums', array_merge($bannerData, compact('albums')));
     }
 }

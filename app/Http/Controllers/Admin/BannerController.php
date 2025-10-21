@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Banner;
+use Illuminate\Support\Facades\DB;
 
 class BannerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = \DB::table('banners');
+        $query = DB::table('banners');
 
         if ($request->filled('page_filter')) {
             $query->where('key_page', $request->page_filter);
@@ -41,7 +42,7 @@ class BannerController extends Controller
     {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'key_page' => 'required|in:' . Banner::PAGE_HOME . ',' . Banner::PAGE_SEARCH,
+            'key_page' => 'required|in:' . Banner::PAGE_HOME . ',' . Banner::PAGE_SEARCH . ',' . Banner::PAGE_ALBUMS,
             'order' => 'required|integer|min:0',
             'status' => 'nullable|boolean',
         ], [
@@ -80,7 +81,7 @@ class BannerController extends Controller
     {
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'key_page' => 'required|in:' . Banner::PAGE_HOME . ',' . Banner::PAGE_SEARCH,
+            'key_page' => 'required|in:' . Banner::PAGE_HOME . ',' . Banner::PAGE_SEARCH . ',' . Banner::PAGE_ALBUMS,
             'order' => 'required|integer|min:0',
             'status' => 'nullable|boolean',
         ], [
