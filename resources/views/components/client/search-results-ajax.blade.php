@@ -13,7 +13,6 @@
             @endif
         @endforeach
         
-        {{-- Item đặc biệt để chèn link --}}
         <div class="masonry-item" data-height="wide">
             <div class="image-card">
                 <a href="{{ url('/y-tuong-thiet-ke') }}" class="text-decoration-none color-primary-12">

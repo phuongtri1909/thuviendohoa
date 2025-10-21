@@ -24,10 +24,9 @@ class SearchController extends Controller
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
         
-        // Build query for sets with optimized eager loading
         $setsQuery = Set::with([
                 'photos' => function($query) {
-                    $query->select('id', 'set_id', 'path')->take(1); // Only get first photo
+                    $query->select('id', 'set_id', 'path')->take(1);
                 },
                 'categories.category:id,name,slug',
                 'albums.album:id,name,slug',
@@ -37,7 +36,6 @@ class SearchController extends Controller
             ])
             ->where('status', Set::STATUS_ACTIVE);
         
-        // Apply search query
         if ($query) {
             $setsQuery->where(function(Builder $q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
@@ -46,42 +44,36 @@ class SearchController extends Controller
             });
         }
         
-        // Apply category filter
         if ($categorySlug) {
             $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
                 $q->where('slug', $categorySlug);
             });
         }
         
-        // Apply album filter
         if ($albumSlug) {
             $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
                 $q->where('slug', $albumSlug);
             });
         }
         
-        // Apply tag filter
         if ($tagSlug) {
             $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tagSlug) {
                 $q->where('slug', $tagSlug);
             });
         }
         
-        // Apply tags filter (multiple tags)
         if (!empty($tags)) {
             $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tags) {
                 $q->whereIn('slug', $tags);
             });
         }
         
-        // Apply color filters
         if (!empty($colors)) {
             $setsQuery->whereHas('colors.color', function(Builder $q) use ($colors) {
                 $q->whereIn('value', $colors);
             });
         }
         
-        // Apply software filters
         if (!empty($software)) {
             $setsQuery->whereHas('software.software', function(Builder $q) use ($software) {
                 $q->whereIn('id', $software);
@@ -90,27 +82,20 @@ class SearchController extends Controller
         
         $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(12);
         
-        // Get selected category and album for display
         $selectedCategory = $categorySlug ? Category::where('slug', $categorySlug)->first() : null;
         $selectedAlbum = $albumSlug ? Album::where('slug', $albumSlug)->first() : null;
         
-        // Get all categories for filter dropdown
         $categories = Category::orderBy('order', 'asc')->get();
         
-        // Get all albums for filter dropdown
         $albums = Album::orderBy('created_at', 'desc')->get();
         
-        // Get all colors for filter
         $allColors = \App\Models\Color::orderBy('name', 'asc')->get();
         
-        // Get all software for filter
         $allSoftware = \App\Models\Software::orderBy('name', 'asc')->get();
         
-        // Get related tags from filtered sets (optimized query)
         $relatedTags = \App\Models\Tag::whereHas('sets', function(Builder $q) use ($query, $categorySlug, $albumSlug, $tagSlug, $tags, $colors, $software) {
             $q->where('status', Set::STATUS_ACTIVE);
             
-            // Apply same filters as sets query
             if ($query) {
                 $q->where(function(Builder $subQ) use ($query) {
                     $subQ->where('name', 'like', "%{$query}%")
@@ -183,10 +168,9 @@ class SearchController extends Controller
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
         
-        // Build query for sets with optimized eager loading
         $setsQuery = Set::with([
                 'photos' => function($query) {
-                    $query->select('id', 'set_id', 'path')->take(1); // Only get first photo
+                    $query->select('id', 'set_id', 'path')->take(1);
                 },
                 'categories.category:id,name,slug',
                 'albums.album:id,name,slug',
@@ -196,7 +180,6 @@ class SearchController extends Controller
             ])
             ->where('status', Set::STATUS_ACTIVE);
         
-        // Apply search query
         if ($query) {
             $setsQuery->where(function(Builder $q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
@@ -205,42 +188,36 @@ class SearchController extends Controller
             });
         }
         
-        // Apply category filter
         if ($categorySlug) {
             $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
                 $q->where('slug', $categorySlug);
             });
         }
         
-        // Apply album filter
         if ($albumSlug) {
             $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
                 $q->where('slug', $albumSlug);
             });
         }
         
-        // Apply tag filter
         if ($tagSlug) {
             $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tagSlug) {
                 $q->where('slug', $tagSlug);
             });
         }
         
-        // Apply tags filter (multiple tags)
         if (!empty($tags)) {
             $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tags) {
                 $q->whereIn('slug', $tags);
             });
         }
         
-        // Apply color filters
         if (!empty($colors)) {
             $setsQuery->whereHas('colors.color', function(Builder $q) use ($colors) {
                 $q->whereIn('value', $colors);
             });
         }
         
-        // Apply software filters
         if (!empty($software)) {
             $setsQuery->whereHas('software.software', function(Builder $q) use ($software) {
                 $q->whereIn('id', $software);

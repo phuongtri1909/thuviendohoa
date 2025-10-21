@@ -62,7 +62,6 @@
                         @endif
                     @endforeach
                     
-                    {{-- Item đặc biệt để chèn link --}}
                     <div class="masonry-item" data-height="wide">
                         <div class="image-card">
                             <a href="{{ url('/y-tuong-thiet-ke') }}" class="text-decoration-none color-primary-12">
@@ -104,18 +103,15 @@
             colorBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (this.classList.contains('color-clear')) {
-                        // Clear all selected colors
                         selectedColors = [];
                         colorBtns.forEach(b => b.classList.remove('active'));
                     } else {
                         const colorValue = this.getAttribute('data-color');
                         
                         if (this.classList.contains('active')) {
-                            // Remove color from selection
                             selectedColors = selectedColors.filter(c => c !== colorValue);
                             this.classList.remove('active');
                         } else {
-                            // Add color to selection (avoid duplicates)
                             if (!selectedColors.includes(colorValue)) {
                                 selectedColors.push(colorValue);
                                 this.classList.add('active');
@@ -130,24 +126,20 @@
             const softwareBtns = document.querySelectorAll('.software-btn');
             let selectedSoftware = [];
 
-            // Initialize selected tags from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const selectedTags = urlParams.get('tags') ? urlParams.get('tags').split(',') : [];
 
             const tagBtns = document.querySelectorAll('.tag-btn');
-            let selectedTagsArray = [...selectedTags]; // Copy array
+            let selectedTagsArray = [...selectedTags];
 
-            // Tag button event listeners
             tagBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const tagValue = this.getAttribute('data-tag');
                     
                     if (this.classList.contains('active')) {
-                        // Remove tag from selection
                         selectedTagsArray = selectedTagsArray.filter(t => t !== tagValue);
                         this.classList.remove('active');
                     } else {
-                        // Add tag to selection (avoid duplicates)
                         if (!selectedTagsArray.includes(tagValue)) {
                             selectedTagsArray.push(tagValue);
                             this.classList.add('active');
@@ -165,7 +157,6 @@
                 const logoHover = btn.getAttribute('data-logo-hover');
                 const logoActive = btn.getAttribute('data-logo-active');
 
-                // Add class để CSS biết nút nào không có logo_hover/logo_active
                 if (softwareValue !== 'all') {
                     if (!logoHover || logoHover === 'null') {
                         btn.classList.add('no-logo-hover');
@@ -174,8 +165,6 @@
                         btn.classList.add('no-logo-active');
                     }
                 }
-
-                // Hover events chỉ cho software buttons có logo_hover
                 if (softwareValue !== 'all' && logoHover && logoHover !== 'null') {
                     btn.addEventListener('mouseenter', function() {
                         if (!this.classList.contains('active')) {
@@ -190,10 +179,8 @@
                     });
                 }
 
-                // Click events
                 btn.addEventListener('click', function() {
                     if (softwareValue === 'all') {
-                        // Select all - clear other selections
                         selectedSoftware = [];
                         softwareBtns.forEach(b => {
                             b.classList.remove('active');
@@ -206,12 +193,10 @@
                         this.classList.add('active');
                     } else {
                         if (this.classList.contains('active')) {
-                            // Remove software from selection
                             selectedSoftware = selectedSoftware.filter(s => s !== softwareValue);
                             this.classList.remove('active');
                             img.src = logo;
                         } else {
-                            // Add software to selection (avoid duplicates)
                             if (!selectedSoftware.includes(softwareValue)) {
                                 selectedSoftware.push(softwareValue);
                                 this.classList.add('active');
@@ -221,8 +206,6 @@
                                 }
                             }
                         }
-                        
-                        // Update "all" button state
                         const allBtn = document.querySelector('[data-software="all"]');
                         if (selectedSoftware.length === 0) {
                             allBtn.classList.add('active');
@@ -236,57 +219,44 @@
             });
 
             function debouncedUpdateFilters() {
-                // Clear existing timer
                 if (debounceTimer) {
                     clearTimeout(debounceTimer);
                 }
                 
-                // Set new timer
                 debounceTimer = setTimeout(() => {
                     updateFilters();
-                }, 300); // 300ms delay
+                }, 300);
             }
 
             function updateFilters() {
-                // Prevent multiple simultaneous requests
                 if (isLoading) {
                     return;
                 }
-
-                // Get current URL parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const category = urlParams.get('category') || '';
                 const album = urlParams.get('album') || '';
                 const query = urlParams.get('q') || '';
-
-                // Prepare form data
                 const formData = new FormData();
                 formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
                 formData.append('category', category);
                 formData.append('album', album);
                 formData.append('q', query);
                 
-                // Add selected colors
                 selectedColors.forEach(color => {
                     formData.append('colors[]', color);
                 });
                 
-                // Add selected software
                 selectedSoftware.forEach(software => {
                     formData.append('software[]', software);
                 });
                 
-                // Add selected tags
                 selectedTagsArray.forEach(tag => {
                     formData.append('tags[]', tag);
                 });
-
-                // Set loading state
                 isLoading = true;
                 const container = document.getElementById('search-results-container');
                 container.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
 
-                // Send AJAX request
                 fetch('{{ route("search.filter") }}', {
                     method: 'POST',
                     body: formData
@@ -295,13 +265,10 @@
                 .then(data => {
                     if (data.success) {
                         container.innerHTML = data.html;
-                        // Không cần update URL cho colors/software khi dùng AJAX
-                        
-                        // Reinitialize masonry with new content if container exists
                         setTimeout(() => {
                             initMasonry();
                             attachImageClickEvents();
-                        }, 100); // Small delay to ensure DOM is updated
+                        }, 100);
                     }
                 })
                 .catch(error => {
@@ -313,7 +280,6 @@
                 });
             }
 
-            // Không cần update URL cho colors/software khi dùng AJAX
 
             function attachImageClickEvents() {
                 const imageClickables = document.querySelectorAll('.image-clickable');
@@ -354,7 +320,6 @@
                         }
                     });
 
-                    // If all images are already loaded
                     if (loadedImages === images.length) {
                         refreshMasonry();
                     }
