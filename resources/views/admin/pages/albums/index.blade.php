@@ -125,16 +125,16 @@
                                         </td>
                                         <td class="text-center">
                                             @if($album->featuredType)
-                                                <span class="stories-count">Yes</span>
+                                                <span class="stories-count text-success">Yes</span>
                                             @else
-                                                <span class="text-muted">No</span>
+                                                <span class="text-muted text-danger">No</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
                                             @if($album->trendingType)
-                                                <span class="stories-count">Yes</span>
+                                                <span class="stories-count text-success">Yes</span>
                                             @else
-                                                <span class="text-muted">No</span>
+                                                <span class="text-muted text-danger">No</span>
                                             @endif
                                         </td>
                                         <td class="category-date">{{ $album->created_at->format('d/m/Y H:i') }}</td>

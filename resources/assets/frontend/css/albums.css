@@ -1,0 +1,149 @@
+/* Albums Page Styles */
+.albums-section {
+    padding: 40px 0;
+}
+
+.albums-section-positioned {
+    position: relative;
+    margin-top: -450px;
+    z-index: 10;
+    padding: 40px 0;
+}
+
+.albums-content {
+    background: var(--bg-gradient-2);
+    border-radius: 20px;
+    padding: 2rem;
+}
+
+/* Search Form */
+.albums-search-form {
+    margin-top: 2rem;
+}
+
+.albums-search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.albums-search-input {
+    border: 2px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    height: 50px;
+    border-radius: 25px;
+    padding: 0 20px;
+    font-size: 16px;
+    background: white;
+}
+
+.albums-search-input:focus {
+    border-color: #FF8686;
+    box-shadow: 0 4px 12px rgba(255, 134, 134, 0.3);
+    outline: none;
+}
+
+.albums-search-btn {
+    background: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.albums-search-btn:hover {
+    background: linear-gradient(180deg, #E93030 0%, #E93030 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 48, 48, 0.3);
+    color: white;
+}
+
+/* Load More Button */
+.load-more-btn {
+    border-radius: 25px;
+    padding: 12px 30px;
+    background: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+}
+
+.load-more-btn:hover {
+    background: linear-gradient(180deg, #E93030 0%, #E93030 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 48, 48, 0.3);
+}
+
+.load-more-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Albums Grid */
+.albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .albums-search-input {
+        width: 300px;
+        height: 45px;
+    }
+    
+    .albums-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .albums-search-input-wrapper {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .albums-search-input {
+        width: 100%;
+        max-width: 350px;
+        height: 45px;
+    }
+    
+    .albums-search-btn {
+        margin-left: 0;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .albums-section {
+        padding: 20px 0;
+    }
+    
+    .albums-content {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .albums-search-input {
+        width: 100%;
+        height: 40px;
+        font-size: 14px;
+    }
+    
+    .albums-search-btn {
+        height: 40px;
+        font-size: 14px;
+    }
+}

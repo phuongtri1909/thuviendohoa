@@ -5,6 +5,7 @@ use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\SearchController;
+use App\Http\Controllers\Client\AlbumsController;
 use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Client\FacebookController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/albums', [AlbumsController::class, 'index'])->name('albums');
 
 Route::get('/blog', function () {
     return view('client.pages.blog');

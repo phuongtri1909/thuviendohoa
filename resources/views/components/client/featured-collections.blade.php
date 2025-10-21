@@ -1,13 +1,17 @@
-@props(['title', 'collections' => []])
+@props(['title', 'albums' => []])
+
+@push('styles')
+    @vite('resources/assets/frontend/css/components/featured-collections.css')
+@endpush
 
 <div>
-    <h3 class="mb-0 font-xl text-center py-2">{{ $title }}</h3>
+    <h3 class="featured-collections-title">{{ $title }}</h3>
     <div class="row g-3">
-        @foreach($collections as $collection)
+        @foreach($albums as $album)
             <div class="col-lg-3 col-md-6 col-sm-12">
                 <x-client.collection-card 
-                    :title="$collection['title']" 
-                    :images="$collection['images']" 
+                    :title="$album->name" 
+                    :image="$album->image" 
                 />
             </div>
         @endforeach

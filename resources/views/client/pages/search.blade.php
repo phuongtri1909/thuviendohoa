@@ -4,8 +4,7 @@
 @section('keywords', config('app.name'))
 
 @section('content')
-    <!-- Banner Slide -->
-    <x-search-banner 
+    <x-search-slide-banner 
         :banners="$banners" 
         :hasBanners="$has_banners" 
         :interval="4000" 
