@@ -1,113 +1,91 @@
+@props(['sets' => collect(), 'allColors' => collect(), 'allSoftware' => collect(), 'selectedColors' => [], 'selectedSoftware' => [], 'relatedTags' => collect(), 'selectedTags' => []])
+
 <div class="search-result">
     <div class="d-flex justify-content-between align-items-center">
         <div class="color-selection">
             <button class="color-btn color-clear rounded-circle border bg-white" title="Xóa màu đã chọn">
                 <i class="fas fa-times"></i>
             </button>
-            @php
-                $colors = [
-                    '#FF0000',
-                    '#00FF00',
-                    '#0000FF',
-                    '#FFFF00',
-                    '#FF00FF',
-                    '#00FFFF',
-                    '#FFA500',
-                    '#800080',
-                    '#008000',
-                    '#FFC0CB',
-                ];
-            @endphp
-            @foreach ($colors as $color)
-                <button class="color-btn rounded-circle border" style="background-color: {{ $color }}"
-                    title="Chọn màu {{ $color }}">
+            @foreach ($allColors as $color)
+                <button class="color-btn rounded-circle border {{ in_array($color->value, $selectedColors) ? 'active' : '' }}" 
+                    style="background-color: {{ $color->value }}"
+                    title="Chọn màu {{ $color->name }}"
+                    data-color="{{ $color->value }}">
                 </button>
             @endforeach
         </div>
         <div class="software-selection">
-            <button class="software-btn" title="Tất cả">
+            <button class="software-btn {{ empty($selectedSoftware) ? 'active' : '' }}" title="Tất cả" data-software="all">
                 <img src="{{ asset('images/svg/search-results/menu.svg') }}" alt="Tất cả">
             </button>
-            <button class="software-btn" title="Adobe Illustrator">
-                <img src="{{ asset('images/svg/search-results/ai.svg') }}" alt="Adobe Illustrator">
-            </button>
-            <button class="software-btn" title="Adobe Photoshop">
-                <img src="{{ asset('images/svg/search-results/ps.svg') }}" alt="Adobe Photoshop">
-            </button>
-            <button class="software-btn" title="CorelDRAW">
-                <img src="{{ asset('images/svg/search-results/pen.svg') }}" alt="CorelDRAW">
-            </button>
-            <button class="software-btn" title="Hình ảnh">
-                <img src="{{ asset('images/svg/search-results/image.svg') }}" alt="Hình ảnh">
-            </button>
+            @foreach ($allSoftware as $soft)
+                <button class="software-btn {{ in_array($soft->id, $selectedSoftware) ? 'active' : '' }}" 
+                    title="{{ $soft->name }}" 
+                    data-software="{{ $soft->id }}"
+                    data-logo="{{ Storage::url($soft->logo) }}"
+                    data-logo-hover="{{ $soft->logo_hover ? Storage::url($soft->logo_hover) : null }}"
+                    data-logo-active="{{ $soft->logo_active ? Storage::url($soft->logo_active) : null }}">
+                    <img src="{{ Storage::url($soft->logo) }}" alt="{{ $soft->name }}">
+                </button>
+            @endforeach
         </div>
     </div>
     <div class="bg-white rounded-4 p-2 p-md-4 mt-2">
         <div>
             <span class="fw-semibold">Tags phân loại: </span>
-            @for ($i = 0; $i < 10; $i++)
-                <span class="badge bg-primary-10 color-primary-11 p-2 p-md-3 rounded-4 mt-2">hasgtag Trung thu</span>
-            @endfor
+            @if($relatedTags->count() > 0)
+                @foreach($relatedTags as $tag)
+                    <button class="tag-btn badge bg-primary-10 color-primary-11 p-2 p-md-3 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}" 
+                        data-tag="{{ $tag->slug }}" 
+                        title="Chọn tag {{ $tag->name }}">
+                        {{ $tag->name }}
+                    </button>
+                @endforeach
+            @else
+                <span class="text-muted">Không có tag nào liên quan</span>
+            @endif
         </div>
 
-        <div class="result-wrapper" id="masonry-container">
-            @php
-                $sampleImages = [
-                    ['url' => 'https://picsum.photos/700/400?random=1', 'title' => 'Hình ảnh 1', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/400/300?random=2', 'title' => 'Hình ảnh 2', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/850/900?random=3', 'title' => 'Hình ảnh 3', 'height' => 'tall'],
-                    [
-                        'url' => asset('images/d/bancoytuong.png'),
-                        'title' => 'Bạn có ý tưởng thiết kế của riêng mình?',
-                        'height' => 'wide',
-                        'link' => url('/y-tuong-thiet-ke'),
-                    ],
-                    ['url' => 'https://picsum.photos/500/900?random=4', 'title' => 'Hình ảnh 4', 'height' => 'square'],
-                    ['url' => 'https://picsum.photos/650/1250?random=5', 'title' => 'Hình ảnh 5', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/320/450?random=6', 'title' => 'Hình ảnh 6', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/380/280?random=7', 'title' => 'Hình ảnh 7', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/300/350?random=8', 'title' => 'Hình ảnh 8', 'height' => 'medium'],
-                    ['url' => 'https://picsum.photos/400/450?random=9', 'title' => 'Hình ảnh 9', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/350/300?random=10', 'title' => 'Hình ảnh 10', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/300/500?random=11', 'title' => 'Hình ảnh 11', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/420/320?random=12', 'title' => 'Hình ảnh 12', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/300/400?random=13', 'title' => 'Hình ảnh 1', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/400/300?random=14', 'title' => 'Hình ảnh 2', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/350/500?random=15', 'title' => 'Hình ảnh 3', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/300/300?random=16', 'title' => 'Hình ảnh 4', 'height' => 'square'],
-                    ['url' => 'https://picsum.photos/450/350?random=17', 'title' => 'Hình ảnh 5', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/320/450?random=18', 'title' => 'Hình ảnh 6', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/380/280?random=19', 'title' => 'Hình ảnh 7', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/300/350?random=20', 'title' => 'Hình ảnh 8', 'height' => 'medium'],
-                    ['url' => 'https://picsum.photos/400/450?random=21', 'title' => 'Hình ảnh 9', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/350/300?random=22', 'title' => 'Hình ảnh 10', 'height' => 'wide'],
-                    ['url' => 'https://picsum.photos/300/500?random=23', 'title' => 'Hình ảnh 11', 'height' => 'tall'],
-                    ['url' => 'https://picsum.photos/420/320?random=24', 'title' => 'Hình ảnh 12', 'height' => 'wide'],
-                ];
-            @endphp
-
-            @foreach ($sampleImages as $index => $image)
-                <div class="masonry-item" data-height="{{ $image['height'] }}">
-                    <div class="image-card">
-                        @if (!empty($image['link']))
-                            <a href="{{ $image['link'] }}" class="text-decoration-none">
-                                <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy">
-                            </a>
-                        @else
-                            <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}" loading="lazy"
-                                class="image-clickable" data-image-url="{{ $image['url'] }}"
-                                data-image-title="{{ $image['title'] }}">
+        <div id="search-results-container">
+            @if($sets->count() > 0)
+                <div class="result-wrapper" id="masonry-container">
+                    @foreach($sets as $set)
+                        @if($set->photos && $set->photos->count() > 0)
+                            <div class="masonry-item" data-height="tall">
+                                <div class="image-card">
+                                    <img src="{{ Storage::url($set->image) }}" alt="{{ $set->name }}" loading="lazy"
+                                        class="image-clickable" data-image-url="{{ Storage::url($set->image) }}"
+                                        data-image-title="{{ $set->name }}"
+                                        data-set-id="{{ $set->id }}">
+                                </div>
+                            </div>
                         @endif
+                    @endforeach
+                    
+                    {{-- Item đặc biệt để chèn link --}}
+                    <div class="masonry-item" data-height="wide">
+                        <div class="image-card">
+                            <a href="{{ url('/y-tuong-thiet-ke') }}" class="text-decoration-none color-primary-12">
+                                <img src="{{ asset('images/d/bancoytuong.png') }}" alt="Bạn có ý tưởng thiết kế của riêng mình?" loading="lazy">
+                            </a>
+                        </div>
                     </div>
                 </div>
-            @endforeach
-
-            {{-- <x-client.pagination 
-                :paginator="$sampleImages" 
-                :show-select="false" 
-                :max-visible="7" 
-            /> --}}
+            @else
+                <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                    <div class="text-center">
+                        <i class="fas fa-search text-muted mb-3" style="font-size: 3rem;"></i>
+                        <h4 class="text-muted mb-0">Không tìm thấy kết quả nào</h4>
+                    </div>
+                </div>
+            @endif
         </div>
+        
+        @if($sets->count() > 0)
+            <div class="pagination-wrapper mt-4">
+                {{ $sets->appends(request()->query())->links('components.paginate') }}
+            </div>
+        @endif
     </div>
 </div>
 
@@ -119,52 +97,267 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const colorBtns = document.querySelectorAll('.color-btn');
-            let selectedColor = null;
+            let selectedColors = [];
+            let debounceTimer = null;
+            let isLoading = false;
 
             colorBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    colorBtns.forEach(b => b.classList.remove('active'));
-
                     if (this.classList.contains('color-clear')) {
-                        selectedColor = null;
-                        console.log('Đã xóa màu đã chọn');
+                        // Clear all selected colors
+                        selectedColors = [];
+                        colorBtns.forEach(b => b.classList.remove('active'));
                     } else {
-                        this.classList.add('active');
-                        selectedColor = this.style.backgroundColor;
-                        console.log('Đã chọn màu:', selectedColor);
+                        const colorValue = this.getAttribute('data-color');
+                        
+                        if (this.classList.contains('active')) {
+                            // Remove color from selection
+                            selectedColors = selectedColors.filter(c => c !== colorValue);
+                            this.classList.remove('active');
+                        } else {
+                            // Add color to selection (avoid duplicates)
+                            if (!selectedColors.includes(colorValue)) {
+                                selectedColors.push(colorValue);
+                                this.classList.add('active');
+                            }
+                        }
                     }
+
+                    debouncedUpdateFilters();
                 });
             });
 
             const softwareBtns = document.querySelectorAll('.software-btn');
-            let selectedSoftware = null;
+            let selectedSoftware = [];
 
-            softwareBtns.forEach(btn => {
+            // Initialize selected tags from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedTags = urlParams.get('tags') ? urlParams.get('tags').split(',') : [];
+
+            const tagBtns = document.querySelectorAll('.tag-btn');
+            let selectedTagsArray = [...selectedTags]; // Copy array
+
+            // Tag button event listeners
+            tagBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    softwareBtns.forEach(b => b.classList.remove('active'));
-
-                    this.classList.add('active');
-                    selectedSoftware = this.title;
-                    console.log('Đã chọn phần mềm:', selectedSoftware);
+                    const tagValue = this.getAttribute('data-tag');
+                    
+                    if (this.classList.contains('active')) {
+                        // Remove tag from selection
+                        selectedTagsArray = selectedTagsArray.filter(t => t !== tagValue);
+                        this.classList.remove('active');
+                    } else {
+                        // Add tag to selection (avoid duplicates)
+                        if (!selectedTagsArray.includes(tagValue)) {
+                            selectedTagsArray.push(tagValue);
+                            this.classList.add('active');
+                        }
+                    }
+                    
+                    debouncedUpdateFilters();
                 });
             });
 
+            softwareBtns.forEach(btn => {
+                const img = btn.querySelector('img');
+                const softwareValue = btn.getAttribute('data-software');
+                const logo = btn.getAttribute('data-logo');
+                const logoHover = btn.getAttribute('data-logo-hover');
+                const logoActive = btn.getAttribute('data-logo-active');
+
+                // Add class để CSS biết nút nào không có logo_hover/logo_active
+                if (softwareValue !== 'all') {
+                    if (!logoHover || logoHover === 'null') {
+                        btn.classList.add('no-logo-hover');
+                    }
+                    if (!logoActive || logoActive === 'null') {
+                        btn.classList.add('no-logo-active');
+                    }
+                }
+
+                // Hover events chỉ cho software buttons có logo_hover
+                if (softwareValue !== 'all' && logoHover && logoHover !== 'null') {
+                    btn.addEventListener('mouseenter', function() {
+                        if (!this.classList.contains('active')) {
+                            img.src = logoHover;
+                        }
+                    });
+
+                    btn.addEventListener('mouseleave', function() {
+                        if (!this.classList.contains('active')) {
+                            img.src = logo;
+                        }
+                    });
+                }
+
+                // Click events
+                btn.addEventListener('click', function() {
+                    if (softwareValue === 'all') {
+                        // Select all - clear other selections
+                        selectedSoftware = [];
+                        softwareBtns.forEach(b => {
+                            b.classList.remove('active');
+                            const bImg = b.querySelector('img');
+                            const bLogo = b.getAttribute('data-logo');
+                            if (bImg && bLogo) {
+                                bImg.src = bLogo;
+                            }
+                        });
+                        this.classList.add('active');
+                    } else {
+                        if (this.classList.contains('active')) {
+                            // Remove software from selection
+                            selectedSoftware = selectedSoftware.filter(s => s !== softwareValue);
+                            this.classList.remove('active');
+                            img.src = logo;
+                        } else {
+                            // Add software to selection (avoid duplicates)
+                            if (!selectedSoftware.includes(softwareValue)) {
+                                selectedSoftware.push(softwareValue);
+                                this.classList.add('active');
+                                
+                                if (logoActive && logoActive !== 'null') {
+                                    img.src = logoActive;
+                                }
+                            }
+                        }
+                        
+                        // Update "all" button state
+                        const allBtn = document.querySelector('[data-software="all"]');
+                        if (selectedSoftware.length === 0) {
+                            allBtn.classList.add('active');
+                        } else {
+                            allBtn.classList.remove('active');
+                        }
+                    }
+
+                    debouncedUpdateFilters();
+                });
+            });
+
+            function debouncedUpdateFilters() {
+                // Clear existing timer
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+                
+                // Set new timer
+                debounceTimer = setTimeout(() => {
+                    updateFilters();
+                }, 300); // 300ms delay
+            }
+
+            function updateFilters() {
+                // Prevent multiple simultaneous requests
+                if (isLoading) {
+                    return;
+                }
+
+                // Get current URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const category = urlParams.get('category') || '';
+                const album = urlParams.get('album') || '';
+                const query = urlParams.get('q') || '';
+
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                formData.append('category', category);
+                formData.append('album', album);
+                formData.append('q', query);
+                
+                // Add selected colors
+                selectedColors.forEach(color => {
+                    formData.append('colors[]', color);
+                });
+                
+                // Add selected software
+                selectedSoftware.forEach(software => {
+                    formData.append('software[]', software);
+                });
+                
+                // Add selected tags
+                selectedTagsArray.forEach(tag => {
+                    formData.append('tags[]', tag);
+                });
+
+                // Set loading state
+                isLoading = true;
+                const container = document.getElementById('search-results-container');
+                container.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+
+                // Send AJAX request
+                fetch('{{ route("search.filter") }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        container.innerHTML = data.html;
+                        // Không cần update URL cho colors/software khi dùng AJAX
+                        
+                        // Reinitialize masonry with new content if container exists
+                        setTimeout(() => {
+                            initMasonry();
+                            attachImageClickEvents();
+                        }, 100); // Small delay to ensure DOM is updated
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                })
+                .finally(() => {
+                    isLoading = false;
+                });
+            }
+
+            // Không cần update URL cho colors/software khi dùng AJAX
+
+            function attachImageClickEvents() {
+                const imageClickables = document.querySelectorAll('.image-clickable');
+                const modal = document.getElementById('imageModal');
+                const modalImage = document.getElementById('modalImage');
+
+                imageClickables.forEach(img => {
+                    img.addEventListener('click', function() {
+                        const imageUrl = this.getAttribute('data-image-url');
+                        modalImage.src = imageUrl;
+                        modal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    });
+                });
+            }
+
             function initMasonry() {
                 const container = document.getElementById('masonry-container');
-                if (container) {
+                if (container && container.children.length > 0) {
                     const images = container.querySelectorAll('img');
                     let loadedImages = 0;
 
-                    if (images.length === 0) return;
+                    if (images.length === 0) {
+                        refreshMasonry();
+                        return;
+                    }
 
                     images.forEach(img => {
-                        img.addEventListener('load', () => {
+                        if (img.complete) {
                             loadedImages++;
-                            if (loadedImages === images.length) {
-                                refreshMasonry();
-                            }
-                        });
+                        } else {
+                            img.addEventListener('load', () => {
+                                loadedImages++;
+                                if (loadedImages === images.length) {
+                                    refreshMasonry();
+                                }
+                            });
+                        }
                     });
+
+                    // If all images are already loaded
+                    if (loadedImages === images.length) {
+                        refreshMasonry();
+                    }
                 }
             }
 

@@ -7,13 +7,24 @@
     <x-search-slide-banner 
         :banners="$banners" 
         :hasBanners="$has_banners" 
-        :interval="4000" 
+        :interval="4000"
+        :selectedCategory="$selectedCategory ?? null"
+        :selectedAlbum="$selectedAlbum ?? null"
+        :sets="$sets ?? null"
     />
 
 
     <div class="search-section">
         <div class="container-custom">
-            <x-client.search-result />
+            <x-client.search-result 
+                :sets="$sets ?? collect()" 
+                :all-colors="$allColors ?? collect()" 
+                :all-software="$allSoftware ?? collect()"
+                :selected-colors="$colors ?? []"
+                :selected-software="$software ?? []"
+                :related-tags="$relatedTags ?? collect()"
+                :selected-tags="$tags ?? []"
+            />
         </div>
     </div>
 

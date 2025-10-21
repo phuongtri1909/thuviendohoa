@@ -41,6 +41,11 @@ class Set extends Model
         return $this->hasMany(AlbumSet::class);
     }
 
+    public function albumSets()
+    {
+        return $this->hasMany(AlbumSet::class);
+    }
+
     public function bookmarks()
     {
         return $this->hasMany(Bookmark::class);

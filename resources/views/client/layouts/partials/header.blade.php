@@ -202,6 +202,14 @@
 
                             <div class="search-input-container">
                                 <form class="search-form" method="GET" action="{{ route('search') }}">
+                                    <input type="hidden" name="category" value="{{ request()->get('category') }}">
+                                    <input type="hidden" name="album" value="{{ request()->get('album') }}">
+                                    @foreach(request()->get('colors', []) as $color)
+                                        <input type="hidden" name="colors[]" value="{{ $color }}">
+                                    @endforeach
+                                    @foreach(request()->get('software', []) as $software)
+                                        <input type="hidden" name="software[]" value="{{ $software }}">
+                                    @endforeach
                                     <input type="text" class="search-input" name="q"
                                         value="{{ request()->get('q') }}" placeholder="Tìm trong thư viện đồ họa..">
                                     <button class="search-btn" type="submit">
@@ -370,6 +378,14 @@
             <div class="search-container">
                 <form class="search-form" method="GET" action="{{ route('search') }}">
                     <div class="search-input-container">
+                        <input type="hidden" name="category" value="{{ request()->get('category') }}">
+                        <input type="hidden" name="album" value="{{ request()->get('album') }}">
+                        @foreach(request()->get('colors', []) as $color)
+                            <input type="hidden" name="colors[]" value="{{ $color }}">
+                        @endforeach
+                        @foreach(request()->get('software', []) as $software)
+                            <input type="hidden" name="software[]" value="{{ $software }}">
+                        @endforeach
                         <input type="text" class="search-input" name="q" value="{{ request()->get('q') }}"
                             placeholder="Tìm trong thư viện đồ họa..">
                         <button class="search-btn" type="submit">

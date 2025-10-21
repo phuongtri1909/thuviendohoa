@@ -1,4 +1,4 @@
-@props(['title', 'image'])
+@props(['title', 'image', 'albumSlug'])
 
 @once
     @push('styles')
@@ -6,11 +6,11 @@
     @endpush
 @endonce
 
-<div class="collection-wrapper">
+<a href="{{ route('search', ['album' => $albumSlug]) }}" class="collection-wrapper text-decoration-none">
     <div class="collection-card">
         <div class="collection-inner">
             <img src="{{ Storage::url($image) }}" alt="{{ $title }}">
         </div>
     </div>
     <div class="label-collection">{{ $title }}</div>
-</div>
+</a>

@@ -2,6 +2,9 @@
     'banners',
     'hasBanners',
     'interval' => 4000,
+    'selectedCategory' => null,
+    'selectedAlbum' => null,
+    'sets' => null,
 ])
 
 @push('styles')
@@ -40,8 +43,26 @@
                 </nav>
 
                 <div class="banner-search-title text-center">
-                    <h2 class="banner-title mt-5 fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q', '') }}"</h2>
-                    <span class="text-white">Hiển thị 510 kết quả</span>
+                    @if(request()->get('q') || request()->get('category') || request()->get('album'))
+                        <h2 class="banner-title mt-5 fw-bold text-white">
+                            Kết quả tìm kiếm
+                            @if(request()->get('q'))
+                                cho "{{ request()->get('q') }}"
+                            @endif
+                            @if(request()->get('category') && $selectedCategory)
+                                - Danh mục: {{ $selectedCategory->name }}
+                            @endif
+                            @if(request()->get('album') && $selectedAlbum)
+                                - Album: {{ $selectedAlbum->name }}
+                            @endif
+                        </h2>
+                        @if($sets)
+                            <span class="text-white">Hiển thị {{ $sets->total() }} kết quả</span>
+                        @endif
+                    @else
+                        <h2 class="banner-title mt-5 fw-bold text-white">Tìm kiếm trong thư viện</h2>
+                        <span class="text-white">Khám phá hàng nghìn mẫu thiết kế đẹp</span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -66,8 +87,26 @@
                 </nav>
 
                 <div class="banner-search-title text-center">
-                    <h2 class="banner-title mt-5 fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q', '') }}"</h2>
-                    <span class="text-white">Hiển thị 510 kết quả</span>
+                    @if(request()->get('q') || request()->get('category') || request()->get('album'))
+                        <h2 class="banner-title mt-5 fw-bold text-white">
+                            Kết quả tìm kiếm
+                            @if(request()->get('q'))
+                                cho "{{ request()->get('q') }}"
+                            @endif
+                            @if(request()->get('category') && $selectedCategory)
+                                - Danh mục: {{ $selectedCategory->name }}
+                            @endif
+                            @if(request()->get('album') && $selectedAlbum)
+                                - Album: {{ $selectedAlbum->name }}
+                            @endif
+                        </h2>
+                        @if($sets)
+                            <span class="text-white">Hiển thị {{ $sets->total() }} kết quả</span>
+                        @endif
+                    @else
+                        <h2 class="banner-title mt-5 fw-bold text-white">Tìm kiếm trong thư viện</h2>
+                        <span class="text-white">Khám phá hàng nghìn mẫu thiết kế đẹp</span>
+                    @endif
                 </div>
             </div>
         </div>
