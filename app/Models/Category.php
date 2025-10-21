@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 class Category extends Model
 {
     protected $table = 'categories';
-    protected $fillable = ['name', 'slug', 'image'];
+    protected $fillable = ['name', 'slug', 'image', 'order'];
 
     public function categorySets()
     {

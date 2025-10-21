@@ -16,7 +16,7 @@
             <div class="card-top">
                 <div class="card-title">
                     <i class="fas fa-folder icon-title"></i>
-                    <h5>Danh sách danh mục</h5>
+                    <h5>Danh sách danh mục ( hiển thị 8 danh mục trên trang chủ)</h5>
                 </div>
                 <a href="{{ route('admin.categories.create') }}" class="action-button">
                     <i class="fas fa-plus"></i> Thêm danh mục
@@ -99,6 +99,7 @@
                                     <th class="column-large">Tên danh mục</th>
                                     <th class="column-large">Slug</th>
                                     <th class="column-medium">Ảnh</th>
+                                    <th class="column-small text-center">Thứ tự</th>
                                     <th class="column-small text-center">Số bộ</th>
                                     <th class="column-medium">Ngày tạo</th>
                                     <th class="column-small text-center">Thao tác</th>
@@ -123,6 +124,9 @@
                                             @else
                                                 <span class="text-muted">Không có ảnh</span>
                                             @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="order-badge">{{ $category->order }}</span>
                                         </td>
                                         <td class="text-center">
                                             <span class="stories-count">{{ $category->sets_count }}</span>
@@ -190,6 +194,15 @@
         .stories-count {
             background: #e3f2fd;
             color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .order-badge {
+            background: #e8f5e8;
+            color: #2e7d32;
             padding: 4px 8px;
             border-radius: 12px;
             font-size: 12px;

@@ -73,6 +73,23 @@
                             @enderror
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="order" class="form-label-custom">
+                            Thứ tự
+                            <span class="required-mark">*</span>
+                        </label>
+                        <input type="number" id="order" name="order" class="custom-input {{ $errors->has('order') ? 'input-error' : '' }}" value="{{ old('order', $category->order) }}" min="0" required>
+                        <div class="form-hint">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Số nhỏ hơn sẽ hiển thị trước</span>
+                        </div>
+                        <div class="error-message" id="error-order">
+                            @error('order')
+                                {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-actions">

@@ -12,8 +12,8 @@
     <x-banner-carousel 
         :banners="$banners" 
         :hasBanners="$has_banners" 
+        :categories="$categories"
         :interval="3500" 
-        :showIcons="true"
     />
 
     <!-- Component Giữa -->

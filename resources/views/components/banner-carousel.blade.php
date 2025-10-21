@@ -1,12 +1,20 @@
-@props(['banners', 'hasBanners', 'interval' => 3500, 'showIcons' => true, 'showOverlay' => false, 'overlayContent' => null])
+@props([
+    'banners',
+    'hasBanners',
+    'categories',
+    'interval' => 3500,
+    'showIcons' => true,
+    'showOverlay' => false,
+    'overlayContent' => null,
+])
 
 <div id="bannerCarousel" class="carousel slide banner-slide" data-bs-ride="carousel" data-bs-interval="{{ $interval }}">
     <div class="carousel-inner">
-        @if($hasBanners)
-            @foreach($banners as $index => $banner)
+        @if ($hasBanners)
+            @foreach ($banners as $index => $banner)
                 <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                     <img src="{{ Storage::url($banner->image) }}" class="d-block w-100" alt="Banner {{ $index + 1 }}">
-                    @if($showOverlay && $overlayContent)
+                    @if ($showOverlay && $overlayContent)
                         <div class="carousel-caption d-none d-md-block">
                             {!! $overlayContent !!}
                         </div>
@@ -27,9 +35,18 @@
         @endif
     </div>
 
-    @if($showIcons)
-        <!-- Icon Buttons -->
-        <div class="banner-icons">
+
+    <!-- Icon Buttons -->
+    <div class="banner-icons">
+        @if(isset($categories) && $categories->count() > 0)
+            @foreach($categories as $category)
+                <div class="icon-box">
+                    <img class="rounded-4" src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}">
+                    {{ $category->name }}
+                </div>
+            @endforeach
+        @else
+            <!-- Fallback static icons -->
             <div class="icon-box">
                 <img class="rounded-4" src="{{ asset('/images/d/text-effect-3d.png') }}" alt="">
                 Hiệu ứng chữ (text effect 3D)
@@ -58,6 +75,7 @@
                 <img class="rounded-4" src="{{ asset('/images/d/software.png') }}" alt="">
                 Tổng hợp phần mềm cần thiết
             </div>
-        </div>
-    @endif
+        @endif
+    </div>
+
 </div>

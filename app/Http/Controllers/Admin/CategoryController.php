@@ -43,6 +43,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'order' => 'required|integer|min:0',
         ], [
             'name.required' => 'Tên danh mục là bắt buộc',
             'name.string' => 'Tên danh mục phải là chuỗi',
@@ -52,6 +53,9 @@ class CategoryController extends Controller
             'image.image' => 'Ảnh danh mục phải là ảnh',
             'image.mimes' => 'Ảnh danh mục chỉ chấp nhận jpeg, png, jpg, gif, webp',
             'image.max' => 'Ảnh danh mục không được vượt quá 10MB',
+            'order.required' => 'Thứ tự là bắt buộc',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $imagePath = null;
@@ -63,6 +67,7 @@ class CategoryController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'image' => $imagePath,
+            'order' => $request->order,
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được tạo thành công!');
@@ -94,6 +99,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'order' => 'required|integer|min:0',
         ], [
             'name.required' => 'Tên danh mục là bắt buộc',
             'name.string' => 'Tên danh mục phải là chuỗi',
@@ -102,11 +108,15 @@ class CategoryController extends Controller
             'image.image' => 'Ảnh danh mục phải là ảnh',
             'image.mimes' => 'Ảnh danh mục chỉ chấp nhận jpeg, png, jpg, gif, webp',
             'image.max' => 'Ảnh danh mục không được vượt quá 10MB',
+            'order.required' => 'Thứ tự là bắt buộc',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'order' => $request->order,
         ];
 
         if ($request->hasFile('image')) {
