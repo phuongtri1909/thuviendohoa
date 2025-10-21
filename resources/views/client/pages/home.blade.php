@@ -3,53 +3,18 @@
 @section('description', config('app.name') . ' ')
 @section('keywords', config('app.name'))
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
     <!-- Banner Slide -->
-    <div id="bannerCarousel" class="carousel slide banner-slide" data-bs-ride="carousel" data-bs-interval="3500">
-        <div class="carousel-inner" l'>
-            <div class="carousel-item active">
-                <img src="{{ asset('/images/d/banners/banner1.png') }}" class="d-block w-100" alt="Banner 1">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('/images/d/banners/banner2.png') }}" class="d-block w-100" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="{{ asset('/images/d/banners/banner3.png') }}" class="d-block w-100" alt="Banner 3">
-            </div>
-        </div>
-
-        <!-- Icon Buttons -->
-        <div class="banner-icons">
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/text-effect-3d.png') }}" alt="">
-                Hiệu ứng chữ (text effect 3D)
-            </div>
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/font-vh.png') }}" alt="">
-                Tổng hợp font Việt Hóa
-            </div>
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/mockup-branding.png') }}" alt="">
-                Bộ Mockup Branding
-            </div>
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/effect.png') }}" alt="">
-                Hiệu ứng ánh sáng (effects)
-            </div>
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/adobe.png') }}" alt="">
-                Full bộ Adobe bản quyền
-            </div>
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/plugin-preset.png') }}" alt="">
-                Plugin, Preset, Brushes thiết kế
-            </div>
-            <div class="icon-box">
-                <img class="rounded-4" src="{{ asset('/images/d/software.png') }}" alt="">
-                Tổng hợp phần mềm cần thiết
-            </div>
-        </div>
-    </div>
+    <x-banner-carousel 
+        :banners="$banners" 
+        :hasBanners="$has_banners" 
+        :interval="3500" 
+        :showIcons="true"
+    />
 
     <!-- Component Giữa -->
     <div class="featured-section container-custom">

@@ -4,25 +4,13 @@
 @section('keywords', config('app.name'))
 
 @section('content')
-    <div class="banner-static">
-        <img src="{{ asset('/images/d/banners/banner3.png') }}" class="d-block w-100" alt="Banner">
+    <!-- Banner Slide -->
+    <x-search-banner 
+        :banners="$banners" 
+        :hasBanners="$has_banners" 
+        :interval="4000" 
+    />
 
-        <div class="container-custom container-banner-static">
-            <div class="banner-content">
-                <nav class="banner-breadcrumb" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}">TRANG CHỦ</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Tìm kiếm</li>
-                    </ol>
-                </nav>
-
-                <div class="banner-search-title text-center">
-                    <h2 class="banner-title mt-5 fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q') }}"</h2>
-                    <span class="text-white">Hiển thị 510 kết quả</span>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="search-section">
         <div class="container-custom">

@@ -52,6 +52,14 @@
                         </a>
                     </li>
 
+                    <!-- Quản lý banner -->
+                    <li class="{{ Route::currentRouteNamed('admin.banners.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.banners.index') }}">
+                            <i class="fas fa-images"></i>
+                            <span>Banner</span>
+                        </a>
+                    </li>
+
                     <!-- Quản lý màu sắc -->
                     <li class="{{ Route::currentRouteNamed('admin.colors.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.colors.index') }}">

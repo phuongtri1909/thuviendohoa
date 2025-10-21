@@ -31,7 +31,8 @@
                             <label class="detail-label">Ảnh:</label>
                             <div class="detail-value">
                                 @if ($album->image)
-                                    <img src="{{ Storage::url($album->image) }}" alt="image" style="max-height: 120px; border-radius: 6px;">
+                                    <img src="{{ Storage::url($album->image) }}" alt="image"
+                                        style="max-height: 120px; border-radius: 6px;">
                                 @else
                                     <span class="text-muted">Không có ảnh</span>
                                 @endif
@@ -60,14 +61,56 @@
     </div>
 @endsection
 
-<style>
-    .category-details { padding: 20px; }
-    .detail-section { background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
-    .detail-item { display: flex; margin-bottom: 15px; align-items: flex-start; }
-    .detail-label { font-weight: 600; color: #495057; min-width: 150px; margin-right: 15px; }
-    .detail-value { color: #333; flex: 1; }
-    .stories-count { background: #e3f2fd; color: #1976d2; padding: 4px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; }
-    @media (max-width: 768px) { .detail-item { flex-direction: column; gap: 5px; } .detail-label { min-width: auto; margin-right: 0; } }
-</style>
+@push('styles')
+    <style>
+        .category-details {
+            padding: 20px;
+        }
 
+        .detail-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
 
+        .detail-item {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 150px;
+            margin-right: 15px;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        .stories-count {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .detail-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-label {
+                min-width: auto;
+                margin-right: 0;
+            }
+        }
+    </style>
+@endpush

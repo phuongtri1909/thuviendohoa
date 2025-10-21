@@ -4,15 +4,14 @@ use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\SearchController;
 use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/search', function () {
-    return view('client.pages.search');
-})->name('search');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/blog', function () {
     return view('client.pages.blog');
