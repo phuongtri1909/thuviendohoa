@@ -279,13 +279,10 @@
 
                 // Xác nhận xóa
                 confirmDeleteBtn.addEventListener('click', function() {
-                   
                     if (currentFormId) {
-                        console.log(currentFormId);
                         const form = document.getElementById(currentFormId);
-                        console.log(form);
                         if (form) {
-                            // form.submit();
+                            form.submit();
                         }
                     }
                     closeModal();
