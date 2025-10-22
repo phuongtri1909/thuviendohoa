@@ -78,7 +78,7 @@
                     </li>
 
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-money-bill"></i>
                             <span>Quản lý giao dịch</span>
@@ -89,6 +89,12 @@
                                 <a href="{{ route('admin.banks.index') }}">
                                     <i class="fas fa-bank"></i>
                                     <span>Ngân hàng</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.packages.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.packages.index') }}">
+                                    <i class="fas fa-coins"></i>
+                                    <span>Gói xu</span>
                                 </a>
                             </li>
                         </ul>
