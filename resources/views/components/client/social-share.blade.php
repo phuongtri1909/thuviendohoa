@@ -4,6 +4,7 @@
     'showFavorite' => true,
     'favoriteCount' => null,
     'isFavorited' => false,
+    'setId' => null,
 ])
 
 @php
@@ -191,7 +192,7 @@
     {{-- Favorite Button --}}
     @if ($showFavorite)
         <button type="button" class="favorite-btn {{ $isFavorited ? 'favorited' : '' }} text-xs-1"
-            onclick="toggleFavorite(this)">
+            @if($setId) data-set-id="{{ $setId }}" onclick="toggleFavoriteModal(this)" @else onclick="toggleFavorite(this)" @endif>
             <i class="{{ $isFavorited ? 'fas' : 'far' }} fa-heart"></i>
             <span>Yêu thích</span>
         </button>
@@ -213,7 +214,46 @@
                 icon.classList.remove('far');
                 icon.classList.add('fas');
             }
+        }
 
+        function toggleFavoriteModal(button) {
+    
+            const setId = button.getAttribute('data-set-id');
+            if (!setId) return;
+
+            const icon = button.querySelector('i');
+            const isCurrentlyFavorited = button.classList.contains('favorited');
+
+            fetch(`/search/set/${setId}/favorite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.isFavorited) {
+                        button.classList.add('favorited');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        button.classList.remove('favorited');
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+
+                    const favoriteElement = document.querySelector('#imageModal .modal-favorite span');
+                    if (favoriteElement) {
+                        favoriteElement.textContent = `Yêu thích: ${data.favoriteCount}`;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
     </script>
 @endpush

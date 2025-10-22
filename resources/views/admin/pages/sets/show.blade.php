@@ -55,11 +55,11 @@
                         </div>
                         <div class="detail-item">
                             <label class="detail-label">Từ khóa:</label>
-                            <span class="detail-value">{{ $set->keywords }}</span>
+                            <span class="detail-value">{{ $set->keywords ? (is_string($set->keywords) ? $set->keywords : json_encode($set->keywords)) : 'Không có' }}</span>
                         </div>
                         <div class="detail-item">
                             <label class="detail-label">Định dạng:</label>
-                            <span class="detail-value">{{ $set->formats }}</span>
+                            <span class="detail-value">{{ $set->formats ? (is_string($set->formats) ? $set->formats : json_encode($set->formats)) : 'Không có' }}</span>
                         </div>
                         <div class="detail-item">
                             <label class="detail-label">Mô tả:</label>

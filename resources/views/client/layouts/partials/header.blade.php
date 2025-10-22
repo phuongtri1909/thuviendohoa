@@ -45,7 +45,7 @@
     <meta name="keywords"
         content="@if ($seoKeywords) {{ $seoKeywords }}@elseif(@hasSection('keywords'))@yield('keywords')@else {{ config('app.name') }},park @endif">
     <meta name="author" content="{{ config('app.name') }}">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="index, follow">
     <meta property="og:type" content="website">
     <meta property="og:title"
         content="@if ($seoTitle) {{ $seoTitle }}@elseif(@hasSection('title'))@yield('title')@else Home - {{ config('app.name') }} @endif">

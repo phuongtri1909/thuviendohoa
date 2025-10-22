@@ -100,8 +100,8 @@ class SetController extends Controller
             'image' => $imagePath,
             'drive_url' => $request->drive_url,
             'status' => (bool) $request->status,
-            'keywords' => $request->filled('keywords') ? json_encode($request->input('keywords')) : null,
-            'formats' => $request->filled('formats') ? json_encode($request->input('formats')) : null,
+            'keywords' => $request->filled('keywords') ? $request->input('keywords') : null,
+            'formats' => $request->filled('formats') ? $request->input('formats') : null,
             'size' => $request->size,
             'price' => $request->price,
         ]);
@@ -192,8 +192,8 @@ class SetController extends Controller
             'description' => $request->description,
             'drive_url' => $request->drive_url,
             'status' => (bool) $request->status,
-            'keywords' => $request->filled('keywords') ? json_encode($request->input('keywords')) : null,
-            'formats' => $request->filled('formats') ? json_encode($request->input('formats')) : null,
+            'keywords' => $request->filled('keywords') ? $request->input('keywords') : null,
+            'formats' => $request->filled('formats') ? $request->input('formats') : null,
             'size' => $request->size,
             'price' => $request->price,
         ];

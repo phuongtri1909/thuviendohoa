@@ -1,7 +1,7 @@
 {{-- File: resources/views/components/badge.blade.php --}}
 
 @props([
-    'type' => 'premium', // premium, vip, gold, silver, bronze, success, danger, warning, info
+    'type' => 'premium', // premium, free
     'label' => 'Premium',
     'value' => null,
     'icon' => null,
@@ -10,15 +10,8 @@
 @php
     $colors = [
         'premium' => ['bg' => '#F0A610', 'text' => '#fff'],
-        'vip' => ['bg' => '#9b59b6', 'text' => '#fff'],
-        'gold' => ['bg' => '#f1c40f', 'text' => '#333'],
-        'silver' => ['bg' => '#95a5a6', 'text' => '#fff'],
-        'bronze' => ['bg' => '#cd7f32', 'text' => '#fff'],
-        'success' => ['bg' => '#27ae60', 'text' => '#fff'],
-        'danger' => ['bg' => '#e74c3c', 'text' => '#fff'],
-        'warning' => ['bg' => '#f39c12', 'text' => '#fff'],
-        'info' => ['bg' => '#3498db', 'text' => '#fff'],
-        'primary' => ['bg' => '#2c3e50', 'text' => '#fff'],
+        'free' => ['bg' => '#27ae60', 'text' => '#fff'],
+        
     ];
 
     $color = $colors[$type] ?? $colors['premium'];
@@ -123,7 +116,7 @@
             @if ($icon)
                 <i class="{{ $icon }} custom-badge-icon"></i>
             @endif
-            {{ $value }}
+            {{ $value ? $value . ' XU' : 'XU' }}
         </div>
         <div class="custom-badge-divider"></div>
     @endif

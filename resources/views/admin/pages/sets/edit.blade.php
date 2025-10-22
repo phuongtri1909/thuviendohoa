@@ -99,7 +99,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="keywords" class="form-label-custom">Từ khóa (JSON)</label>
-                                <textarea id="keywords" name="keywords" rows="2" class="custom-input {{ $errors->has('keywords') ? 'input-error' : '' }}">{{ old('keywords', $set->keywords) }}</textarea>
+                                <textarea id="keywords" name="keywords" rows="2" class="custom-input {{ $errors->has('keywords') ? 'input-error' : '' }}">{{ old('keywords', $set->keywords ? (is_string($set->keywords) ? $set->keywords : json_encode($set->keywords)) : '') }}</textarea>
                                 <div class="form-hint"><i class="fas fa-info-circle"></i><span>Ví dụ: ["logo","branding"]</span></div>
                                 <div class="error-message" id="error-keywords">@error('keywords') {{ $message }} @enderror</div>
                             </div>
@@ -107,7 +107,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="formats" class="form-label-custom">Định dạng (JSON)</label>
-                                <textarea id="formats" name="formats" rows="2" class="custom-input {{ $errors->has('formats') ? 'input-error' : '' }}">{{ old('formats', $set->formats) }}</textarea>
+                                <textarea id="formats" name="formats" rows="2" class="custom-input {{ $errors->has('formats') ? 'input-error' : '' }}">{{ old('formats', $set->formats ? (is_string($set->formats) ? $set->formats : json_encode($set->formats)) : '') }}</textarea>
                                 <div class="form-hint"><i class="fas fa-info-circle"></i><span>Ví dụ: ["AI","PSD","PNG"]</span></div>
                                 <div class="error-message" id="error-formats">@error('formats') {{ $message }} @enderror</div>
                             </div>

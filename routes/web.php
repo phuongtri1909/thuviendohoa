@@ -14,6 +14,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::post('/search/filter', [SearchController::class, 'filter'])->name('search.filter');
+Route::get('/search/set/{setId}', [SearchController::class, 'getSetDetails'])->name('search.set.details');
+Route::post('/search/set/{setId}/favorite', [SearchController::class, 'toggleFavorite'])->name('search.set.favorite');
 Route::get('/albums', [AlbumsController::class, 'index'])->name('albums');
 
 Route::get('/blog', function () {

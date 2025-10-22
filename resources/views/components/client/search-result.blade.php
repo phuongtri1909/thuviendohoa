@@ -93,6 +93,7 @@
 @endpush
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const colorBtns = document.querySelectorAll('.color-btn');
@@ -284,17 +285,203 @@
             function attachImageClickEvents() {
                 const imageClickables = document.querySelectorAll('.image-clickable');
                 const modal = document.getElementById('imageModal');
-                const modalImage = document.getElementById('modalImage');
 
                 imageClickables.forEach(img => {
                     img.addEventListener('click', function() {
-                        const imageUrl = this.getAttribute('data-image-url');
-                        modalImage.src = imageUrl;
+                        const setId = this.getAttribute('data-set-id');
+                        loadSetDetails(setId);
                         modal.style.display = 'flex';
                         document.body.style.overflow = 'hidden';
                     });
                 });
             }
+
+            function loadSetDetails(setId) {
+                const modal = document.getElementById('imageModal');
+                const loadingContainer = document.querySelector('#imageModal .modal-loading-container');
+                const modalRow = document.querySelector('#imageModal .modal-content .row');
+                
+                loadingContainer.style.display = 'block';
+                modalRow.style.display = 'none';
+
+                fetch(`/search/set/${setId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingContainer.style.display = 'none';
+                    modalRow.style.display = '';
+                    
+                    if (data.success) {
+                        renderSetModal(data.data);
+                    } else {
+                        loadingContainer.innerHTML = '<div class="col-12 text-center py-5"><h4>Không tìm thấy set</h4></div>';
+                        loadingContainer.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingContainer.innerHTML = '<div class="col-12 text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                    loadingContainer.style.display = 'block';
+                });
+            }
+
+            function renderSetModal(set) {
+                const modalImageContainer = document.querySelector('#imageModal .col-12.col-md-7');
+                if (modalImageContainer && set.photos && set.photos.length > 0) {
+                    if (set.photos.length === 1) {
+                        modalImageContainer.innerHTML = `
+                            <a href="/storage/${set.photos[0].path}" data-fancybox="modal-gallery" data-caption="${set.name}">
+                                <img src="/storage/${set.photos[0].path}" alt="${set.name}" class="img-fluid rounded-4">
+                            </a>
+                            <div class="mt-4">
+                                <div id="social-share-container-${set.id}"></div>
+                            </div>
+                        `;
+                        
+                        setTimeout(() => {
+                            initFancybox();
+                        }, 100);
+                    } else {
+                        let photosHtml = '';
+                        set.photos.forEach(photo => {
+                            photosHtml += `
+                                <div class="modal-photo-item">
+                                    <a href="/storage/${photo.path}" data-fancybox="modal-gallery" data-caption="${set.name}">
+                                        <img src="/storage/${photo.path}" alt="${set.name}" class="img-fluid rounded-4">
+                                    </a>
+                                </div>
+                            `;
+                        });
+                        
+                        modalImageContainer.innerHTML = `
+                            <div class="modal-photos-masonry" id="modal-photos-masonry">
+                                ${photosHtml}
+                            </div>
+                            <div class="mt-4">
+                                <div id="social-share-container-${set.id}"></div>
+                            </div>
+                        `;
+                        
+                        setTimeout(() => {
+                            initModalMasonry();
+                            initFancybox();
+                        }, 100);
+                    }
+                }
+
+                const titleElement = document.querySelector('#imageModal .modal-title');
+                if (titleElement) {
+                    const words = set.name.split(' ');
+                    if (words.length > 1) {
+                        titleElement.innerHTML = `<span class="underline-first">${words[0]}</span> ${words.slice(1).join(' ')}`;
+                    } else {
+                        titleElement.innerHTML = `<span class="underline-first">${set.name}</span>`;
+                    }
+                }
+
+                const descriptionElement = document.querySelector('#imageModal .modal-description');
+                if (descriptionElement) {
+                    descriptionElement.textContent = set.description || 'Không có mô tả';
+                }
+
+                const formatElement = document.querySelector('#imageModal .modal-format span');
+                if (formatElement) {
+                    let formatsText = 'Không xác định';
+                    
+                    if (set.formats) {
+                        try {
+                            const formatsArray = typeof set.formats === 'string' ? JSON.parse(set.formats) : set.formats;
+                            if (Array.isArray(formatsArray) && formatsArray.length > 0) {
+                                formatsText = formatsArray.join(', ');
+                            }
+                        } catch (e) {
+                            console.error('Error parsing formats:', e);
+                        }
+                    }
+                    
+                    formatElement.textContent = `Định dạng: ${formatsText}`;
+                }
+
+                const sizeElement = document.querySelector('#imageModal .modal-size span');
+                if (sizeElement) {
+                    sizeElement.textContent = `Dung lượng: ${set.size + ' MB' || 'Không xác định'}`;
+                }
+
+                const favoriteElement = document.querySelector('#imageModal .modal-favorite span');
+                if (favoriteElement) {
+                    favoriteElement.textContent = `Yêu thích: ${set.bookmarks ? set.bookmarks.length : 0}`;
+                }
+
+                renderSocialShare(set);
+
+                const tagsContainer = document.querySelector('.tags-product-list');
+                if (tagsContainer) {
+                    if (set.tags && set.tags.length > 0) {
+                        const tagsHtml = set.tags.map(tag => `<span class="tags-product-item p-1 p-md-2 text-xs-2">${tag.tag.name}</span>`).join('');
+                        tagsContainer.innerHTML = `
+                            <span class="tags-product p-1 me-2 text-xs-2">
+                                <img src="/images/svg/search-results/tag.svg" alt="">
+                                Tags sản phẩm:
+                            </span>
+                            ${tagsHtml}
+                        `;
+                    } else {
+                        tagsContainer.innerHTML = '';
+                    }
+                }
+
+                const keywordWrapper = document.querySelector('#imageModal .modal-keywords-wrapper');
+                
+                if (keywordWrapper) {
+                    let keywordsContent = '';
+                    
+                    if (set.keywords) {
+                        try {
+                            const keywordsArray = typeof set.keywords === 'string' ? JSON.parse(set.keywords) : set.keywords;
+                            if (Array.isArray(keywordsArray) && keywordsArray.length > 0) {
+                                const firstKeywords = keywordsArray.slice(0, 2).map(keyword => `<a class="color-primary-9" href="#">${keyword}</a>`).join(' ; ');
+                                keywordsContent = firstKeywords;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing keywords:', e);
+                        }
+                    }
+                    
+                    keywordWrapper.innerHTML = `<span class="modal-keywords color-primary-12">Từ khóa:</span> ${keywordsContent} - <span class="color-primary-6">Mẫu #${set.id}</span>`;
+                }
+
+                const badgeContainer = document.querySelector('#imageModal .d-flex.flex-column.mt-4');
+                if (badgeContainer) {
+                    const badgeType = set.type === 'free' ? 'free' : 'premium';
+                    const badgeLabel = set.type === 'free' ? 'Free' : 'Premium';
+                    const badgeValue = set.price || '0';
+                    const badgeColor = set.type === 'free' ? '#27ae60' : '#F0A610';
+                    
+                    badgeContainer.innerHTML = `
+                        <div class="custom-badge">
+                            <div class="custom-badge-value" style="background-color: ${badgeColor}; color: #fff;">
+                                ${badgeValue} XU
+                            </div>
+                            <div class="custom-badge-divider"></div>
+                            <div class="custom-badge-label" style="background-color: ${badgeColor}; color: #fff;">
+                                ${badgeLabel}
+                            </div>
+                        </div>
+                        
+                        <button class="btn-download btn fw-semibold py-3 px-5 d-flex mt-2">
+                            <img src="/images/svg/arrow-right.svg" alt="" class="arrow-original">
+                            <img src="/images/svg/arrow-right.svg" alt="" class="arrow-new">
+                            Tải về máy
+                        </button>
+                    `;
+                }
+            }
+
 
             function initMasonry() {
                 const container = document.getElementById('masonry-container');
@@ -326,6 +513,117 @@
                 }
             }
 
+            function initModalMasonry() {
+                const container = document.getElementById('modal-photos-masonry');
+                if (!container) return;
+                
+                const images = container.querySelectorAll('img');
+                let loadedImages = 0;
+                
+                if (images.length === 0) return;
+                
+                const checkAllImagesLoaded = () => {
+                    loadedImages++;
+                    if (loadedImages === images.length) {
+                        if (typeof Masonry !== 'undefined') {
+                            new Masonry(container, {
+                                itemSelector: '.modal-photo-item',
+                                columnWidth: '.modal-photo-item',
+                                percentPosition: true,
+                                gutter: 15
+                            });
+                        }
+                    }
+                };
+                
+                images.forEach(img => {
+                    if (img.complete) {
+                        checkAllImagesLoaded();
+                    } else {
+                        img.addEventListener('load', checkAllImagesLoaded);
+                        img.addEventListener('error', checkAllImagesLoaded);
+                    }
+                });
+            }
+
+            function initFancybox() {
+                if (typeof $.fancybox !== 'undefined') {
+                    $('[data-fancybox="modal-gallery"]').fancybox({
+                        buttons: [
+                            "slideShow",
+                            "thumbs",
+                            "zoom",
+                            "fullScreen",
+                            "share",
+                            "close"
+                        ],
+                        loop: true,
+                        protect: true,
+                        animationEffect: "fade",
+                        transitionEffect: "slide",
+                        toolbar: true,
+                        infobar: true,
+                        arrows: true
+                    });
+                } else if (typeof Fancybox !== 'undefined') {
+                    Fancybox.bind('[data-fancybox="modal-gallery"]', {
+                        Toolbar: {
+                            display: {
+                                left: ['infobar'],
+                                middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW', 'flipX', 'flipY'],
+                                right: ['slideshow', 'fullscreen', 'thumbs', 'close']
+                            }
+                        }
+                    });
+                }
+            }
+
+            function renderSocialShare(set) {
+                const container = document.querySelector(`#social-share-container-${set.id}`);
+                if (!container) return;
+
+                const shareUrl = `${window.location.origin}/search?set=${set.id}`;
+                const shareTitle = set.name;
+                const encodedUrl = encodeURIComponent(shareUrl);
+                const encodedTitle = encodeURIComponent(shareTitle);
+
+                container.innerHTML = `
+                    <div class="social-share-wrapper">
+                        <div class="social-buttons">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank"
+                                class="social-btn facebook text-xs-1" title="Chia sẻ trên Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>Facebook</span>
+                            </a>
+
+                            <a href="https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}" target="_blank"
+                                class="social-btn twitter text-xs-1" title="Chia sẻ trên Twitter">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </a>
+
+                            <a href="https://www.pinterest.com/pin/create/button/?url=${encodedUrl}" target="_blank"
+                                class="social-btn pinterest text-xs-1" title="Chia sẻ trên Pinterest">
+                                <i class="fab fa-pinterest-p"></i>
+                                <span>Pinterest</span>
+                            </a>
+
+                            <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank"
+                                class="social-btn linkedin text-xs-1" title="Chia sẻ trên LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                                <span>LinkedIn</span>
+                            </a>
+                        </div>
+
+                        <button type="button" class="favorite-btn text-xs-1 ${set.isFavorited ? 'favorited' : ''}" data-set-id="${set.id}" onclick="toggleFavoriteModal(this)">
+                            <i class="${set.isFavorited ? 'fas' : 'far'} fa-heart"></i>
+                            <span>Yêu thích</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+
             function refreshMasonry() {
                 const container = document.getElementById('masonry-container');
                 if (container) {
@@ -335,21 +633,8 @@
                 }
             }
 
-            const imageClickables = document.querySelectorAll('.image-clickable');
             const modal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
             const closeModal = document.getElementById('closeModal');
-
-            imageClickables.forEach(img => {
-                img.addEventListener('click', function() {
-                    const imageUrl = this.getAttribute('data-image-url');
-
-                    modalImage.src = imageUrl;
-
-                    modal.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
-                });
-            });
 
             function closeImageModal() {
                 modal.style.display = 'none';
@@ -371,6 +656,16 @@
             });
 
             initMasonry();
+            attachImageClickEvents();
+            
+            // Auto open modal if set parameter exists in URL
+            const modalUrlParams = new URLSearchParams(window.location.search);
+            const setId = modalUrlParams.get('set');
+            if (setId) {
+                loadSetDetails(setId);
+                document.getElementById('imageModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
 
             let resizeTimeout;
             window.addEventListener('resize', () => {

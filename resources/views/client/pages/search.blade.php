@@ -4,27 +4,14 @@
 @section('keywords', config('app.name'))
 
 @section('content')
-    <x-search-slide-banner 
-        :banners="$banners" 
-        :hasBanners="$has_banners" 
-        :interval="4000"
-        :selectedCategory="$selectedCategory ?? null"
-        :selectedAlbum="$selectedAlbum ?? null"
-        :sets="$sets ?? null"
-    />
+    <x-search-slide-banner :banners="$banners" :hasBanners="$has_banners" :interval="4000" :selectedCategory="$selectedCategory ?? null" :selectedAlbum="$selectedAlbum ?? null"
+        :sets="$sets ?? null" />
 
 
     <div class="search-section">
         <div class="container-custom">
-            <x-client.search-result 
-                :sets="$sets ?? collect()" 
-                :all-colors="$allColors ?? collect()" 
-                :all-software="$allSoftware ?? collect()"
-                :selected-colors="$colors ?? []"
-                :selected-software="$software ?? []"
-                :related-tags="$relatedTags ?? collect()"
-                :selected-tags="$tags ?? []"
-            />
+            <x-client.search-result :sets="$sets ?? collect()" :all-colors="$allColors ?? collect()" :all-software="$allSoftware ?? collect()" :selected-colors="$colors ?? []"
+                :selected-software="$software ?? []" :related-tags="$relatedTags ?? collect()" :selected-tags="$tags ?? []" />
         </div>
     </div>
 
@@ -40,51 +27,67 @@
                 <button class="modal-close" id="closeModal">&times;</button>
 
                 <div class="row">
+                    <div class="modal-loading-container" style="display: none;">
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải...
+                        </div>
+                    </div>
                     <div class="col-12 col-md-7">
                         <img id="modalImage" src="" alt="" class="img-fluid rounded-4">
 
                         <div class="mt-4">
-                            <x-client.social-share :favorite-count="125" :is-favorited="true" />
+                            <x-client.social-share :url="url('/search?set=1')" :title="'Sample Set'" :favorite-count="125" :is-favorited="true" :set-id="1" />
                         </div>
                     </div>
-                    <div class="col-12 col-md-5">
+                    <div class="col-12 col-md-5 modal-content-right">
 
-                        <span class="color-primary-12">Từ khóa:</span> <a class="color-primary-9" href="#">Backdrop -
-                            Phông sự kiện</a> ; <a class="color-primary-9" href="#">Lễ tết</a> - <span
-                            class="color-primary-6">Mẫu #502</span>
+                        <div class="modal-keywords-wrapper">
+                            <span class="modal-keywords color-primary-12">Từ khóa:</span> <a class="color-primary-9"
+                                href="#">Backdrop -
+                                Phông sự kiện</a> ; <a class="color-primary-9" href="#">Lễ tết</a> - <span
+                                class="color-primary-6">Mẫu #502</span>
+                        </div>
 
                         @php
                             $title = 'Khánh lịch 2024 Ất Tỵ với họa tiết vàng';
                             $words = explode(' ', $title, 2);
                         @endphp
 
-                        <h4 class="color-primary text-1lg mt-2">
+                        <h4 class="modal-title color-primary text-1lg my-2">
                             <span class="underline-first">{{ $words[0] }}</span>
                             {{ isset($words[1]) ? ' ' . $words[1] : '' }}
                         </h4>
 
 
-                        <p class="color-primary-12">
+                        <p class="modal-description color-primary-12">
                             Chính sách và thời gian bảo hành sản phẩm sẽ được ghi trong thông tin chi tiết của sản phẩm..
                         </p>
 
                         <div class="color-primary-12">
-                            <div class="modal-info-item">
+                            <div class="modal-info-item modal-format">
                                 <img src="{{ asset('images/svg/search-results/format.svg') }}" alt="">
                                 <span>Định dạng: Illustrator, eps</span>
                             </div>
-                            <div class="modal-info-item">
+                            <div class="modal-info-item modal-size">
                                 <img src="{{ asset('images/svg/search-results/capacity.svg') }}" alt="">
                                 <span>Dung lượng: 2.62M</span>
                             </div>
-                            <div class="modal-info-item">
+                            <div class="modal-info-item modal-favorite">
                                 <img src="{{ asset('images/svg/search-results/whitelist.svg') }}" alt="">
                                 <span>Yêu thích: 36</span>
                             </div>
                         </div>
 
                         <div class="d-flex flex-column mt-4">
-                            <x-client.badge value="5 XU" label="Premium" />
+                            <div class="custom-badge">
+                                <div class="custom-badge-value" style="background-color: #F0A610; color: #fff;">
+                                    5 XU
+                                </div>
+                                <div class="custom-badge-divider"></div>
+                                <div class="custom-badge-label" style="background-color: #F0A610; color: #fff;">
+                                    Premium
+                                </div>
+                            </div>
 
                             <button class="btn-download btn fw-semibold py-3 px-5 d-flex mt-2">
                                 <img src="{{ asset('images/svg/arrow-right.svg') }}" alt="" class="arrow-original">
@@ -145,17 +148,17 @@
                 </div>
 
                 <div class="mt-3">
-                    
+
                     <div class="tags-product-list align-items-center">
                         <span class="tags-product p-1 me-2 text-xs-2">
                             <img src="{{ asset('images/svg/search-results/tag.svg') }}" alt="">
                             Tags sản phẩm:
                         </span>
-                        @for ($i = 0; $i < 20; $i++)
-                            <span class="tags-product-item p-1 p-md-2 text-xs-2">
-                                Backgroup
-                            </span>
-                        @endfor
+
+                        <span class="tags-product-item p-1 p-md-2 text-xs-2">
+                            Backgroup
+                        </span>
+
                     </div>
                 </div>
 
@@ -256,4 +259,13 @@
             });
         });
     </script>
+@endpush
+
+@push('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+@endpush
+
+@push('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 @endpush

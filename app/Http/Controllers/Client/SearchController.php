@@ -8,6 +8,7 @@ use App\Helpers\BannerHelper;
 use App\Models\Set;
 use App\Models\Category;
 use App\Models\Album;
+use App\Models\Bookmark;
 use Illuminate\Database\Eloquent\Builder;
 
 class SearchController extends Controller
@@ -24,15 +25,11 @@ class SearchController extends Controller
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
         
-        $setsQuery = Set::with([
+        $setsQuery = Set::select('id', 'name', 'image', 'created_at')
+            ->with([
                 'photos' => function($query) {
                     $query->select('id', 'set_id', 'path')->take(1);
-                },
-                'categories.category:id,name,slug',
-                'albums.album:id,name,slug',
-                'colors.color:id,value,name',
-                'tags.tag:id,name,slug',
-                'software.software:id,name'
+                }
             ])
             ->where('status', Set::STATUS_ACTIVE);
         
@@ -168,15 +165,11 @@ class SearchController extends Controller
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
         
-        $setsQuery = Set::with([
+        $setsQuery = Set::select('id', 'name', 'image', 'created_at')
+            ->with([
                 'photos' => function($query) {
                     $query->select('id', 'set_id', 'path')->take(1);
-                },
-                'categories.category:id,name,slug',
-                'albums.album:id,name,slug',
-                'colors.color:id,value,name',
-                'tags.tag:id,name,slug',
-                'software.software:id,name'
+                }
             ])
             ->where('status', Set::STATUS_ACTIVE);
         
@@ -230,6 +223,94 @@ class SearchController extends Controller
             'success' => true,
             'html' => view('components.client.search-results-ajax', compact('sets'))->render(),
             'count' => $sets->total()
+        ]);
+    }
+
+    public function getSetDetails(Request $request, $setId)
+    {
+        $userId = auth()->id();
+        
+        $set = Set::with([
+                'photos' => function($query) {
+                    $query->select('id', 'set_id', 'path');
+                },
+                'tags.tag:id,name,slug',
+                'categories.category:id,name,slug',
+                'albums.album:id,name,slug',
+                'colors.color:id,value,name',
+                'software.software:id,name',
+                'bookmarks' => function($query) {
+                    $query->select('id', 'set_id', 'user_id');
+                }
+            ])
+                ->select('id', 'name', 'description', 'formats', 'size', 'image', 'keywords', 'type', 'price')
+            ->where('id', $setId)
+            ->where('status', Set::STATUS_ACTIVE)
+            ->first();
+
+        if (!$set) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Set not found'
+            ], 404);
+        }
+
+        $isFavorited = false;
+        if ($userId) {
+            $isFavorited = Bookmark::where('user_id', $userId)
+                ->where('set_id', $setId)
+                ->exists();
+        }
+
+        $set->isFavorited = $isFavorited;
+
+        return response()->json([
+            'success' => true,
+            'data' => $set
+        ]);
+    }
+
+    public function toggleFavorite(Request $request, $setId)
+    {
+        $set = Set::find($setId);
+        
+        if (!$set) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Set not found'
+            ], 404);
+        }
+
+        $userId = auth()->id();
+        
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated'
+            ], 401);
+        }
+
+        $existingBookmark = Bookmark::where('user_id', $userId)
+            ->where('set_id', $setId)
+            ->first();
+
+        if ($existingBookmark) {
+            $existingBookmark->delete();
+            $isFavorited = false;
+        } else {
+            Bookmark::create([
+                'user_id' => $userId,
+                'set_id' => $setId
+            ]);
+            $isFavorited = true;
+        }
+
+        $favoriteCount = Bookmark::where('set_id', $setId)->count();
+
+        return response()->json([
+            'success' => true,
+            'isFavorited' => $isFavorited,
+            'favoriteCount' => $favoriteCount
         ]);
     }
 }

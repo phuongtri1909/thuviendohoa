@@ -120,6 +120,43 @@
     color: white !important;
 }
 
+/* Modal photos masonry */
+.modal-photos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.modal-photos-container .masonry-item {
+    width: 100%;
+    margin: 0;
+}
+
+.modal-photos-container .image-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.modal-photos-container .image-card:hover {
+    transform: translateY(-2px);
+}
+
+.modal-photos-container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Fancybox customization */
+.fancybox-image {
+    border-radius: 8px;
+}
+
 /* Nút không có logo_hover/logo_active - hiện border */
 .software-btn.no-logo-hover:hover {
     border: 2px solid #007bff !important;
@@ -361,6 +398,7 @@
     cursor: not-allowed;
 }
 
+
 @media (max-width: 576px) {
     .pagination-wrapper {
         gap: 10px;
@@ -369,5 +407,176 @@
     .page-link {
         padding: 6px 10px;
         font-size: 14px;
+    }
+}
+
+.modal-photos-masonry {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.modal-photo-item {
+    width: calc(50% - 7.5px);
+    margin-bottom: 15px;
+}
+
+.modal-photo-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.modal-photo-item img:hover {
+    transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+    .modal-photo-item {
+        width: calc(33.333% - 10px);
+    }
+}
+
+@media (max-width: 767px) {
+    .modal-photo-item {
+        width: calc(50% - 7.5px);
+    }
+}
+
+.modal-photo-item a {
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.modal-photo-item a:hover {
+    transform: scale(1.05);
+}
+
+.modal-photo-item a img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.fancybox-container {
+    z-index: 999999 !important;
+}
+
+.fancybox-bg {
+    z-index: 999998 !important;
+}
+
+.fancybox-inner {
+    z-index: 999999 !important;
+}
+
+.fancybox-toolbar {
+    z-index: 1000000 !important;
+}
+
+.fancybox-thumbs {
+    z-index: 1000001 !important;
+}
+
+.fancybox-thumbs-y {
+    z-index: 1000001 !important;
+}
+
+.fancybox-button {
+    z-index: 1000002 !important;
+}
+
+.fancybox-button--thumbs {
+    z-index: 1000002 !important;
+}
+
+/* Badge Styles */
+.custom-badge {
+    display: inline-flex;
+    align-items: stretch;
+    font-weight: 600;
+    font-size: 16px;
+    height: 32px;
+    position: relative;
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.custom-badge-value {
+    background-color: #F0A610;
+    color: #fff;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 4px 0 0 4px;
+    font-size: 17px;
+    font-weight: 700;
+    min-width: 55px;
+}
+
+.custom-badge-divider {
+    width: 2px;
+    background-color: rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.custom-badge-label {
+    background-color: #F0A610;
+    color: #fff;
+    padding: 0 40px 0 5px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 100px;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 70% 50%, calc(100% - 20px) 100%, 0 100%);
+}
+
+.custom-badge-label::after {
+    display: none;
+}
+
+.custom-badge-label::before {
+    display: none;
+}
+
+.custom-badge-icon {
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .custom-badge {
+        font-size: 14px;
+        height: 40px;
+    }
+
+    .custom-badge-value {
+        padding: 0 16px;
+        font-size: 16px;
+        min-width: 70px;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-badge {
+        font-size: 12px;
+        height: 34px;
+    }
+
+    .custom-badge-value {
+        padding: 0 12px;
+        font-size: 14px;
+        min-width: 60px;
+    }
+
+    .custom-badge-label {
+        padding: 0 30px 0 5px;
+        font-size: 14px;
+        min-width: 100px;
     }
 }

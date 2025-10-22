@@ -196,24 +196,6 @@
     transform: scale(1.1);
 }
 
-.modal-image {
-    width: 100%;
-    height: auto;
-    max-height: 80vh;
-    object-fit: contain;
-    display: block;
-
-}
-
-.modal-title {
-    padding: 15px 20px;
-    background: white;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    border-top: 1px solid #eee;
-}
-
 /* Tags product layout */
 .tags-product-list {
     display: flex;
