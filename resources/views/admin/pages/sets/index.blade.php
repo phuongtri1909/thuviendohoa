@@ -90,6 +90,7 @@
                                     <th class="column-small">Trạng thái</th>
                                     <th class="column-small">Kích thước</th>
                                     <th class="column-small">Giá</th>
+                                    <th class="column-small">Nổi bật</th>
                                     <th class="column-medium">Ngày tạo</th>
                                     <th class="column-small text-center">Thao tác</th>
                                 </tr>
@@ -110,6 +111,13 @@
                                         <td>{{ $set->status ? 'Kích hoạt' : 'Tắt' }}</td>
                                         <td>{{ $set->size }}</td>
                                         <td>{{ number_format($set->price) }}</td>
+                                        <td>
+                                            @if($set->is_featured)
+                                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Có</span>
+                                            @else
+                                                <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Không</span>
+                                            @endif
+                                        </td>
                                         <td class="category-date">{{ $set->created_at->format('d/m/Y H:i') }}</td>
                                         <td>
                                             <div class="action-buttons-wrapper">

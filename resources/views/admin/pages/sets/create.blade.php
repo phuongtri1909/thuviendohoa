@@ -59,6 +59,18 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
+                                    <label for="is_featured" class="checkbox-label">Nổi bật</label>
+                                </div>
+                                <div class="error-message" id="error-is_featured">@error('is_featured') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="image" class="form-label-custom">Logo (ảnh) <span class="required-mark">*</span></label>
                                 <input type="file" id="image" name="image" accept="image/*" class="custom-input {{ $errors->has('image') ? 'input-error' : '' }}" required>
                                 <div class="form-hint"><i class="fas fa-info-circle"></i><span>Định dạng: jpeg, png, jpg, gif, webp. Tối đa 10MB</span></div>

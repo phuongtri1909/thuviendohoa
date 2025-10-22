@@ -54,6 +54,16 @@
                             <span class="detail-value">{{ number_format($set->price) }}</span>
                         </div>
                         <div class="detail-item">
+                            <label class="detail-label">Nổi bật:</label>
+                            <span class="detail-value">
+                                @if($set->is_featured)
+                                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Có</span>
+                                @else
+                                    <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Không</span>
+                                @endif
+                            </span>
+                        </div>
+                        <div class="detail-item">
                             <label class="detail-label">Từ khóa:</label>
                             <span class="detail-value">{{ $set->keywords ? (is_string($set->keywords) ? $set->keywords : json_encode($set->keywords)) : 'Không có' }}</span>
                         </div>

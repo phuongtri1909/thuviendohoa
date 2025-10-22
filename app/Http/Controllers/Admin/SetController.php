@@ -64,6 +64,7 @@ class SetController extends Controller
             'formats' => 'nullable',
             'size' => 'required|numeric',
             'price' => 'nullable|integer',
+            'is_featured' => 'nullable|boolean',
             'photos' => 'required|array|min:1',
             'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'album_ids' => 'nullable|array',
@@ -104,6 +105,7 @@ class SetController extends Controller
             'formats' => $request->filled('formats') ? $request->input('formats') : null,
             'size' => $request->size,
             'price' => $request->price,
+            'is_featured' => (bool) $request->is_featured,
         ]);
 
         // create relations
@@ -171,6 +173,7 @@ class SetController extends Controller
             'formats' => 'nullable',
             'size' => 'required|numeric',
             'price' => 'nullable|integer',
+            'is_featured' => 'nullable|boolean',
             'photos' => 'nullable|array',
             'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'album_ids' => 'nullable|array',
@@ -196,6 +199,7 @@ class SetController extends Controller
             'formats' => $request->filled('formats') ? $request->input('formats') : null,
             'size' => $request->size,
             'price' => $request->price,
+            'is_featured' => (bool) $request->is_featured,
         ];
 
         if ($request->hasFile('image')) {
