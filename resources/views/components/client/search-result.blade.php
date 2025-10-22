@@ -298,11 +298,24 @@
 
             function loadSetDetails(setId) {
                 const modal = document.getElementById('imageModal');
-                const loadingContainer = document.querySelector('#imageModal .modal-loading-container');
-                const modalRow = document.querySelector('#imageModal .modal-content .row');
+                if (modal) {
+                    modal.scrollTop = 0;
+                }
                 
-                loadingContainer.style.display = 'block';
-                modalRow.style.display = 'none';
+                const modalContent = document.querySelector('#imageModal .modal-content');
+                if (modalContent) {
+                    modalContent.style.opacity = '0.5';
+                    modalContent.style.pointerEvents = 'none';
+                }
+                
+                let loadingSpinner = modal.querySelector('.loading-spinner-overlay');
+                if (!loadingSpinner) {
+                    loadingSpinner = document.createElement('div');
+                    loadingSpinner.className = 'loading-spinner-overlay';
+                    loadingSpinner.innerHTML = '<div class="spinner"><i class="fas fa-spinner fa-spin fa-3x"></i></div>';
+                    modal.appendChild(loadingSpinner);
+                }
+                loadingSpinner.style.display = 'flex';
 
                 fetch(`/search/set/${setId}`, {
                     method: 'GET',
@@ -313,24 +326,33 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    loadingContainer.style.display = 'none';
-                    modalRow.style.display = '';
+                    if (loadingSpinner) {
+                        loadingSpinner.style.display = 'none';
+                    }
+                    if (modalContent) {
+                        modalContent.style.opacity = '1';
+                        modalContent.style.pointerEvents = 'auto';
+                    }
                     
                     if (data.success) {
-                        renderSetModal(data.data);
+                        renderSetModal(data.data, data.relatedSets, data.featuredSets);
                     } else {
-                        loadingContainer.innerHTML = '<div class="col-12 text-center py-5"><h4>Không tìm thấy set</h4></div>';
-                        loadingContainer.style.display = 'block';
+                        console.error('Error:', data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    loadingContainer.innerHTML = '<div class="col-12 text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
-                    loadingContainer.style.display = 'block';
+                    if (loadingSpinner) {
+                        loadingSpinner.style.display = 'none';
+                    }
+                    if (modalContent) {
+                        modalContent.style.opacity = '1';
+                        modalContent.style.pointerEvents = 'auto';
+                    }
                 });
             }
 
-            function renderSetModal(set) {
+            function renderSetModal(set, relatedSets = [], featuredSets = []) {
                 const modalImageContainer = document.querySelector('#imageModal .col-12.col-md-7');
                 if (modalImageContainer && set.photos && set.photos.length > 0) {
                     if (set.photos.length === 1) {
@@ -374,6 +396,7 @@
                     }
                 }
 
+                // Update title
                 const titleElement = document.querySelector('#imageModal .modal-title');
                 if (titleElement) {
                     const words = set.name.split(' ');
@@ -384,11 +407,13 @@
                     }
                 }
 
+                // Update description
                 const descriptionElement = document.querySelector('#imageModal .modal-description');
                 if (descriptionElement) {
                     descriptionElement.textContent = set.description || 'Không có mô tả';
                 }
 
+                // Update format
                 const formatElement = document.querySelector('#imageModal .modal-format span');
                 if (formatElement) {
                     let formatsText = 'Không xác định';
@@ -407,18 +432,22 @@
                     formatElement.textContent = `Định dạng: ${formatsText}`;
                 }
 
+                // Update size
                 const sizeElement = document.querySelector('#imageModal .modal-size span');
                 if (sizeElement) {
-                    sizeElement.textContent = `Dung lượng: ${set.size + ' MB' || 'Không xác định'}`;
+                    sizeElement.textContent = `Dung lượng: ${set.size ? set.size + ' MB' : 'Không xác định'}`;
                 }
 
+                // Update favorite count
                 const favoriteElement = document.querySelector('#imageModal .modal-favorite span');
                 if (favoriteElement) {
                     favoriteElement.textContent = `Yêu thích: ${set.bookmarks ? set.bookmarks.length : 0}`;
                 }
 
+                // Render social share
                 renderSocialShare(set);
 
+                // Update tags
                 const tagsContainer = document.querySelector('.tags-product-list');
                 if (tagsContainer) {
                     if (set.tags && set.tags.length > 0) {
@@ -435,6 +464,7 @@
                     }
                 }
 
+                // Update keywords
                 const keywordWrapper = document.querySelector('#imageModal .modal-keywords-wrapper');
                 
                 if (keywordWrapper) {
@@ -455,6 +485,7 @@
                     keywordWrapper.innerHTML = `<span class="modal-keywords color-primary-12">Từ khóa:</span> ${keywordsContent} - <span class="color-primary-6">Mẫu #${set.id}</span>`;
                 }
 
+                // Update badge
                 const badgeContainer = document.querySelector('#imageModal .d-flex.flex-column.mt-4');
                 if (badgeContainer) {
                     const badgeType = set.type === 'free' ? 'free' : 'premium';
@@ -480,7 +511,96 @@
                         </button>
                     `;
                 }
+                
+                const relatedSetsContainer = document.querySelector('#imageModal #sliderWrapper1');
+                if (relatedSetsContainer && relatedSets && relatedSets.length > 0) {
+                    relatedSetsContainer.innerHTML = '';
+                    relatedSets.forEach(relatedSet => {
+                        const imageSrc = `/storage/${relatedSet.image}`;
+                        
+                        const slideItem = document.createElement('div');
+                        slideItem.className = 'slide-item';
+                        slideItem.innerHTML = `
+                            <a href="#" class="related-set-link" data-set-id="${relatedSet.id}">
+                                <img src="${imageSrc}" alt="${relatedSet.name}" loading="lazy">
+                            </a>
+                        `;
+                        relatedSetsContainer.appendChild(slideItem);
+                    });
+                    
+                    if (window.ImageSlider) {
+                        new window.ImageSlider('sliderWrapper1', 'prevBtn1', 'nextBtn1');
+                    }
+                }
+                
+                const featuredSetsContainer = document.querySelector('#imageModal #sliderAuto1');
+                if (featuredSetsContainer && featuredSets && featuredSets.length > 0) {
+                    featuredSetsContainer.innerHTML = '';
+                    featuredSets.forEach(featuredSet => {
+                        const imageSrc = `/storage/${featuredSet.image}`;
+                        
+                        const slideItem = document.createElement('div');
+                        slideItem.className = 'slide-item';
+                        slideItem.innerHTML = `
+                            <a href="#" class="featured-set-link" data-set-id="${featuredSet.id}">
+                                <img src="${imageSrc}" alt="${featuredSet.name}" loading="lazy">
+                            </a>
+                        `;
+                        featuredSetsContainer.appendChild(slideItem);
+                    });
+                    
+                    const autoSliderHost = document.querySelector('#imageModal .image-slider-auto');
+                    if (autoSliderHost && window.AutoImageSlider) {
+                        new window.AutoImageSlider(autoSliderHost, 'sliderAuto1');
+                    }
+                }
             }
+
+            function renderSocialShare(set) {
+                const container = document.querySelector(`#social-share-container-${set.id}`);
+                if (!container) return;
+
+                const shareUrl = `${window.location.origin}/search?set=${set.id}`;
+                const shareTitle = set.name;
+                const encodedUrl = encodeURIComponent(shareUrl);
+                const encodedTitle = encodeURIComponent(shareTitle);
+
+                container.innerHTML = `
+                    <div class="social-share-wrapper">
+                        <div class="social-buttons">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank"
+                                class="social-btn facebook text-xs-1" title="Chia sẻ trên Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>Facebook</span>
+                            </a>
+
+                            <a href="https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}" target="_blank"
+                                class="social-btn twitter text-xs-1" title="Chia sẻ trên Twitter">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </a>
+
+                            <a href="https://www.pinterest.com/pin/create/button/?url=${encodedUrl}" target="_blank"
+                                class="social-btn pinterest text-xs-1" title="Chia sẻ trên Pinterest">
+                                <i class="fab fa-pinterest-p"></i>
+                                <span>Pinterest</span>
+                            </a>
+
+                            <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank"
+                                class="social-btn linkedin text-xs-1" title="Chia sẻ trên LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                                <span>LinkedIn</span>
+                            </a>
+                        </div>
+
+                        <button type="button" class="favorite-btn text-xs-1 ${set.isFavorited ? 'favorited' : ''}" data-set-id="${set.id}" onclick="toggleFavoriteModal(this)">
+                            <i class="${set.isFavorited ? 'fas' : 'far'} fa-heart"></i>
+                            <span>Yêu thích</span>
+                        </button>
+                    </div>
+                `;
+            }
+
 
 
             function initMasonry() {
@@ -578,50 +698,6 @@
                 }
             }
 
-            function renderSocialShare(set) {
-                const container = document.querySelector(`#social-share-container-${set.id}`);
-                if (!container) return;
-
-                const shareUrl = `${window.location.origin}/search?set=${set.id}`;
-                const shareTitle = set.name;
-                const encodedUrl = encodeURIComponent(shareUrl);
-                const encodedTitle = encodeURIComponent(shareTitle);
-
-                container.innerHTML = `
-                    <div class="social-share-wrapper">
-                        <div class="social-buttons">
-                            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank"
-                                class="social-btn facebook text-xs-1" title="Chia sẻ trên Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                                <span>Facebook</span>
-                            </a>
-
-                            <a href="https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}" target="_blank"
-                                class="social-btn twitter text-xs-1" title="Chia sẻ trên Twitter">
-                                <i class="fab fa-twitter"></i>
-                                <span>Twitter</span>
-                            </a>
-
-                            <a href="https://www.pinterest.com/pin/create/button/?url=${encodedUrl}" target="_blank"
-                                class="social-btn pinterest text-xs-1" title="Chia sẻ trên Pinterest">
-                                <i class="fab fa-pinterest-p"></i>
-                                <span>Pinterest</span>
-                            </a>
-
-                            <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank"
-                                class="social-btn linkedin text-xs-1" title="Chia sẻ trên LinkedIn">
-                                <i class="fab fa-linkedin-in"></i>
-                                <span>LinkedIn</span>
-                            </a>
-                        </div>
-
-                        <button type="button" class="favorite-btn text-xs-1 ${set.isFavorited ? 'favorited' : ''}" data-set-id="${set.id}" onclick="toggleFavoriteModal(this)">
-                            <i class="${set.isFavorited ? 'fas' : 'far'} fa-heart"></i>
-                            <span>Yêu thích</span>
-                        </button>
-                    </div>
-                `;
-            }
 
 
             function refreshMasonry() {
@@ -658,7 +734,6 @@
             initMasonry();
             attachImageClickEvents();
             
-            // Auto open modal if set parameter exists in URL
             const modalUrlParams = new URLSearchParams(window.location.search);
             const setId = modalUrlParams.get('set');
             if (setId) {
@@ -666,6 +741,20 @@
                 document.getElementById('imageModal').style.display = 'flex';
                 document.body.style.overflow = 'hidden';
             }
+            
+            document.addEventListener('click', function(e) {
+                const relatedLink = e.target.closest('.related-set-link');
+                const featuredLink = e.target.closest('.featured-set-link');
+                
+                if (relatedLink || featuredLink) {
+                    e.preventDefault();
+                    const link = relatedLink || featuredLink;
+                    const setId = link.getAttribute('data-set-id');
+                    if (setId) {
+                        loadSetDetails(setId);
+                    }
+                }
+            });
 
             let resizeTimeout;
             window.addEventListener('resize', () => {

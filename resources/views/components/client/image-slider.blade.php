@@ -44,11 +44,11 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
             height: var(--slide-height, 260px);
+            width: var(--slide-height, 260px);
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
-            width: auto;
             box-sizing: border-box;
         }
 
@@ -58,9 +58,9 @@
         }
 
         .slide-item img {
+            width: 100%;
             height: 100%;
-            width: auto;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
         }
 
@@ -223,6 +223,8 @@
                 }
             }
 
+            window.ImageSlider = ImageSlider;
+            
             new ImageSlider('{{ $id ?? 'sliderWrapper' }}', '{{ $prevId ?? 'prevBtn' }}',
                 '{{ $nextId ?? 'nextBtn' }}');
         });

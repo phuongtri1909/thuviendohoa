@@ -54,6 +54,7 @@
 
         .facebook:hover {
             background-color: #166fe5;
+            color: white;
         }
 
         /* Twitter */
@@ -63,6 +64,7 @@
 
         .twitter:hover {
             background-color: #1a8cd8;
+            color: white;
         }
 
         /* Pinterest */
@@ -72,6 +74,7 @@
 
         .pinterest:hover {
             background-color: #cc001a;
+            color: white;
         }
 
         /* LinkedIn */
@@ -81,6 +84,7 @@
 
         .linkedin:hover {
             background-color: #085196;
+            color: white;
         }
 
         .social-btn i {

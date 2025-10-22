@@ -44,18 +44,18 @@
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             height: var(--slide-height);
+            width: var(--slide-height);
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
-            width: auto;
             box-sizing: border-box;
         }
 
         .image-slider-auto .slide-item img {
+            width: 100%;
             height: 100%;
-            width: auto;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
         }
 
@@ -233,6 +233,8 @@
                 }
             }
 
+            window.AutoImageSlider = AutoImageSlider;
+            
             document.querySelectorAll('.image-slider-auto').forEach((host, idx) => {
                 const wrapperId = host.querySelector('.slider-wrapper').id || `sliderAutoWrapper_${idx}`;
                 new AutoImageSlider(host, wrapperId);

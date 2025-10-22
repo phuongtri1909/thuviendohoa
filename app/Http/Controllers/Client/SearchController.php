@@ -264,9 +264,48 @@ class SearchController extends Controller
 
         $set->isFavorited = $isFavorited;
 
+        $relatedSets = Set::with([
+                'photos' => function($query) {
+                    $query->select('id', 'set_id', 'path')->take(1);
+                }
+            ])
+            ->select('id', 'name', 'image', 'created_at')
+            ->where('status', Set::STATUS_ACTIVE)
+            ->where('id', '!=', $setId)
+            ->where(function($query) use ($set) {
+                $categoryIds = $set->categories->pluck('category_id');
+                if ($categoryIds->isNotEmpty()) {
+                    $query->whereHas('categories', function($q) use ($categoryIds) {
+                        $q->whereIn('category_id', $categoryIds);
+                    });
+                }
+                
+                $albumIds = $set->albums->pluck('album_id');
+                if ($albumIds->isNotEmpty()) {
+                    $query->orWhereHas('albums', function($q) use ($albumIds) {
+                        $q->whereIn('album_id', $albumIds);
+                    });
+                }
+            })
+            ->limit(20)
+            ->get();
+
+        $featuredSets = Set::with([
+                'photos' => function($query) {
+                    $query->select('id', 'set_id', 'path')->take(1);
+                }
+            ])
+            ->select('id', 'name', 'image', 'created_at')
+            ->where('status', Set::STATUS_ACTIVE)
+            ->where('is_featured', true)
+            ->limit(20)
+            ->get();
+
         return response()->json([
             'success' => true,
-            'data' => $set
+            'data' => $set,
+            'relatedSets' => $relatedSets,
+            'featuredSets' => $featuredSets
         ]);
     }
 

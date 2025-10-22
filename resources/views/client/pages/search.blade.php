@@ -27,11 +27,6 @@
                 <button class="modal-close" id="closeModal">&times;</button>
 
                 <div class="row">
-                    <div class="modal-loading-container" style="display: none;">
-                        <div class="col-12 text-center py-5">
-                            <i class="fas fa-spinner fa-spin"></i> Đang tải...
-                        </div>
-                    </div>
                     <div class="col-12 col-md-7">
                         <img id="modalImage" src="" alt="" class="img-fluid rounded-4">
 
@@ -182,7 +177,6 @@
                                     $height = 300;
                                 }
 
-                                // Tạo URL hiển thị
                                 $relativePath = str_replace(public_path(), '', $path);
                                 $src = asset(ltrim($relativePath, '/'));
 
