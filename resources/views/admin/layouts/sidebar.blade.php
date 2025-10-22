@@ -19,14 +19,7 @@
                         </a>
                     </li>
 
-                    <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.banner-homes.*', 'admin.image-homes.*', 'admin.general-introductions.*', 'admin.intro-features.*', 'admin.intro-locations.*', 'admin.slide-locations.*', 'admin.intro-images.*']) ? 'open' : '' }}">
-                        <a href="#" class="submenu-toggle">
-                            <i class="fas fa-home"></i>
-                            <span>Trang chủ</span>
-                            <i class="fas fa-chevron-down submenu-arrow"></i>
-                        </a>
-                    </li>
+                    
 
                     <!-- Quản lý danh mục -->
                     <li class="{{ Route::currentRouteNamed('admin.categories.*') ? 'active' : '' }}">
@@ -82,6 +75,23 @@
                             <i class="fas fa-code"></i>
                             <span>Phần mềm</span>
                         </a>
+                    </li>
+
+                    <li
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*']) ? 'open' : '' }}">
+                        <a href="#" class="submenu-toggle">
+                            <i class="fas fa-money-bill"></i>
+                            <span>Quản lý giao dịch</span>
+                            <i class="fas fa-chevron-down submenu-arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li class="{{ Route::currentRouteNamed('admin.banks.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.banks.index') }}">
+                                    <i class="fas fa-bank"></i>
+                                    <span>Ngân hàng</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <!-- Cấu hình hệ thống -->

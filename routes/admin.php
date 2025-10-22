@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoSiteController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\BankController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -55,5 +56,7 @@ Route::group(['as' => 'admin.'], function () {
         Route::resource('sets', SetController::class);
 
         Route::resource('banners', BannerController::class);
+
+        Route::resource('banks', BankController::class);
     });
 });
