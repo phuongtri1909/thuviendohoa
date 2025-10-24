@@ -58,7 +58,7 @@ Route::group(['as' => 'admin.'], function () {
 
         Route::resource('banners', BannerController::class);
 
-        Route::resource('banks', BankController::class);
+        Route::resource('banks', BankController::class)->except(['create', 'store', 'destroy']);
 
         Route::resource('packages', PackageController::class)->only(['index', 'edit', 'update']);
     });

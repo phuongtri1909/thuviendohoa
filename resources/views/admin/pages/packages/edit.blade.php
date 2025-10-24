@@ -135,14 +135,14 @@
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <label for="expiry" class="form-label-custom">
-                                        Hạn sử dụng (ngày) <span class="required-mark">*</span>
+                                        Hạn sử dụng (tháng) <span class="required-mark">*</span>
                                     </label>
                                     <input type="number" id="expiry" name="expiry" 
                                            class="custom-input {{ $errors->has('expiry') ? 'input-error' : '' }}"
                                            value="{{ old('expiry', $package->expiry) }}" min="1" required>
                                     <div class="form-hint">
                                         <i class="fas fa-info-circle"></i>
-                                        <span>Số ngày xu có hiệu lực (tối thiểu 1 ngày)</span>
+                                        <span>Số tháng xu có hiệu lực (tối thiểu 1 tháng)</span>
                                     </div>
                                     <div class="error-message" id="error-expiry">
                                         @error('expiry')

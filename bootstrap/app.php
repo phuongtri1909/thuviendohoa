@@ -28,7 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\CheckActive::class,
         ]);
 
-        $middleware->validateCsrfTokens(except: []);
+        $middleware->validateCsrfTokens(except: [
+            'payment/casso/callback'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // ...

@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\Client\SearchController;
-use App\Http\Controllers\Client\AlbumsController;
 use App\Http\Controllers\Client\UserController;
+use App\Http\Controllers\Client\AlbumsController;
+use App\Http\Controllers\Client\SearchController;
+use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
 
@@ -30,6 +31,8 @@ Route::get('get-link', function () {
     return view('client.pages.get-link');
 })->name('get.link');
 
+Route::get('payment/casso/callback', [PaymentController::class, 'cassoCallback'])->name('payment.casso.callback');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -38,6 +41,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('update-profile/update-name', [UserController::class, 'updateName'])->name('update.name');
         Route::post('update-avatar', [UserController::class, 'updateAvatar'])->name('update.avatar');
         Route::post('update-password', [UserController::class, 'updatePassword'])->name('update.password');
+
+        Route::get('payment', [PaymentController::class, 'index'])->name('payment');
+        Route::post('payment/store', [PaymentController::class, 'store'])->name('payment.store');
+        Route::get('payment/sse', [PaymentController::class, 'sse'])->name('payment.sse');
     });
 });
 

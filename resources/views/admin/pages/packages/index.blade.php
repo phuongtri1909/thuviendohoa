@@ -40,7 +40,7 @@
                                     <th class="column-medium">Giá (VNĐ)</th>
                                     <th class="column-medium">Xu</th>
                                     <th class="column-medium">Xu thưởng</th>
-                                    <th class="column-medium">Hạn sử dụng</th>
+                                    <th class="column-medium">Hạn sử dụng (tháng)</th>
                                     <th class="column-medium">Ngày tạo</th>
                                     <th class="column-small text-center">Thao tác</th>
                                 </tr>
@@ -69,7 +69,7 @@
                                             <span class="package-bonus">{{ number_format($package->bonus_coins) }} xu</span>
                                         </td>
                                         <td>
-                                            <span class="package-expiry">{{ $package->expiry }} ngày</span>
+                                            <span class="package-expiry">{{ $package->expiry }} tháng</span>
                                         </td>
                                         <td class="package-date">
                                             {{ $package->created_at->format('d/m/Y H:i') }}
