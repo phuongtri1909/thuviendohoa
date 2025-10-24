@@ -262,10 +262,13 @@ class PaymentController extends Controller
                     
                     $newExpiry = $baseDate->addMonths($payment->expiry);
                     
-                    $user->update([
-                        'package_id' => $newPackage,
-                        'package_expired_at' => $newExpiry
-                    ]);
+                    $package = Package::where('plan', $newPackage)->first();
+                    if ($package) {
+                        $user->update([
+                            'package_id' => $package->id,
+                            'package_expired_at' => $newExpiry
+                        ]);
+                    }
                     
                 }
                 
