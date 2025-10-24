@@ -27,6 +27,14 @@ class User extends Authenticatable
         'key_active',
         'key_reset_password',
         'reset_password_at',
+        'facebook_id',
+        'twitter_id',
+        'twitter_token',
+        'twitter_refresh_token',
+        'package_id',
+        'package_expired_at',
+        'coins',
+        'free_downloads'
     ];
 
     const ROLE_ADMIN = 'admin';

@@ -18,9 +18,9 @@
                     <i class="fas fa-university icon-title"></i>
                     <h5>Danh sách ngân hàng</h5>
                 </div>
-                <a href="{{ route('admin.banks.create') }}" class="action-button">
+                {{-- <a href="{{ route('admin.banks.create') }}" class="action-button">
                     <i class="fas fa-plus"></i> Thêm ngân hàng
-                </a>
+                </a> --}}
             </div>
 
             <div class="card-content">
@@ -31,9 +31,9 @@
                         </div>
                         <h4>Chưa có ngân hàng nào</h4>
                         <p>Bắt đầu bằng cách thêm ngân hàng đầu tiên.</p>
-                        <a href="{{ route('admin.banks.create') }}" class="action-button">
+                        {{-- <a href="{{ route('admin.banks.create') }}" class="action-button">
                             <i class="fas fa-plus"></i> Thêm ngân hàng mới
-                        </a>
+                        </a> --}}
                     </div>
                 @else
                     <div class="data-table-container">
@@ -100,11 +100,11 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
 
-                                                @include('components.delete-form', [
+                                                {{-- @include('components.delete-form', [
                                                     'id' => $bank->id,
                                                     'route' => route('admin.banks.destroy', $bank),
                                                     'message' => "Bạn có chắc chắn muốn xóa ngân hàng '{$bank->name}'?",
-                                                ])
+                                                ]) --}}
                                             </div>
                                         </td>
                                     </tr>

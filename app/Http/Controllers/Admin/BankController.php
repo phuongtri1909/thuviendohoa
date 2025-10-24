@@ -23,40 +23,40 @@ class BankController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return view('admin.pages.banks.create');
-    }
+    // public function create()
+    // {
+    //     return view('admin.pages.banks.create');
+    // }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50',
-            'account_number' => 'required|string|max:50',
-            'account_name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'qr_code' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'code' => 'required|string|max:50',
+    //         'account_number' => 'required|string|max:50',
+    //         'account_name' => 'required|string|max:255',
+    //         'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         'qr_code' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //     ]);
 
-        $data = $request->except(['logo', 'qr_code']);
+    //     $data = $request->except(['logo', 'qr_code']);
 
-        if ($request->hasFile('logo')) {
-            $data['logo'] = $this->processAndSaveImage($request->file('logo'), 'banks/logos');
-        }
+    //     if ($request->hasFile('logo')) {
+    //         $data['logo'] = $this->processAndSaveImage($request->file('logo'), 'banks/logos');
+    //     }
 
-        if ($request->hasFile('qr_code')) {
-            $data['qr_code'] = $this->processAndSaveImage($request->file('qr_code'), 'banks/qr_codes');
-        }
+    //     if ($request->hasFile('qr_code')) {
+    //         $data['qr_code'] = $this->processAndSaveImage($request->file('qr_code'), 'banks/qr_codes');
+    //     }
 
-        Bank::create($data);
+    //     Bank::create($data);
 
-        return redirect()->route('admin.banks.index')
-            ->with('success', 'Ngân hàng đã được tạo thành công.');
-    }
+    //     return redirect()->route('admin.banks.index')
+    //         ->with('success', 'Ngân hàng đã được tạo thành công.');
+    // }
 
     /**
      * Display the specified resource.
@@ -113,21 +113,21 @@ class BankController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bank $bank)
-    {
-        if ($bank->logo) {
-            Storage::disk('public')->delete($bank->logo);
-        }
+    // public function destroy(Bank $bank)
+    // {
+    //     if ($bank->logo) {
+    //         Storage::disk('public')->delete($bank->logo);
+    //     }
 
-        if ($bank->qr_code) {
-            Storage::disk('public')->delete($bank->qr_code);
-        }
+    //     if ($bank->qr_code) {
+    //         Storage::disk('public')->delete($bank->qr_code);
+    //     }
 
-        $bank->delete();
+    //     $bank->delete();
 
-        return redirect()->route('admin.banks.index')
-            ->with('success', 'Thông tin ngân hàng đã được xóa thành công.');
-    }
+    //     return redirect()->route('admin.banks.index')
+    //         ->with('success', 'Thông tin ngân hàng đã được xóa thành công.');
+    // }
 
     /**
      * Process and save image file
