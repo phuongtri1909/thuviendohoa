@@ -282,7 +282,7 @@ class PaymentController extends Controller
             
             DB::commit();
             
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true], 200);
             
         } catch (\Exception $e) {
             DB::rollBack();
