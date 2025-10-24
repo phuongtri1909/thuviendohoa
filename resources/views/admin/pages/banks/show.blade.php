@@ -87,11 +87,11 @@
                     <a href="{{ route('admin.banks.edit', $bank) }}" class="action-button">
                         <i class="fas fa-edit"></i> Chỉnh sửa
                     </a>
-                    @include('components.delete-form', [
+                    {{-- @include('components.delete-form', [
                         'id' => $bank->id,
                         'route' => route('admin.banks.destroy', $bank),
                         'message' => "Bạn có chắc chắn muốn xóa ngân hàng '{$bank->name}'?",
-                    ])
+                    ]) --}}
                 </div>
             </div>
         </div>
