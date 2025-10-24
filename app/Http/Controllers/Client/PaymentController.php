@@ -138,7 +138,8 @@ class PaymentController extends Controller
 
     public function cassoCallback(Request $request)
     {
-        Log::info('Casso callback received', ['request' => $request->all()]);
+        return response()->json(['success' => true], 200);
+        
         $payload = $request->getContent();
         $signature = $request->header('X-Casso-Signature');
         
