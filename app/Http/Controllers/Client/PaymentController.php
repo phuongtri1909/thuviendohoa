@@ -138,6 +138,9 @@ class PaymentController extends Controller
 
     public function cassoCallback(Request $request)
     {
+        // Acknowledge webhook receipt immediately to prevent retries
+        return response()->json(['success' => true], 200);
+        
         $payload = $request->getContent();
         $signature = $request->header('X-Casso-Signature');
         
