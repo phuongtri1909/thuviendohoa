@@ -892,7 +892,6 @@
                 }
 
             function startSSEConnection(transactionCode) {
-                    console.log('startSSEConnection', transactionCode);
                     
                 if (sseConnection) {
                     sseConnection.close();
@@ -900,7 +899,6 @@
 
                     const sseUrl = '{{ route('user.payment.sse') }}?transaction_code=' + encodeURIComponent(transactionCode);
                 sseConnection = new EventSource(sseUrl);
-                    console.log('sseConnection', sseConnection);
 
                 sseConnection.onmessage = function(event) {
                     try {
@@ -956,13 +954,11 @@
                     if (isFirstCheck) {
                         sseCheckInterval = setTimeout(() => {
                             if (currentTransactionCode && $('#paymentModal').hasClass('show')) {
-                                console.log('First SSE check after 5 seconds...');
                                 startSSEConnection(currentTransactionCode);
                                 isFirstCheck = false;
                                 
                                 sseCheckInterval = setInterval(() => {
                                     if (currentTransactionCode && $('#paymentModal').hasClass('show')) {
-                                        console.log('Periodic SSE check every 3 seconds...');
                                         startSSEConnection(currentTransactionCode);
                                     }
                                 }, 3000);
@@ -972,7 +968,6 @@
                         // Subsequent checks every 3 seconds
                         sseCheckInterval = setInterval(() => {
                             if (currentTransactionCode && $('#paymentModal').hasClass('show')) {
-                                console.log('Periodic SSE check every 3 seconds...');
                                 startSSEConnection(currentTransactionCode);
                             }
                         }, 3000);

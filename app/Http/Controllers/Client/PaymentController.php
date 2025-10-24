@@ -253,7 +253,13 @@ class PaymentController extends Controller
                 
                 if ($newLevel > $currentLevel) {
                     $currentExpiry = $user->package_expired_at;
-                    $baseDate = $currentExpiry && $currentExpiry->isFuture() ? $currentExpiry : now();
+                    
+                    if ($currentExpiry && Carbon::parse($currentExpiry)->isFuture()) {
+                        $baseDate = Carbon::parse($currentExpiry);
+                    } else {
+                        $baseDate = now();
+                    }
+                    
                     $newExpiry = $baseDate->addMonths($payment->expiry);
                     
                     $user->update([
