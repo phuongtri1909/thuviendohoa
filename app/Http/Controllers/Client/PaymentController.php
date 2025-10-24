@@ -171,7 +171,7 @@ class PaymentController extends Controller
         
         if (!$transactionId) {
             Log::warning('Mã giao dịch không tồn tại, vui lòng thử lại sau', ['data' => $data]);
-            return response()->json(['success' => false, 'message' => 'Mã giao dịch không tồn tại, vui lòng thử lại sau']);
+            return response()->json(['success' => false, 'message' => 'Mã giao dịch không tồn tại, vui lòng thử lại sau'], 400);
         }
         
         $existingPayment = PaymentCasso::where('casso_transaction_id', $transactionId)
@@ -179,7 +179,7 @@ class PaymentController extends Controller
             ->first();
             
         if ($existingPayment) {
-            return response()->json(['success' => true, 'message' => 'Giao dịch đã được xử lý, vui lòng thử lại sau']);
+            return response()->json(['success' => true, 'message' => 'Giao dịch đã được xử lý, vui lòng thử lại sau'], 200);
         }
         
         DB::beginTransaction();
@@ -204,7 +204,7 @@ class PaymentController extends Controller
                     'description' => $description,
                     'extracted_code' => $transactionCode
                 ]);
-                return response()->json(['success' => false, 'message' => 'Giao dịch không tồn tại, vui lòng thử lại sau']);
+                return response()->json(['success' => false, 'message' => 'Giao dịch không tồn tại, vui lòng thử lại sau'], 400);
             }
             
             if ($amount < $payment->amount) {
@@ -222,7 +222,7 @@ class PaymentController extends Controller
                 ]);
                 
                 DB::commit();
-                return response()->json(['success' => false, 'message' => 'Số tiền nhận được không đủ, vui lòng thử lại sau']);
+                return response()->json(['success' => false, 'message' => 'Số tiền nhận được không đủ, vui lòng thử lại sau'], 400);
             }
             
             $payment->update([
@@ -296,7 +296,7 @@ class PaymentController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'description' => $description
             ]);
-            return response()->json(['success' => false, 'message' => 'Lỗi xảy ra khi xử lý giao dịch, vui lòng thử lại sau']);
+            return response()->json(['success' => false, 'message' => 'Lỗi xảy ra khi xử lý giao dịch, vui lòng thử lại sau'], 500);
         }
     }
 
