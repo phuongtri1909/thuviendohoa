@@ -138,7 +138,21 @@ class PaymentController extends Controller
 
     public function cassoCallback(Request $request)
     {
-        return response()->json(['success' => true], 200);
+        Log::info('Casso Webhook received', $request->all());
+    
+    // Verify secure token (lấy từ Casso dashboard)
+    $secureToken = config('services.casso.secure_token');
+    
+    if ($request->input('secure_token') !== $secureToken) {
+        Log::warning('Invalid Casso secure token');
+        return response()->json(['error' => 'Invalid token'], 401);
+    }
+    
+    // Trả về response đúng format
+    return response()->json([
+        'success' => true,
+        'error' => 0
+    ], 200);
         
         $payload = $request->getContent();
         $signature = $request->header('X-Casso-Signature');
