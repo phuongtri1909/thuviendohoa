@@ -31,7 +31,7 @@ Route::get('get-link', function () {
     return view('client.pages.get-link');
 })->name('get.link');
 
-Route::get('payment/casso/callback', [PaymentController::class, 'cassoCallback'])->name('payment.casso.callback');
+Route::post('payment/casso/callback', [PaymentController::class, 'cassoCallback'])->name('payment.casso.callback');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
