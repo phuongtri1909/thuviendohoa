@@ -161,7 +161,7 @@
                                         </td>
                                         <td>
                                             <div class="user-info">
-                                                <strong>{{ $payment->user->name ?? 'N/A' }}</strong>
+                                                <strong>{{ $payment->user->full_name ?? 'N/A' }}</strong>
                                                 <br>
                                                 <small class="text-muted">{{ $payment->user->email ?? 'N/A' }}</small>
                                             </div>

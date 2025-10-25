@@ -108,7 +108,7 @@
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div class="user-info">
-                                    <h6>{{ $payment->user->name ?? 'N/A' }}</h6>
+                                    <h6>{{ $payment->user->full_name ?? 'N/A' }}</h6>
                                     <p class="text-muted">{{ $payment->user->email ?? 'N/A' }}</p>
                                     <div class="user-stats">
                                         <div class="stat-item">
