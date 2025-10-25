@@ -89,6 +89,12 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10, ['*'], 'purchases_page');
         
-        return view('admin.pages.users.show', compact('user', 'payments', 'purchases'));
+        // Get user's coin transactions
+        $coinTransactions = \App\Models\CoinTransaction::with('admin')
+            ->where('user_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'coin_transactions_page');
+        
+        return view('admin.pages.users.show', compact('user', 'payments', 'purchases', 'coinTransactions'));
     }
 }

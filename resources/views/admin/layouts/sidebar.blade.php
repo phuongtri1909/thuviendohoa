@@ -126,12 +126,19 @@
                         </ul>
                     </li>
 
-                    <li class="{{ Route::currentRouteNamed('admin.users.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.users.index') }}">
-                            <i class="fas fa-users"></i>
-                            <span>Người dùng</span>
-                        </a>
-                    </li>
+                            <li class="{{ Route::currentRouteNamed('admin.users.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.users.index') }}">
+                                    <i class="fas fa-users"></i>
+                                    <span>Người dùng</span>
+                                </a>
+                            </li>
+
+                            <li class="{{ Route::currentRouteNamed('admin.coins.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.coins.index') }}">
+                                    <i class="fas fa-coins"></i>
+                                    <span>Xu thủ công</span>
+                                </a>
+                            </li>
 
                     <!-- Cấu hình hệ thống -->
                     <li

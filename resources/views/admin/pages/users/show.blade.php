@@ -195,6 +195,54 @@
                                 <p class="text-muted">Chưa mua file nào.</p>
                             @endif
                         </div>
+
+                        <!-- Coin Transactions -->
+                        <div class="user-details mt-4">
+                            <h6 class="section-title">Lịch sử cộng/trừ xu thủ công</h6>
+                            @if($coinTransactions->count() > 0)
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Số xu</th>
+                                                <th>Lý do</th>
+                                                <th>Admin</th>
+                                                <th>Ngày</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($coinTransactions as $transaction)
+                                                <tr>
+                                                    <td>
+                                                        <span class="transaction-type {{ $transaction->amount > 0 ? 'add' : 'subtract' }}">
+                                                            @if($transaction->amount > 0)
+                                                                <i class="fas fa-plus"></i> Cộng xu
+                                                            @else
+                                                                <i class="fas fa-minus"></i> Trừ xu
+                                                            @endif
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="amount-badge {{ $transaction->amount > 0 ? 'positive' : 'negative' }}">
+                                                            {{ $transaction->amount > 0 ? '+' : '' }}{{ number_format($transaction->amount) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ $transaction->reason }}</td>
+                                                    <td>{{ $transaction->admin->full_name ?? 'N/A' }}</td>
+                                                    <td>{{ $transaction->created_at->format('d/m/Y H:i') }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-3">
+                                    {{ $coinTransactions->links('components.paginate') }}
+                                </div>
+                            @else
+                                <p class="text-muted">Chưa có giao dịch cộng/trừ xu thủ công nào.</p>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="col-md-4">
@@ -235,6 +283,15 @@
                                     <div class="stat-content">
                                         <div class="stat-number">{{ number_format($user->coins ?? 0) }}</div>
                                         <div class="stat-label">Xu hiện tại</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="stat-number">{{ $coinTransactions->total() }}</div>
+                                        <div class="stat-label">Giao dịch xu thủ công</div>
                                     </div>
                                 </div>
                             </div>
@@ -392,6 +449,44 @@
         .download-status.not-downloaded {
             background: #fff3cd;
             color: #856404;
+        }
+
+        .transaction-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .transaction-type.add {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .transaction-type.subtract {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .amount-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .amount-badge.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .amount-badge.negative {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .stats-card {
