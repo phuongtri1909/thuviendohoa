@@ -4,13 +4,6 @@
 
 @section('main-content')
 <div class="category-form-container">
-    <!-- Breadcrumb -->
-    <div class="content-breadcrumb">
-        <ol class="breadcrumb-list">
-            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item current">Cấu hình Logo và Favicon</li>
-        </ol>
-    </div>
 
     <div class="form-card">
         <div class="form-header">

@@ -121,18 +121,28 @@
                                     <span>Ngân hàng</span>
                                 </a>
                             </li>
-                           
+
 
                         </ul>
                     </li>
 
-                            <li class="{{ Route::currentRouteNamed('admin.users.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.users.index') }}">
-                                    <i class="fas fa-users"></i>
-                                    <span>Người dùng</span>
-                                </a>
-                            </li>
+                    <li class="{{ Route::currentRouteNamed('admin.users.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.users.index') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Người dùng</span>
+                        </a>
+                    </li>
 
+                    
+
+                    <li
+                    class="has-submenu {{ Route::currentRouteNamed(['admin.coins.*', 'admin.monthly-bonuses.*', 'admin.coin-histories.*']) ? 'open' : '' }}">
+                    <a href="#" class="submenu-toggle">
+                        <i class="fas fa-coins"></i>
+                        <span>Quản lý xu</span>
+                        <i class="fas fa-chevron-down submenu-arrow"></i>
+                    </a>
+                    <ul class="submenu">
                         <li class="{{ Route::currentRouteNamed('admin.coins.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.coins.index') }}">
                                 <i class="fas fa-coins"></i>
@@ -145,6 +155,14 @@
                                 <span>Cộng xu hàng tháng</span>
                             </a>
                         </li>
+                        <li class="{{ Route::currentRouteNamed('admin.coin-histories.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.coin-histories.index') }}">
+                                <i class="fas fa-history"></i>
+                                <span>Lịch sử xu</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                     <!-- Cấu hình hệ thống -->
                     <li

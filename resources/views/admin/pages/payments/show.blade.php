@@ -4,14 +4,6 @@
 
 @section('main-content')
     <div class="category-container">
-        <!-- Breadcrumb -->
-        <div class="content-breadcrumb">
-            <ol class="breadcrumb-list">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.payments.index') }}">Giao dịch</a></li>
-                <li class="breadcrumb-item current">Chi tiết giao dịch</li>
-            </ol>
-        </div>
 
         <div class="content-card">
             <div class="card-top">

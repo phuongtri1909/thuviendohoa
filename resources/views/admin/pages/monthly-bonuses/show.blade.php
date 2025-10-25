@@ -4,14 +4,6 @@
 
 @section('main-content')
     <div class="category-container">
-        <!-- Breadcrumb -->
-        <div class="content-breadcrumb">
-            <ol class="breadcrumb-list">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.monthly-bonuses.index') }}">Lịch sử cộng xu</a></li>
-                <li class="breadcrumb-item current">Chi tiết cộng xu hàng tháng</li>
-            </ol>
-        </div>
 
         <div class="content-card">
             <div class="card-top">
@@ -371,7 +363,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #1976d2;
+        color: var(--primary-color);
     }
 
     .stat-content {
