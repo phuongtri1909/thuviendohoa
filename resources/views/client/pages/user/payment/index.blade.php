@@ -169,13 +169,11 @@
                 left: 0;
                 width: 100%;
                 height: 1px;
-                background: repeating-linear-gradient(
-                    to right,
-                    #ccc 0px,
-                    #ccc 2px,
-                    transparent 2px,
-                    transparent 4px
-                );
+                background: repeating-linear-gradient(to right,
+                        #ccc 0px,
+                        #ccc 2px,
+                        transparent 2px,
+                        transparent 4px);
             }
 
             .package-feature-colored-1 {
@@ -784,6 +782,25 @@
                                     <i class="fas fa-university me-2"></i>Thông tin chuyển khoản
                             </h5>
                             <p class="mb-3 opacity-75">Ngân hàng: <strong>${bankInfo.name} (${bankInfo.code})</strong></p>
+
+                            ${bankInfo.qr_code ? `
+                                            <div class="payment-qr-section">
+                                                <div class="payment-qr-code">
+                                                    <img src="${bankInfo.qr_code}" alt="QR Code" style="max-width: 100%; height: auto;">
+                                                </div>
+                                                <p class="text-muted mt-3 mb-0">
+                                                    <i class="fas fa-qrcode me-1"></i>Quét mã QR để thanh toán nhanh
+                                                </p>
+                                                <div class="alert alert-info mt-2">
+                                                    <small>
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        QR code chứa thông tin: STK, số tiền và nội dung chuyển khoản
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                
+                        
                             
                             <div class="payment-info-row">
                                 <div class="payment-info-item">
@@ -833,18 +850,7 @@
                                     </div>
                                 </div>
                                 
-                                ${bankInfo.qr_code ? `
-                                    <div class="payment-qr-section">
-                                        <div class="payment-qr-code">
-                                            <img src="${bankInfo.qr_code}" alt="QR Code">
-                                                    </div>
-                                        <p class="text-muted mt-3 mb-0">
-                                            <i class="fas fa-qrcode me-1"></i>Quét mã QR để thanh toán nhanh
-                                        </p>
-                                                </div>
-                                                ` : ''}
-                                
-                        <div class="alert alert-gradient mt-3">
+                                <div class="alert alert-gradient mt-3">
                             <h6 class="mb-2">
                                 <i class="fas fa-exclamation-circle me-2"></i>Lưu ý quan trọng
                             </h6>

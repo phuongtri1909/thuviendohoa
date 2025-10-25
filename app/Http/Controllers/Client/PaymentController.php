@@ -63,6 +63,9 @@ class PaymentController extends Controller
 
             DB::commit();
 
+            // Tạo QR code động cho OCB
+            $qrCodeData = $this->generateOCBQRCode($bank, $transactionCode, $package->amount);
+
             return response()->json([
                 'success' => true,
                 'transaction_code' => $transactionCode,
@@ -75,7 +78,7 @@ class PaymentController extends Controller
                     'code' => $bank->code,
                     'account_number' => $bank->account_number,
                     'account_name' => $bank->account_name,
-                    'qr_code' => $bank->qr_code ? asset('storage/' . $bank->qr_code) : null,
+                    'qr_code' => $qrCodeData,
                 ],
                 'message' => 'Vui lòng chuyển khoản theo thông tin bên dưới'
             ]);
@@ -368,6 +371,72 @@ class PaymentController extends Controller
         
         return $sortedData;
     }
+    private function generateOCBQRCode($bank, $transactionCode, $amount)
+    {
+        try {
+            $accountNo = $bank->account_number; 
+            $accountName = $bank->account_name;
+            $description = $transactionCode;
+            
+            $qrData = $this->callVietQRAPI($accountNo, $accountName, $amount, $description);
+            
+            if ($qrData) {
+                Log::info('VietQR API Success', [
+                    'account_no' => $accountNo,
+                    'amount' => $amount,
+                    'has_qr_data' => !empty($qrData)
+                ]);
+                
+                return $qrData;
+            }
+            
+            return null;
+            
+        } catch (\Exception $e) {
+            Log::error('Error generating QR code: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     */
+    private function callVietQRAPI($accountNo, $accountName, $amount, $description)
+    {
+        try {
+            $url = "https://img.vietqr.io/image/OCB-{$accountNo}-compact2.jpg";
+            
+            $params = [
+                'amount' => (int)$amount,
+                'addInfo' => $description,
+                'accountName' => $accountName
+            ];
+            
+            $queryString = http_build_query($params);
+            $fullUrl = $url . '?' . $queryString;
+            
+            $ch = curl_init($fullUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            
+            $imageData = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode == 200 && !empty($imageData)) {
+                $base64 = base64_encode($imageData);
+                return 'data:image/jpeg;base64,' . $base64;
+            }
+            
+            return null;
+            
+        } catch (\Exception $e) {
+            Log::error('VietQR API Exception: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     
     /**
      */
