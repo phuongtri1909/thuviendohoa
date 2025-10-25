@@ -86,7 +86,7 @@
                     </li>
 
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*', 'admin.payments.*', 'admin.purchase-sets.*', 'admin.users.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*', 'admin.payments.*', 'admin.purchase-sets.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-money-bill"></i>
                             <span>Quản lý bán hàng</span>
