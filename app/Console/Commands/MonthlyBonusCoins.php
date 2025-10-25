@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use App\Models\Package;
 use App\Models\CoinTransaction;
+use App\Models\MonthlyBonus;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -128,6 +129,18 @@ class MonthlyBonusCoins extends Command
             return;
         }
         
+        // Kiểm tra xem đã có monthly bonus cho package này trong tháng này chưa
+        $currentMonth = now()->format('Y-m');
+        $existingBonus = MonthlyBonus::where('package_id', $packageId)
+            ->where('month', $currentMonth)
+            ->first();
+            
+        if ($existingBonus) {
+            $this->warn("Package {$package->name} đã được cộng bonus trong tháng {$currentMonth} (ID: {$existingBonus->id})");
+            $this->info("Số user đã cộng: {$existingBonus->total_users}, Tổng xu: {$existingBonus->total_coins}");
+            return;
+        }
+        
         // Đếm tổng số user cần xử lý
         $totalUsers = User::where('package_id', $packageId)
             ->where('package_expired_at', '>', now())
@@ -153,6 +166,8 @@ class MonthlyBonusCoins extends Command
         $processed = 0;
         $offset = 0;
         $batchNumber = 1;
+        $allUserIds = [];
+        $currentMonth = now()->format('Y-m');
         
         // Xử lý theo batch để tránh overload
         do {
@@ -162,14 +177,37 @@ class MonthlyBonusCoins extends Command
                 ->limit($batchSize)
                 ->get();
                 
+            $usersToProcess = collect();
+            foreach ($users as $user) {
+                $alreadyReceived = MonthlyBonus::where('package_id', $packageId)
+                    ->where('month', $currentMonth)
+                    ->whereJsonContains('user_ids', (string)$user->id)
+                    ->exists();
+                    
+                if (!$alreadyReceived) {
+                    $usersToProcess->push($user);
+                } else {
+                    $this->info("User {$user->full_name} (ID: {$user->id}) đã nhận bonus trong tháng này, bỏ qua");
+                }
+            }
+            
             if ($users->isEmpty()) {
                 break;
             }
             
-            $this->info("Batch #{$batchNumber}: Xử lý {$users->count()} user...");
-            $this->processBatch($users, $package);
+            if ($usersToProcess->isEmpty()) {
+                $offset += $batchSize;
+                continue;
+            }
             
-            $processed += $users->count();
+            $this->info("Batch #{$batchNumber}: Xử lý {$usersToProcess->count()} user...");
+            $this->processBatch($usersToProcess, $package);
+            
+            $allUserIds = array_merge($allUserIds, $usersToProcess->pluck('id')->map(function($id) {
+                return (string)$id;
+            })->toArray());
+            
+            $processed += $usersToProcess->count();
             $offset += $batchSize;
             $batchNumber++;
             
@@ -183,6 +221,22 @@ class MonthlyBonusCoins extends Command
             
         } while ($processed < $totalUsers);
         
+        // Lưu MonthlyBonus record
+        if ($processed > 0) {
+            MonthlyBonus::create([
+                'package_id' => $package->id,
+                'month' => $currentMonth,
+                'total_users' => $processed,
+                'total_coins' => $processed * $package->bonus_coins,
+                'bonus_per_user' => $package->bonus_coins,
+                'user_ids' => $allUserIds,
+                'notes' => "Tự động cộng bonus coins hàng tháng cho {$processed} user",
+                'processed_at' => now(),
+            ]);
+            
+            $this->info("Đã lưu record MonthlyBonus cho package {$package->name}");
+        }
+        
         $this->info("Hoàn thành xử lý package {$package->name}");
     }
     
@@ -194,31 +248,9 @@ class MonthlyBonusCoins extends Command
         DB::beginTransaction();
         
         try {
-            $transactions = [];
-            $now = now();
-            
             foreach ($users as $user) {
                 $user->increment('coins', $package->bonus_coins);
-                
-                $transactions[] = [
-                    'user_id' => $user->id,
-                    'admin_id' => 1,
-                    'amount' => $package->bonus_coins,
-                    'type' => CoinTransaction::TYPE_PACKAGE_BONUS,
-                    'reason' => "Bonus hàng tháng - {$package->name}",
-                    'note' => "Tự động cộng bonus coins hàng tháng cho gói {$package->name}",
-                    'target_data' => json_encode([
-                        'package_id' => $package->id,
-                        'package_name' => $package->name,
-                        'bonus_coins' => $package->bonus_coins,
-                        'month' => $now->format('Y-m')
-                    ]),
-                    'created_at' => $now,
-                    'updated_at' => $now
-                ];
             }
-            
-            CoinTransaction::insert($transactions);
             
             DB::commit();
             

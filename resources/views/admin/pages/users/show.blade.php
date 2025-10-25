@@ -243,6 +243,46 @@
                                 <p class="text-muted">Chưa có giao dịch cộng/trừ xu thủ công nào.</p>
                             @endif
                         </div>
+
+                        <!-- Monthly Bonuses -->
+                        <div class="user-details mt-4">
+                            <h6 class="section-title">Lịch sử cộng xu hàng tháng</h6>
+                            @if($monthlyBonuses->count() > 0)
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Tháng</th>
+                                                <th>Gói</th>
+                                                <th>Số xu</th>
+                                                <th>Thời gian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($monthlyBonuses as $bonus)
+                                                <tr>
+                                                    <td>{{ $bonus->formatted_month }}</td>
+                                                    <td>
+                                                        <span class="package-badge">{{ $bonus->package->name }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="amount-badge positive">+{{ number_format($bonus->bonus_per_user) }}</span>
+                                                    </td>
+                                                    <td>{{ $bonus->processed_at_formatted }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination-wrapper">
+                                    {{ $monthlyBonuses->links('components.paginate') }}
+                                </div>
+                            @else
+                                <div class="empty-state">
+                                    <p class="text-muted">Chưa có lịch sử cộng xu hàng tháng nào.</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="col-md-4">

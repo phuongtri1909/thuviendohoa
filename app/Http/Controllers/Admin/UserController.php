@@ -95,6 +95,11 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10, ['*'], 'coin_transactions_page');
         
-        return view('admin.pages.users.show', compact('user', 'payments', 'purchases', 'coinTransactions'));
+        $monthlyBonuses = \App\Models\MonthlyBonus::with('package')
+            ->whereJsonContains('user_ids', (string)$id)
+            ->orderBy('processed_at', 'desc')
+            ->paginate(10, ['*'], 'monthly_bonuses_page');
+        
+        return view('admin.pages.users.show', compact('user', 'payments', 'purchases', 'coinTransactions', 'monthlyBonuses'));
     }
 }

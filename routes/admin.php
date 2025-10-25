@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\PaymentCassoController;
 use App\Http\Controllers\Admin\PurchaseSetController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CoinController;
+use App\Http\Controllers\Admin\MonthlyBonusController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -74,5 +75,7 @@ Route::group(['as' => 'admin.'], function () {
         
                 Route::resource('coins', CoinController::class)->except(['edit', 'update', 'destroy']);
         Route::get('coins/package-users/{packageId}', [CoinController::class, 'getPackageUsers'])->name('coins.package-users');
+        
+        Route::resource('monthly-bonuses', MonthlyBonusController::class)->only(['index', 'show']);
     });
 });

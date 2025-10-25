@@ -133,12 +133,18 @@
                                 </a>
                             </li>
 
-                            <li class="{{ Route::currentRouteNamed('admin.coins.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.coins.index') }}">
-                                    <i class="fas fa-coins"></i>
-                                    <span>Xu thủ công</span>
-                                </a>
-                            </li>
+                        <li class="{{ Route::currentRouteNamed('admin.coins.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.coins.index') }}">
+                                <i class="fas fa-coins"></i>
+                                <span>Xu thủ công</span>
+                            </a>
+                        </li>
+                        <li class="{{ Route::currentRouteNamed('admin.monthly-bonuses.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.monthly-bonuses.index') }}">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Cộng xu hàng tháng</span>
+                            </a>
+                        </li>
 
                     <!-- Cấu hình hệ thống -->
                     <li
