@@ -29,6 +29,10 @@ class PaymentCasso extends Model
     const STATUS_FAILED = 'failed';
     const STATUS_CANCELLED = 'cancelled';
 
+    protected $casts = [
+        'processed_at' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
