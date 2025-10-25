@@ -339,9 +339,9 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#">
+                                            <a href="{{ route('user.purchases') }}">
                                                 <img src="{{ asset('/images/svg/download.svg') }}" alt="Download">
-                                                <span>Lịch sử tải xuống (35)</span>
+                                                <span>Lịch sử tải xuống ({{ auth()->user()->purchasedSets->count() }})</span>
                                             </a>
                                         </li>
                                         <li>

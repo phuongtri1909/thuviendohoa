@@ -68,8 +68,16 @@
                         </div>
 
                         <div class="user-nav-item">
+                            <a href="{{ route('user.purchases') }}"
+                                class="user-nav-link text-decoration-none hover-color-7 {{ request()->routeIs('user.purchases') ? 'active' : '' }}">
+                                <i class="fa-solid fa-box-open user-nav-icon"></i>
+                                <span class="user-nav-text">Sản phẩm đã mua</span>
+                            </a>
+                        </div>
+
+                        <div class="user-nav-item">
                             <a href="{{ route('user.favorites') }}"
-                                class="user-nav-link text-decoration-none hover-color-7 {{ request()->routeIs('user.favorite') ? 'active' : '' }}">
+                                class="user-nav-link text-decoration-none hover-color-7 {{ request()->routeIs('user.favorites') ? 'active' : '' }}">
                                 <i class="fa-solid fa-heart user-nav-icon"></i>
                                 <span class="user-nav-text">Sản phẩm yêu thích</span>
                             </a>

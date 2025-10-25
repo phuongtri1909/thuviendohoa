@@ -266,6 +266,17 @@ class UserController extends Controller
         return view('client.pages.user.favorites', compact('favorites'));
     }
 
+    public function purchases()
+    {
+        $user = Auth::user();
+        $purchases = $user->purchasedSets()
+            ->with('set')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        
+        return view('client.pages.user.purchases', compact('purchases'));
+    }
+
     public function addFavorite(Request $request)
     {
         try {

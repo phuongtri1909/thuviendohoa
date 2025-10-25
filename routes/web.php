@@ -52,6 +52,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('favorites/add', [UserController::class, 'addFavorite'])->name('favorites.add');
         Route::post('favorites/remove', [UserController::class, 'removeFavorite'])->name('favorites.remove');
 
+        Route::get('purchases', [UserController::class, 'purchases'])->name('purchases');
+
         // dùng ở search-result.blade.php
         Route::post('/search/set/{setId}/favorite', [UserController::class, 'toggleFavorite'])->name('search.set.favorite');
 
