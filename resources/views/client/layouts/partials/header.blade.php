@@ -204,10 +204,10 @@
                                 <form class="search-form" method="GET" action="{{ route('search') }}">
                                     <input type="hidden" name="category" value="{{ request()->get('category') }}">
                                     <input type="hidden" name="album" value="{{ request()->get('album') }}">
-                                    @foreach(request()->get('colors', []) as $color)
+                                    @foreach (request()->get('colors', []) as $color)
                                         <input type="hidden" name="colors[]" value="{{ $color }}">
                                     @endforeach
-                                    @foreach(request()->get('software', []) as $software)
+                                    @foreach (request()->get('software', []) as $software)
                                         <input type="hidden" name="software[]" value="{{ $software }}">
                                     @endforeach
                                     <input type="text" class="search-input" name="q"
@@ -221,7 +221,8 @@
                     </div>
 
                     <div class="header-actions d-none d-md-flex">
-                        <a href="{{ route('get.link') }}" class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
+                        <a href="{{ route('get.link') }}"
+                            class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
                             <span class="color-primary fw-semibold text-md pe-3">Get Link</span>
                         </a>
@@ -244,9 +245,11 @@
                             <button class="user-profile-btn" id="userDropdownBtn">
                                 <div class="user-avatar-container">
                                     @if (auth()->user() && auth()->user()->avatar)
-                                        <img class="avatar" src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
+                                        <img class="avatar" src="{{ Storage::url(auth()->user()->avatar) }}"
+                                            alt="User">
                                     @else
-                                        <img class="avatar-default" src="{{ asset('/images/svg/user.svg') }}" alt="User">
+                                        <img class="avatar-default" src="{{ asset('/images/svg/user.svg') }}"
+                                            alt="User">
                                     @endif
                                 </div>
                                 <img src="{{ asset('/images/svg/arrow-down.svg') }}" alt="Arrow Up"
@@ -258,36 +261,68 @@
                                     <div class="user-info">
                                         <div class="user-avatar-large">
                                             @if (auth()->user() && auth()->user()->avatar)
-                                                <img class="avatar" src="{{ Storage::url(auth()->user()->avatar) }}" alt="User">
+                                                <img class="avatar" src="{{ Storage::url(auth()->user()->avatar) }}"
+                                                    alt="User">
                                             @else
-                                                <img class="avatar-default" src="{{ asset('/images/svg/user.svg') }}" alt="User">
+                                                <img class="avatar-default" src="{{ asset('/images/svg/user.svg') }}"
+                                                    alt="User">
                                             @endif
                                         </div>
                                         <div class="user-details">
                                             <h6 class="user-name">{{ auth()->user()->full_name }}</h6>
                                             <p class="user-email">{{ auth()->user()->email }}</p>
                                             <div class="user-type mt-2">
-                                                <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+">
-                                                <span class="text-md color-primary-3">TK THƯỜNG</span>
+                                                @if (auth()->user()->package_id)
+                                                    <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+"
+                                                        class="{{ auth()->user()->package->getPlanFilter() }}">
+                                                    <span class="text-md {{ auth()->user()->package->getPlanColor() }}">
+                                                        {{ auth()->user()->package->getPlanName() }}</span>
+                                                @else
+                                                    <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+"
+                                                        class="filter-primary-color-3">
+                                                    <span class="text-md color-primary-3">TK THƯỜNG</span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
 
                                     <hr class="my-3">
 
-                                    <div class="download-count">
-                                        <p class="text-md color-primary-4 mb-0">Lượt tải file của bạn:</p>
-                                        <div class="count-display">
-                                            <span class="count-number text-6xl color-primary-3">2</span>
-                                            <span class="count-text text-md color-primary-4">lượt</span>
+                                    @if (auth()->user()->package_id)
+                                        <div class="download-count">
+                                            <p class="text-md color-primary-4 mb-0">Số dư:</p>
+                                            <div class="count-display">
+                                                <span
+                                                    class="count-number text-6xl {{ auth()->user()->package->getPlanColor() }}">{{ auth()->user()->coins }}</span>
+                                                <span class="count-text text-md color-primary-4">XU</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <div class="download-count">
+                                            <p class="text-md color-primary-4 mb-0">Lượt tải file của bạn:</p>
+                                            <div class="count-display">
+                                                <span
+                                                    class="count-number text-6xl {{ auth()->user()->package->getPlanColor() }}">{{ auth()->user()->free_downloads }}</span>
+                                                <span class="count-text text-md color-primary-4">Lượt</span>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <hr class="my-3">
 
-                                    <button class="unlimited-btn rounded-5">
-                                        Đăng kí tải không giới hạn
-                                    </button>
+                                    <div class="d-flex justify-content-center text-center">
+                                        @if (auth()->user()->package_id)
+                                            <a href="{{ route('user.payment') }}"
+                                                class="text-decoration-none text-white unlimited-btn rounded-5 {{ auth()->user()->package->getPlanGradient() }}">
+                                                NẠP XU
+                                            </a>
+                                        @else
+                                            <a href="{{ route('user.payment') }}"
+                                                class="text-decoration-none text-white unlimited-btn rounded-5 {{ auth()->user()->package->getPlanGradient() }}">
+                                                Đăng kí tải không giới hạn
+                                            </a>
+                                        @endif
+                                    </div>
 
                                     <ul class="user-menu mt-2">
                                         <li>
@@ -324,9 +359,9 @@
                                     </ul>
                                 </div>
 
-                                <button class="partner-btn">
+                                {{-- <button class="partner-btn">
                                     Đăng kí làm đối tác Printon
-                                </button>
+                                </button> --}}
                             </div>
                         </div>
                     @endauth
@@ -380,10 +415,10 @@
                     <div class="search-input-container">
                         <input type="hidden" name="category" value="{{ request()->get('category') }}">
                         <input type="hidden" name="album" value="{{ request()->get('album') }}">
-                        @foreach(request()->get('colors', []) as $color)
+                        @foreach (request()->get('colors', []) as $color)
                             <input type="hidden" name="colors[]" value="{{ $color }}">
                         @endforeach
-                        @foreach(request()->get('software', []) as $software)
+                        @foreach (request()->get('software', []) as $software)
                             <input type="hidden" name="software[]" value="{{ $software }}">
                         @endforeach
                         <input type="text" class="search-input" name="q" value="{{ request()->get('q') }}"

@@ -187,7 +187,7 @@
             }
 
             .package-feature-colored-3 {
-                color: #E7B724;
+                color: #F5C42E;
                 font-weight: 500;
             }
 
@@ -386,7 +386,7 @@
             }
 
             .modal-header.package-gold {
-                background: #E7B724;
+                background: #F5C42E;
             }
 
             .modal-header.package-platinum {
@@ -437,7 +437,7 @@
             }
 
             .payment-info-card.package-gold {
-                background: #E7B724;
+                background: #F5C42E;
                 box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
                 color: #333 !important;
             }

@@ -15,6 +15,20 @@
     --bg-gradient: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
     --bg-gradient-2: linear-gradient(90deg, #FFF4F4 0%, #FFFFF3 20%, #F1FFED 40%, #EFFEFF 60%, #F3F1FF 80%, #FFF3FE 100%);
     --bg-gradient-3: linear-gradient(90deg, #F0B00C 0%, #EF9016 100%);
+
+    --bg-gradient-bronze: linear-gradient(180deg, #e6a07a 0%, #b4633e 100%);
+    --bg-gradient-silver: linear-gradient(180deg, #bfbfbf 0%, #666666 100%);
+    --bg-gradient-gold:   linear-gradient(180deg, #FFD964 0%, #ECB818 100%);
+    --bg-gradient-platinum: linear-gradient(180deg, #d680f7 0%, #a832db 100%);
+    --color-bronze: #cd8053;
+    --color-silver: #7e7e7e;
+    --color-gold: #F5C42E;
+    --color-platinum: #be40e8;
+    --filter-bronze: invert(61%) sepia(52%) saturate(565%) hue-rotate(339deg) brightness(95%) contrast(95%);
+    --filter-silver: invert(47%) sepia(0%) saturate(0%) hue-rotate(178deg) brightness(94%) contrast(84%);
+    --filter-gold: invert(80%) sepia(83%) saturate(917%) hue-rotate(357deg) brightness(100%) contrast(97%);
+    --filter-platinum: invert(53%) sepia(95%) saturate(3740%) hue-rotate(266deg) brightness(97%) contrast(92%);
+    --filter-primary-color-3: invert(74%) sepia(56%) saturate(639%) hue-rotate(313deg) brightness(102%) contrast(101%);
     --primary-hover: #444444;
     --secondary-color: #8C5E3B;
     --accent-color: #D1A66E;
@@ -156,7 +170,7 @@ html {
     font-size: var(--font-size-xs) !important;
 }
 
-.text-xs-2{
+.text-xs-2 {
     font-size: var(--font-size-xs) !important;
 }
 
@@ -310,6 +324,54 @@ html {
     background: var(--bg-gradient-2) !important;
 }
 
+.bg-gradient-bronze {
+    background: var(--bg-gradient-bronze) !important;
+}
+
+.bg-gradient-silver {
+    background: var(--bg-gradient-silver) !important;
+}
+
+.bg-gradient-gold {
+    background: var(--bg-gradient-gold) !important;
+}
+
+.bg-gradient-platinum {
+    background: var(--bg-gradient-platinum) !important;
+}
+
+.bg-gradient-bronze:hover {
+    box-shadow: 0 4px 12px var(--color-bronze);
+}
+
+.bg-gradient-silver:hover {
+    box-shadow: 0 4px 12px var(--color-silver);
+}
+
+.bg-gradient-gold:hover {
+    box-shadow: 0 4px 12px var(--color-gold);
+}
+
+.bg-gradient-platinum:hover {
+    box-shadow: 0 4px 12px var(--color-platinum);
+}
+
+.bg-bronze {
+    background-color: var(--color-bronze) !important;
+}
+
+.bg-silver {
+    background-color: var(--color-silver) !important;
+}
+
+.bg-gold {
+    background-color: var(--color-gold) !important;
+}
+
+.bg-platinum {
+    background-color: var(--color-platinum) !important;
+}
+
 .color-primary {
     color: var(--primary-color) !important;
 }
@@ -359,12 +421,49 @@ html {
     color: var(--primary-color-11) !important;
 }
 
-.color-primary-12{
+.color-primary-12 {
     color: var(--primary-color-12) !important;
 }
 
-.color-primary-13{
+.color-primary-13 {
     color: var(--primary-color-13);
+}
+
+
+.color-bronze {
+    color: var(--color-bronze) !important;
+}
+
+.color-silver {
+    color: var(--color-silver) !important;
+}
+
+.color-gold {
+    color: var(--color-gold) !important;
+}
+
+.color-platinum {
+    color: var(--color-platinum) !important;
+}
+
+.filter-bronze {
+    filter: var(--filter-bronze) !important;
+}
+
+.filter-silver {
+    filter: var(--filter-silver) !important;
+}
+
+.filter-gold {
+    filter: var(--filter-gold) !important;
+}
+
+.filter-platinum {
+    filter: var(--filter-platinum) !important;
+}
+
+.filter-primary-color-3 {
+    filter: var(--filter-primary-color-3) !important;
 }
 
 .font-light {
@@ -423,7 +522,7 @@ html {
         font-size: var(--font-size-3xl) !important;
     }
 
-    .text-xs-2{
+    .text-xs-2 {
         font-size: var(--font-size-sm) !important;
     }
 }
@@ -433,10 +532,10 @@ html {
         font-size: var(--font-size-sm) !important;
     }
 
-    .text-xs-2{
+    .text-xs-2 {
         font-size: var(--font-size-md) !important;
     }
-    
+
     .text-xs-4 {
         font-size: var(--font-size-1lg) !important;
     }

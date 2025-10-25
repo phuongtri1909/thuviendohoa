@@ -864,7 +864,6 @@
 
 .unlimited-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(238, 90, 36, 0.3);
 }
 
 .user-menu {

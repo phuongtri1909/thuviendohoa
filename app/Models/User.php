@@ -49,6 +49,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+
     public function isActive(): bool
     {
         return $this->active === self::ACTIVE_YES;
