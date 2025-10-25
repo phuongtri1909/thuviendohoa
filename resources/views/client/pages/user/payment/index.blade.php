@@ -718,7 +718,7 @@
                     const $targetPackage = $(`.package-item[data-package-plan="${packagePlan}"]`);
 
                     if ($targetPackage.length > 0) {
-                        setTimeout(() => {
+                                setTimeout(() => {
                             $targetPackage.trigger('click');
                             
                             urlParams.delete('package');

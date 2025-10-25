@@ -5,7 +5,7 @@
         <!-- Sidebar -->
         <div id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <img src="{{  $logoPath }}" alt="logo" height="40">
+                <img src="{{ $logoPath }}" alt="logo" height="40">
                 <button id="close-sidebar" class="close-sidebar d-md-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -19,32 +19,6 @@
                         </a>
                     </li>
 
-                    
-
-                    <!-- Quản lý danh mục -->
-                    <li class="{{ Route::currentRouteNamed('admin.categories.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.categories.index') }}">
-                            <i class="fas fa-folder"></i>
-                            <span>Danh mục</span>
-                        </a>
-                    </li>
-
-                    <!-- Quản lý album -->
-                    <li class="{{ Route::currentRouteNamed('admin.albums.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.albums.index') }}">
-                            <i class="fas fa-images"></i>
-                            <span>Album</span>
-                        </a>
-                    </li>
-
-                    <!-- Quản lý set -->
-                    <li class="{{ Route::currentRouteNamed('admin.sets.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.sets.index') }}">
-                            <i class="fas fa-layer-group"></i>
-                            <span>Set</span>
-                        </a>
-                    </li>
-
                     <!-- Quản lý banner -->
                     <li class="{{ Route::currentRouteNamed('admin.banners.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.banners.index') }}">
@@ -53,50 +27,94 @@
                         </a>
                     </li>
 
-                    <!-- Quản lý màu sắc -->
-                    <li class="{{ Route::currentRouteNamed('admin.colors.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.colors.index') }}">
-                            <i class="fas fa-palette"></i>
-                            <span>Màu sắc</span>
-                        </a>
-                    </li>
-
-                    <!-- Quản lý tag -->
-                    <li class="{{ Route::currentRouteNamed('admin.tags.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.tags.index') }}">
-                            <i class="fas fa-tags"></i>
-                            <span>Tag</span>
-                        </a>
-                    </li>
-
-                    <!-- Quản lý phần mềm -->
-                    <li class="{{ Route::currentRouteNamed('admin.software.*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.software.index') }}">
-                            <i class="fas fa-code"></i>
-                            <span>Phần mềm</span>
-                        </a>
-                    </li>
-
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.sets.*', 'admin.albums.*', 'admin.categories.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
-                            <i class="fas fa-money-bill"></i>
-                            <span>Quản lý giao dịch</span>
+                            <i class="fas fa-cogs"></i>
+                            <span>Quản lý sản phẩm</span>
                             <i class="fas fa-chevron-down submenu-arrow"></i>
                         </a>
                         <ul class="submenu">
-                            <li class="{{ Route::currentRouteNamed('admin.banks.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.banks.index') }}">
-                                    <i class="fas fa-bank"></i>
-                                    <span>Ngân hàng</span>
+                            <!-- Quản lý set -->
+                            <li class="{{ Route::currentRouteNamed('admin.sets.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.sets.index') }}">
+                                    <i class="fas fa-layer-group"></i>
+                                    <span>Sản phẩm</span>
                                 </a>
                             </li>
+
+                            <!-- Quản lý danh mục -->
+                            <li class="{{ Route::currentRouteNamed('admin.categories.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.categories.index') }}">
+                                    <i class="fas fa-folder"></i>
+                                    <span>Danh mục</span>
+                                </a>
+                            </li>
+
+                            <!-- Quản lý album -->
+                            <li class="{{ Route::currentRouteNamed('admin.albums.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.albums.index') }}">
+                                    <i class="fas fa-images"></i>
+                                    <span>Album</span>
+                                </a>
+                            </li>
+
+                            <!-- Quản lý màu sắc -->
+                            <li class="{{ Route::currentRouteNamed('admin.colors.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.colors.index') }}">
+                                    <i class="fas fa-palette"></i>
+                                    <span>Màu sắc</span>
+                                </a>
+                            </li>
+
+                            <!-- Quản lý tag -->
+                            <li class="{{ Route::currentRouteNamed('admin.tags.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.tags.index') }}">
+                                    <i class="fas fa-tags"></i>
+                                    <span>Tag</span>
+                                </a>
+                            </li>
+
+                            <!-- Quản lý phần mềm -->
+                            <li class="{{ Route::currentRouteNamed('admin.software.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.software.index') }}">
+                                    <i class="fas fa-code"></i>
+                                    <span>Phần mềm</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*', 'admin.payments.*']) ? 'open' : '' }}">
+                        <a href="#" class="submenu-toggle">
+                            <i class="fas fa-money-bill"></i>
+                            <span>Quản lý bán hàng</span>
+                            <i class="fas fa-chevron-down submenu-arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li class="{{ Route::currentRouteNamed('admin.payments.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.payments.index') }}">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Giao dịch thanh toán</span>
+                                </a>
+                            </li>
+
                             <li class="{{ Route::currentRouteNamed('admin.packages.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.packages.index') }}">
                                     <i class="fas fa-coins"></i>
                                     <span>Gói xu</span>
                                 </a>
                             </li>
+
+                            <li class="{{ Route::currentRouteNamed('admin.banks.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.banks.index') }}">
+                                    <i class="fas fa-bank"></i>
+                                    <span>Ngân hàng</span>
+                                </a>
+                            </li>
+                           
+
                         </ul>
                     </li>
 
@@ -146,7 +164,7 @@
                         <a href="{{ route('logout') }}">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Đăng xuất</span>
-                        </a>   
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -176,7 +194,6 @@
 
     @push('styles')
         <style>
-
             /* Submenu styles */
             .has-submenu {
                 position: relative;
