@@ -64,4 +64,14 @@ class Package extends Model
             self::PLAN_PLATINUM => 'TK BẠCH KIM',
         };
     }
+
+    public function getPlanPluralName()
+    {
+        return match($this->plan) {
+            self::PLAN_BRONZE => 'ĐỒNG',
+            self::PLAN_SILVER => 'BẠC',
+            self::PLAN_GOLD => 'VÀNG',
+            self::PLAN_PLATINUM => 'BẠCH KIM',
+        };
+    }
 }

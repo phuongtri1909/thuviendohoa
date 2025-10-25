@@ -59,6 +59,42 @@ class User extends Authenticatable
         return $this->hasMany(Bookmark::class);
     }
 
+    public function purchasedSets()
+    {
+        return $this->hasMany(PurchaseSet::class);
+    }
+
+    public function hasPurchasedSet($setId)
+    {
+        return $this->purchasedSets()->where('set_id', $setId)->exists();
+    }
+
+    public function hasValidPackage()
+    {
+        if (!$this->package_id) {
+            return false;
+        }
+
+        if (!$this->package_expired_at) {
+            return false;
+        }
+
+        return \Carbon\Carbon::parse($this->package_expired_at)->isFuture();
+    }
+
+    public function canDownloadFree()
+    {
+        // User có thể tải free nếu:
+        // 1. Không có package_id (user thường)
+        // 2. Có package_id nhưng hết hạn (VIP hết hạn)
+        return $this->free_downloads > 0;
+    }
+
+    public function hasUnlimitedDownloads()
+    {
+        return $this->package_id && $this->hasValidPackage();
+    }
+
     public function isActive(): bool
     {
         return $this->active === self::ACTIVE_YES;

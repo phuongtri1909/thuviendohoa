@@ -10,6 +10,7 @@ use App\Http\Controllers\Client\SearchController;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
+use App\Http\Controllers\Client\PurchaseSetController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -53,6 +54,10 @@ Route::group(['middleware' => 'auth'], function () {
 
         // dùng ở search-result.blade.php
         Route::post('/search/set/{setId}/favorite', [UserController::class, 'toggleFavorite'])->name('search.set.favorite');
+
+        // Purchase & Download routes
+        Route::get('purchase/check/{setId}', [PurchaseSetController::class, 'checkDownloadCondition'])->name('purchase.check');
+        Route::post('purchase/confirm/{setId}', [PurchaseSetController::class, 'confirmPurchase'])->name('purchase.confirm');
     });
 });
 

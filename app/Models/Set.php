@@ -18,8 +18,8 @@ class Set extends Model
     const TYPE_FREE = 'free';
     const TYPE_PREMIUM = 'premium';
 
-    const STATUS_ACTIVE = true;
-    const STATUS_INACTIVE = false;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
 
     public function photos()
     {
@@ -64,6 +64,26 @@ class Set extends Model
     public function software()
     {
         return $this->hasMany(SoftwareSet::class);
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(PurchaseSet::class);
+    }
+
+    public function isPurchasedBy($userId)
+    {
+        return $this->purchases()->where('user_id', $userId)->exists();
+    }
+
+    public function isFree()
+    {
+        return $this->type === self::TYPE_FREE;
+    }
+
+    public function isPremium()
+    {
+        return $this->type === self::TYPE_PREMIUM;
     }
 
     public static function processAndSaveImage(UploadedFile $imageFile): string

@@ -582,7 +582,7 @@
                             </div>
                         </div>
                         
-                        <button class="btn-download btn fw-semibold py-3 px-5 d-flex mt-2">
+                        <button class="btn-download btn fw-semibold py-3 px-5 d-flex mt-2" onclick="initDownload(${set.id})" data-set-id="${set.id}">
                             <img src="/images/svg/arrow-right.svg" alt="" class="arrow-original">
                             <img src="/images/svg/arrow-right.svg" alt="" class="arrow-new">
                             Tải về máy
@@ -923,6 +923,227 @@
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(refreshMasonry, 250);
             });
+
+            function showSwal(options) {
+                const result = Swal.fire({
+                    ...options,
+                    backdrop: true,
+                    didOpen: () => {
+                        const swalContainer = document.querySelector('.swal2-container');
+                        if (swalContainer) {
+                            swalContainer.style.setProperty('z-index', '99999999', 'important');
+                        }
+                    }
+                });
+                return result;
+            }
+
+            // Download & Purchase Functions
+            window.initDownload = function(setId) {
+                if (!setId) {
+                    showToast('Không thể xác định file cần tải', 'error');
+                    return;
+                }
+
+                // Show loading
+                showSwal({
+                    title: 'Đang kiểm tra...',
+                    text: 'Vui lòng đợi',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Check download condition
+                fetch(`/user/purchase/check/${setId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Swal.close();
+
+                    if (!data.success) {
+                        // Cannot download
+                        showSwal({
+                            icon: 'error',
+                            title: 'Không thể tải',
+                            text: data.message,
+                            confirmButtonColor: '#667eea'
+                        });
+                        return;
+                    }
+
+                    // Can download - show confirmation modal
+                    showDownloadConfirmModal(data, setId);
+                })
+                .catch(error => {
+                    Swal.close();
+                    console.error('Error:', error);
+                    
+                    if (error.status === 401) {
+                        showSwal({
+                            icon: 'warning',
+                            title: 'Chưa đăng nhập',
+                            text: 'Vui lòng đăng nhập để tải file',
+                            confirmButtonText: 'Đăng nhập',
+                            confirmButtonColor: '#667eea'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/login';
+                            }
+                        });
+                    } else {
+                        showSwal({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra khi kiểm tra điều kiện tải',
+                            confirmButtonColor: '#667eea'
+                        });
+                    }
+                });
+            };
+
+            function showDownloadConfirmModal(data, setId) {
+                const set = data.set;
+                let message = data.message;
+                let confirmButtonText = 'Xác nhận tải';
+
+                // Build message content
+                let htmlContent = `
+                    <div class="text-start">
+                        <h5 class="mb-3">${set.name}</h5>
+                `;
+
+                if (data.already_purchased) {
+                    htmlContent += `<p class="text-success"><i class="fas fa-check-circle me-2"></i>Bạn đã mua file này</p>`;
+                    confirmButtonText = 'Tải ngay';
+                } else if (data.is_free) {
+                    if (data.unlimited) {
+                        htmlContent += `<p class="text-success"><i class="fas fa-infinity me-2"></i>File miễn phí - Tải không giới hạn (VIP)</p>`;
+                    } else if (data.free_downloads_left) {
+                        htmlContent += `<p class="text-info"><i class="fas fa-gift me-2"></i>File miễn phí - Còn ${data.free_downloads_left} lượt tải</p>`;
+                    }
+                    confirmButtonText = 'Tải ngay';
+                } else if (data.requires_purchase) {
+                    htmlContent += `
+                        <div class="alert alert-warning">
+                            <strong>Mua file Premium</strong><br>
+                            Giá: <strong>${set.price} XU</strong><br>
+                            Xu hiện tại: <strong>${data.user.coins} XU</strong><br>
+                            Xu còn lại sau khi mua: <strong>${data.user.remaining_coins} XU</strong>
+                        </div>
+                    `;
+                    confirmButtonText = 'Xác nhận mua';
+                }
+
+                htmlContent += `</div>`;
+
+                showSwal({
+                    title: data.already_purchased ? 'Tải file' : (data.is_free ? 'Tải file miễn phí' : 'Xác nhận mua file'),
+                    html: htmlContent,
+                    icon: data.already_purchased || data.is_free ? 'success' : 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#667eea',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: confirmButtonText,
+                    cancelButtonText: 'Hủy',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        confirmPurchaseAndDownload(setId);
+                    }
+                });
+            }
+
+            function confirmPurchaseAndDownload(setId) {
+                // Show loading
+                showSwal({
+                    title: 'Đang xử lý...',
+                    text: 'Vui lòng đợi',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Confirm purchase
+                fetch(`/user/purchase/confirm/${setId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        user_confirmed: true // Explicit user confirmation
+                    })
+                })
+                .then(response => {
+                    Swal.close();
+
+                    // Check if response is a file download (streaming response)
+                    const contentType = response.headers.get('content-type');
+                    const contentDisposition = response.headers.get('content-disposition');
+                    
+                    if (contentType?.includes('application/zip') || contentDisposition?.includes('attachment')) {
+                        // Handle file download
+                        return response.blob().then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = contentDisposition?.split('filename=')[1] || 'download.zip';
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                            
+                            showSwal({
+                                icon: 'success',
+                                title: 'Tải xuống thành công!',
+                                text: 'File đã được tải về máy',
+                                confirmButtonColor: '#667eea'
+                            });
+                        });
+                    }
+
+                    // Handle JSON response (error cases)
+                    return response.json().then(data => {
+                        if (data.success) {
+                            showSwal({
+                                icon: 'success',
+                                title: 'Thành công!',
+                                text: data.message,
+                                confirmButtonColor: '#667eea'
+                            });
+                        } else {
+                            showSwal({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: data.message,
+                                confirmButtonColor: '#667eea'
+                            });
+                        }
+                    });
+                })
+                .catch(error => {
+                    Swal.close();
+                    console.error('Error:', error);
+                    showSwal({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Có lỗi xảy ra khi xử lý giao dịch',
+                        confirmButtonColor: '#667eea'
+                    });
+                });
+            }
         });
     </script>
 @endpush
