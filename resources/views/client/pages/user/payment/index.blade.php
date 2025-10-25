@@ -732,37 +732,43 @@
                     const packageId = $(this).data('package-id');
                     const $packageItem = $(this);
 
+                    // Show modal first
                     const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
                     modal.show();
 
-                            $.ajax({
+                    // Make AJAX request
+                    $.ajax({
                         url: '{{ route('user.payment.store') }}',
-                                type: 'POST',
-                                data: {
+                        type: 'POST',
+                        data: {
                             package_id: packageId,
                             _token: '{{ csrf_token() }}'
-                                },
-                                dataType: 'json',
-                                success: function(response) {
-                                    if (response.success) {
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
                                 currentTransactionCode = response.transaction_code;
+                                console.log('Transaction code set:', currentTransactionCode);
                                 showPaymentInfo(response, $packageItem);
-                                    } else {
+                                
+                                // Start SSE check after transaction code is set
+                                startSSECheck();
+                            } else {
                                 showError(response.message || 'Có lỗi xảy ra khi tạo giao dịch');
                             }
                         },
                         error: function(xhr) {
-                                let errorMessage = 'Đã xảy ra lỗi khi xử lý yêu cầu';
+                            let errorMessage = 'Đã xảy ra lỗi khi xử lý yêu cầu';
 
-                                if (xhr.responseJSON) {
-                                    if (xhr.responseJSON.errors) {
-                                        const errors = xhr.responseJSON.errors;
-                                        const firstError = Object.values(errors)[0];
-                                        errorMessage = firstError[0] || errorMessage;
-                                    } else if (xhr.responseJSON.message) {
-                                        errorMessage = xhr.responseJSON.message;
-                                    }
+                            if (xhr.responseJSON) {
+                                if (xhr.responseJSON.errors) {
+                                    const errors = xhr.responseJSON.errors;
+                                    const firstError = Object.values(errors)[0];
+                                    errorMessage = firstError[0] || errorMessage;
+                                } else if (xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
                                 }
+                            }
 
                             showError(errorMessage);
                         }
@@ -935,48 +941,52 @@
                 }
 
             function startSSEConnection(transactionCode) {
-
+                console.log('Starting SSE connection for transaction:', transactionCode);
+                
                 if (sseConnection) {
                     sseConnection.close();
+                    sseConnection = null;
                 }
 
-                    const sseUrl = '{{ route('user.payment.sse') }}?transaction_code=' + encodeURIComponent(
-                        transactionCode);
+                const sseUrl = '{{ route('user.payment.sse') }}?transaction_code=' + encodeURIComponent(transactionCode);
                 sseConnection = new EventSource(sseUrl);
 
                 sseConnection.onmessage = function(event) {
                     try {
                         const data = JSON.parse(event.data);
+                        console.log('SSE message received:', data);
 
                         if (data.type === 'close') {
                             sseConnection.close();
+                            sseConnection = null;
                             return;
                         }
 
-                            if (data.type === 'payment' && data.status === 'success') {
-                                if (sseConnection) {
-                                    sseConnection.close();
-                                    sseConnection = null;
-                                }
-                                if (sseCheckInterval) {
-                                    clearInterval(sseCheckInterval);
-                                    sseCheckInterval = null;
-                                }
+                        if (data.type === 'payment' && data.status === 'success') {
+                            console.log('Payment successful, closing SSE connection');
+                            
+                            if (sseConnection) {
+                                sseConnection.close();
+                                sseConnection = null;
+                            }
+                            
+                            if (sseCheckInterval) {
+                                clearInterval(sseCheckInterval);
+                                sseCheckInterval = null;
+                            }
 
-                                const paymentModal = bootstrap.Modal.getInstance(document.getElementById(
-                                    'paymentModal'));
-                                if (paymentModal) {
-                                    paymentModal.hide();
-                                }
+                            const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+                            if (paymentModal) {
+                                paymentModal.hide();
+                            }
 
-                                $('#successMessage').text(
-                                    `Bạn đã nhận được ${data.coins.toLocaleString('vi-VN')} xu.`);
-                                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                                successModal.show();
+                            $('#successMessage').text(`Bạn đã nhận được ${data.coins.toLocaleString('vi-VN')} xu.`);
+                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            successModal.show();
 
                             setTimeout(() => {
                                 window.location.reload();
-                                }, 5000);
+                            }, 5000);
                         }
                     } catch (error) {
                         console.error('SSE parsing error:', error);
@@ -985,61 +995,66 @@
 
                 sseConnection.onerror = function(event) {
                     console.error('SSE connection error:', event);
-                        sseConnection.close();
-                    };
-                }
-
-                let sseCheckInterval = null;
-                let isFirstCheck = true;
-
-                function startSSECheck() {
-                    if (sseCheckInterval) {
-                        clearInterval(sseCheckInterval);
-                    }
-
-                    if (isFirstCheck) {
-                        sseCheckInterval = setTimeout(() => {
-                            if (currentTransactionCode && $('#paymentModal').hasClass('show')) {
-                                startSSEConnection(currentTransactionCode);
-                                isFirstCheck = false;
-
-                                sseCheckInterval = setInterval(() => {
-                                    if (currentTransactionCode && $('#paymentModal').hasClass('show')) {
-                                        startSSEConnection(currentTransactionCode);
-                                    }
-                                }, 3000);
-                            }
-                        }, 5000);
-                    } else {
-                        // Subsequent checks every 3 seconds
-                        sseCheckInterval = setInterval(() => {
-                            if (currentTransactionCode && $('#paymentModal').hasClass('show')) {
-                                startSSEConnection(currentTransactionCode);
-                            }
-                        }, 3000);
-                    }
-                }
-
-                $('#paymentModal').on('shown.bs.modal', function() {
-                    if (currentTransactionCode) {
-                        isFirstCheck = true;
-                        startSSECheck();
-                    }
-                });
-
-                $('#paymentModal').on('hidden.bs.modal', function() {
-                    // Stop SSE and interval when modal is closed
                     if (sseConnection) {
                         sseConnection.close();
                         sseConnection = null;
                     }
-                    if (sseCheckInterval) {
-                        clearInterval(sseCheckInterval);
-                        sseCheckInterval = null;
+                };
+            }
+
+            let sseCheckInterval = null;
+
+            function startSSECheck() {
+                console.log('Starting SSE check for transaction:', currentTransactionCode);
+                console.log('Modal is shown:', document.getElementById('paymentModal').classList.contains('show'));
+                
+                if (sseCheckInterval) {
+                    clearInterval(sseCheckInterval);
+                }
+
+                // Start SSE connection after 5 seconds
+                setTimeout(() => {
+                    console.log('5 seconds timeout triggered');
+                    console.log('currentTransactionCode:', currentTransactionCode);
+                    console.log('Modal still shown:', document.getElementById('paymentModal').classList.contains('show'));
+                    
+                    if (currentTransactionCode && document.getElementById('paymentModal').classList.contains('show')) {
+                        console.log('Starting SSE connection after 5 seconds...');
+                        startSSEConnection(currentTransactionCode);
+                    } else {
+                        console.log('SSE not started - missing transaction code or modal not shown');
                     }
-                    isFirstCheck = true;
-                    currentTransactionCode = null;
-                });
+                }, 5000);
+
+                // Set up interval to reconnect every 5 seconds
+                sseCheckInterval = setInterval(() => {
+                    console.log('Interval check - currentTransactionCode:', currentTransactionCode);
+                    console.log('Interval check - Modal shown:', document.getElementById('paymentModal').classList.contains('show'));
+                    
+                    if (currentTransactionCode && document.getElementById('paymentModal').classList.contains('show')) {
+                        console.log('Reconnecting SSE every 5 seconds...');
+                        startSSEConnection(currentTransactionCode);
+                    } else {
+                        console.log('SSE interval skipped - missing transaction code or modal not shown');
+                    }
+                }, 5000);
+            }
+
+            // SSE is now started directly after transaction code is set in AJAX success
+
+            $('#paymentModal').on('hidden.bs.modal', function() {
+                console.log('Payment modal hidden, stopping SSE');
+                // Stop SSE and interval when modal is closed
+                if (sseConnection) {
+                    sseConnection.close();
+                    sseConnection = null;
+                }
+                if (sseCheckInterval) {
+                    clearInterval(sseCheckInterval);
+                    sseCheckInterval = null;
+                }
+                currentTransactionCode = null;
+            });
             });
         </script>
     @endpush
