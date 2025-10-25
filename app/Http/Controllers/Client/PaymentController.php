@@ -380,13 +380,7 @@ class PaymentController extends Controller
             
             $qrData = $this->callVietQRAPI($accountNo, $accountName, $amount, $description);
             
-            if ($qrData) {
-                Log::info('VietQR API Success', [
-                    'account_no' => $accountNo,
-                    'amount' => $amount,
-                    'has_qr_data' => !empty($qrData)
-                ]);
-                
+            if ($qrData) {  
                 return $qrData;
             }
             
