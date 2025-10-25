@@ -748,7 +748,6 @@
                         success: function(response) {
                             if (response.success) {
                                 currentTransactionCode = response.transaction_code;
-                                console.log('Transaction code set:', currentTransactionCode);
                                 showPaymentInfo(response, $packageItem);
                                 
                                 // Start SSE check after transaction code is set
@@ -941,8 +940,6 @@
                 }
 
             function startSSEConnection(transactionCode) {
-                console.log('Starting SSE connection for transaction:', transactionCode);
-                
                 if (sseConnection) {
                     sseConnection.close();
                     sseConnection = null;
@@ -954,7 +951,6 @@
                 sseConnection.onmessage = function(event) {
                     try {
                         const data = JSON.parse(event.data);
-                        console.log('SSE message received:', data);
 
                         if (data.type === 'close') {
                             sseConnection.close();
@@ -963,8 +959,6 @@
                         }
 
                         if (data.type === 'payment' && data.status === 'success') {
-                            console.log('Payment successful, closing SSE connection');
-                            
                             if (sseConnection) {
                                 sseConnection.close();
                                 sseConnection = null;
@@ -994,7 +988,6 @@
                 };
 
                 sseConnection.onerror = function(event) {
-                    console.error('SSE connection error:', event);
                     if (sseConnection) {
                         sseConnection.close();
                         sseConnection = null;
@@ -1005,37 +998,21 @@
             let sseCheckInterval = null;
 
             function startSSECheck() {
-                console.log('Starting SSE check for transaction:', currentTransactionCode);
-                console.log('Modal is shown:', document.getElementById('paymentModal').classList.contains('show'));
-                
                 if (sseCheckInterval) {
                     clearInterval(sseCheckInterval);
                 }
 
                 // Start SSE connection after 5 seconds
                 setTimeout(() => {
-                    console.log('5 seconds timeout triggered');
-                    console.log('currentTransactionCode:', currentTransactionCode);
-                    console.log('Modal still shown:', document.getElementById('paymentModal').classList.contains('show'));
-                    
                     if (currentTransactionCode && document.getElementById('paymentModal').classList.contains('show')) {
-                        console.log('Starting SSE connection after 5 seconds...');
                         startSSEConnection(currentTransactionCode);
-                    } else {
-                        console.log('SSE not started - missing transaction code or modal not shown');
                     }
                 }, 5000);
 
                 // Set up interval to reconnect every 5 seconds
                 sseCheckInterval = setInterval(() => {
-                    console.log('Interval check - currentTransactionCode:', currentTransactionCode);
-                    console.log('Interval check - Modal shown:', document.getElementById('paymentModal').classList.contains('show'));
-                    
                     if (currentTransactionCode && document.getElementById('paymentModal').classList.contains('show')) {
-                        console.log('Reconnecting SSE every 5 seconds...');
                         startSSEConnection(currentTransactionCode);
-                    } else {
-                        console.log('SSE interval skipped - missing transaction code or modal not shown');
                     }
                 }, 5000);
             }
@@ -1043,7 +1020,6 @@
             // SSE is now started directly after transaction code is set in AJAX success
 
             $('#paymentModal').on('hidden.bs.modal', function() {
-                console.log('Payment modal hidden, stopping SSE');
                 // Stop SSE and interval when modal is closed
                 if (sseConnection) {
                     sseConnection.close();
