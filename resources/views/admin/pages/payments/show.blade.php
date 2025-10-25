@@ -129,7 +129,7 @@
                                             <div class="stat-item">
                                                 <span class="stat-label">Hết hạn:</span>
                                                 <span class="stat-value {{ $payment->user->package_expired_at->isFuture() ? 'text-success' : 'text-danger' }}">
-                                                    {{ $payment->user->package_expired_at->format('d/m/Y') }}
+                                                    {{ $payment->user->package_expired_at->format('d/m/Y') }} 
                                                 </span>
                                             </div>
                                         @endif
