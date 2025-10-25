@@ -67,6 +67,14 @@
                             </a>
                         </div>
 
+                        <div class="user-nav-item">
+                            <a href="{{ route('user.favorites') }}"
+                                class="user-nav-link text-decoration-none hover-color-7 {{ request()->routeIs('user.favorite') ? 'active' : '' }}">
+                                <i class="fa-solid fa-heart user-nav-icon"></i>
+                                <span class="user-nav-text">Sản phẩm yêu thích</span>
+                            </a>
+                        </div>
+
 
                         <div class="user-nav-item user-nav-logout">
                             <a href="{{ route('logout') }}" class="user-nav-link text-danger text-decoration-none">

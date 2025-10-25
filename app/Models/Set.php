@@ -36,6 +36,11 @@ class Set extends Model
         return $this->hasMany(CategorySet::class);
     }
 
+    public function category()
+    {
+        return $this->hasOne(CategorySet::class)->with('category');
+    }
+
     public function albums()
     {
         return $this->hasMany(AlbumSet::class);

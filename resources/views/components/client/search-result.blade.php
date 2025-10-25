@@ -317,7 +317,7 @@
                 }
                 loadingSpinner.style.display = 'flex';
 
-                fetch(`/search/set/${setId}`, {
+                fetch(`/search/set/id/${setId}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -338,6 +338,7 @@
                         renderSetModal(data.data, data.relatedSets, data.featuredSets);
                     } else {
                         console.error('Error:', data.message);
+                        showSetNotFoundError(data.message, data.featuredSets || []);
                     }
                 })
                 .catch(error => {
@@ -349,10 +350,96 @@
                         modalContent.style.opacity = '1';
                         modalContent.style.pointerEvents = 'auto';
                     }
+                    showSetNotFoundError('Có lỗi xảy ra khi tải thông tin file', []);
+                });
+            }
+
+            function loadSetDetailsBySlug(setSlug) {
+                const modal = document.getElementById('imageModal');
+                if (modal) {
+                    modal.scrollTop = 0;
+                }
+                
+                const modalContent = document.querySelector('#imageModal .modal-content');
+                if (modalContent) {
+                    modalContent.style.opacity = '0.5';
+                    modalContent.style.pointerEvents = 'none';
+                }
+                
+                let loadingSpinner = modal.querySelector('.loading-spinner-overlay');
+                if (!loadingSpinner) {
+                    loadingSpinner = document.createElement('div');
+                    loadingSpinner.className = 'loading-spinner-overlay';
+                    loadingSpinner.innerHTML = '<div class="spinner"><i class="fas fa-spinner fa-spin fa-3x"></i></div>';
+                    modal.appendChild(loadingSpinner);
+                }
+                loadingSpinner.style.display = 'flex';
+
+                // Kiểm tra nếu setSlug là số (ID) thì dùng route ID
+                const isNumeric = /^\d+$/.test(setSlug);
+                const apiUrl = isNumeric ? `/search/set/id/${setSlug}` : `/search/set/${setSlug}`;
+
+                fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (loadingSpinner) {
+                        loadingSpinner.style.display = 'none';
+                    }
+                    if (modalContent) {
+                        modalContent.style.opacity = '1';
+                        modalContent.style.pointerEvents = 'auto';
+                    }
+                    
+                    if (data.success) {
+                        renderSetModal(data.data, data.relatedSets, data.featuredSets);
+                    } else {
+                        console.error('Error:', data.message);
+                        showSetNotFoundError(data.message, data.featuredSets || []);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (loadingSpinner) {
+                        loadingSpinner.style.display = 'none';
+                    }
+                    if (modalContent) {
+                        modalContent.style.opacity = '1';
+                        modalContent.style.pointerEvents = 'auto';
+                    }
+                    showSetNotFoundError('Có lỗi xảy ra khi tải thông tin file', []);
                 });
             }
 
             function renderSetModal(set, relatedSets = [], featuredSets = []) {
+                const errorContent = document.querySelector('.error-content');
+                if (errorContent) {
+                    errorContent.remove();
+                }
+
+                const modalContent = document.querySelector('#imageModal .modal-content');
+                if (modalContent) {
+                    const hiddenRows = modalContent.querySelectorAll('.row:not(.error-content)');
+                    hiddenRows.forEach(row => {
+                        row.style.display = '';
+                    });
+
+                    const imageSlider = modalContent.querySelector('.image-slider');
+                    if (imageSlider) {
+                        imageSlider.style.display = '';
+                    }
+
+                    const tagsList = modalContent.querySelector('.tags-product-list');
+                    if (tagsList) {
+                        tagsList.style.display = '';
+                    }
+                }
+
                 const modalImageContainer = document.querySelector('#imageModal .col-12.col-md-7');
                 if (modalImageContainer && set.photos && set.photos.length > 0) {
                     if (set.photos.length === 1) {
@@ -396,7 +483,6 @@
                     }
                 }
 
-                // Update title
                 const titleElement = document.querySelector('#imageModal .modal-title');
                 if (titleElement) {
                     const words = set.name.split(' ');
@@ -407,13 +493,11 @@
                     }
                 }
 
-                // Update description
                 const descriptionElement = document.querySelector('#imageModal .modal-description');
                 if (descriptionElement) {
                     descriptionElement.textContent = set.description || 'Không có mô tả';
                 }
 
-                // Update format
                 const formatElement = document.querySelector('#imageModal .modal-format span');
                 if (formatElement) {
                     let formatsText = 'Không xác định';
@@ -432,22 +516,18 @@
                     formatElement.textContent = `Định dạng: ${formatsText}`;
                 }
 
-                // Update size
                 const sizeElement = document.querySelector('#imageModal .modal-size span');
                 if (sizeElement) {
                     sizeElement.textContent = `Dung lượng: ${set.size ? set.size + ' MB' : 'Không xác định'}`;
                 }
 
-                // Update favorite count
                 const favoriteElement = document.querySelector('#imageModal .modal-favorite span');
                 if (favoriteElement) {
                     favoriteElement.textContent = `Yêu thích: ${set.bookmarks ? set.bookmarks.length : 0}`;
                 }
 
-                // Render social share
                 renderSocialShare(set);
 
-                // Update tags
                 const tagsContainer = document.querySelector('.tags-product-list');
                 if (tagsContainer) {
                     if (set.tags && set.tags.length > 0) {
@@ -464,7 +544,6 @@
                     }
                 }
 
-                // Update keywords
                 const keywordWrapper = document.querySelector('#imageModal .modal-keywords-wrapper');
                 
                 if (keywordWrapper) {
@@ -485,7 +564,6 @@
                     keywordWrapper.innerHTML = `<span class="modal-keywords color-primary-12">Từ khóa:</span> ${keywordsContent} - <span class="color-primary-6">Mẫu #${set.id}</span>`;
                 }
 
-                // Update badge
                 const badgeContainer = document.querySelector('#imageModal .d-flex.flex-column.mt-4');
                 if (badgeContainer) {
                     const badgeType = set.type === 'free' ? 'free' : 'premium';
@@ -556,11 +634,86 @@
                 }
             }
 
+            function showSetNotFoundError(message, featuredSets = []) {
+                const modal = document.getElementById('imageModal');
+                if (!modal) return;
+
+                const modalContent = modal.querySelector('.modal-content');
+                if (modalContent) {
+                    const existingRows = modalContent.querySelectorAll('.row:not(.error-content)');
+                    existingRows.forEach(row => {
+                        row.style.display = 'none';
+                    });
+
+                    const imageSlider = modalContent.querySelector('.image-slider');
+                    if (imageSlider) {
+                        imageSlider.style.display = 'none';
+                    }
+
+                    const tagsList = modalContent.querySelector('.tags-product-list');
+                    if (tagsList) {
+                        tagsList.style.display = 'none';
+                    }
+
+                    const oldError = modalContent.querySelector('.error-content');
+                    if (oldError) {
+                        oldError.remove();
+                    }
+
+                    let featuredHtml = '';
+                    if (featuredSets && featuredSets.length > 0) {
+                        featuredHtml = `
+                            <div class="mt-5">
+                                <h5 class="text-center mb-4">Thiết kế nổi bật</h5>
+                                <div class="row">
+                                    ${featuredSets.map(set => `
+                                        <div class="col-6 col-md-3 mb-3">
+                                            <div class="featured-set-item" onclick="loadSetDetailsBySlug('${set.slug || set.id}')" style="cursor: pointer;">
+                                                <img src="${set.photos && set.photos[0] ? '/storage/' + set.photos[0].path : '/images/default-set.png'}" 
+                                                     alt="${set.name}" class="img-fluid rounded">
+                                                <h6 class="mt-2 text-center">${set.name}</h6>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    const errorContent = document.createElement('div');
+                    errorContent.className = 'row error-content';
+                    errorContent.innerHTML = `
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <div class="error-icon mb-4">
+                                    <i class="fas fa-exclamation-triangle fa-4x text-warning"></i>
+                                </div>
+                                <h4 class="text-muted mb-3">File không tồn tại</h4>
+                                <p class="text-muted mb-4">${message || 'File bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.'}</p>
+                                <button type="button" class="btn btn-primary" onclick="var modal = document.getElementById('imageModal'); modal.style.display = 'none'; document.body.style.overflow = 'auto'; var urlParams = new URLSearchParams(window.location.search); if (urlParams.has('set')) { urlParams.delete('set'); var newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : ''); window.history.replaceState({}, '', newUrl); }">
+                                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                                </button>
+                                ${featuredHtml}
+                            </div>
+                        </div>
+                    `;
+
+                    const firstImageSlider = modalContent.querySelector('.image-slider');
+                    if (firstImageSlider) {
+                        firstImageSlider.parentNode.insertBefore(errorContent, firstImageSlider);
+                    } else {
+                        modalContent.appendChild(errorContent);
+                    }
+                }
+            }
+
+
+
             function renderSocialShare(set) {
                 const container = document.querySelector(`#social-share-container-${set.id}`);
                 if (!container) return;
 
-                const shareUrl = `${window.location.origin}/search?set=${set.id}`;
+                const shareUrl = `${window.location.origin}/search?set=${set.slug}`;
                 const shareTitle = set.name;
                 const encodedUrl = encodeURIComponent(shareUrl);
                 const encodedTitle = encodeURIComponent(shareTitle);
@@ -715,6 +868,13 @@
             function closeImageModal() {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
+                
+                // Xóa ?set= khỏi URL nếu có
+                const url = new URL(window.location);
+                if (url.searchParams.has('set')) {
+                    url.searchParams.delete('set');
+                    window.history.replaceState({}, '', url);
+                }
             }
 
             closeModal.addEventListener('click', closeImageModal);
@@ -734,13 +894,15 @@
             initMasonry();
             attachImageClickEvents();
             
-            const modalUrlParams = new URLSearchParams(window.location.search);
-            const setId = modalUrlParams.get('set');
-            if (setId) {
-                loadSetDetails(setId);
-                document.getElementById('imageModal').style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
+            // Listen for custom event from search.blade.php
+            document.addEventListener('openSetModal', function(event) {
+                const setSlug = event.detail.setSlug;
+                if (setSlug) {
+                    loadSetDetailsBySlug(setSlug);
+                    document.getElementById('imageModal').style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            });
             
             document.addEventListener('click', function(e) {
                 const relatedLink = e.target.closest('.related-set-link');

@@ -228,7 +228,7 @@
             const icon = button.querySelector('i');
             const isCurrentlyFavorited = button.classList.contains('favorited');
 
-            fetch(`/search/set/${setId}/favorite`, {
+            fetch(`user/search/set/${setId}/favorite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

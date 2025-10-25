@@ -345,9 +345,9 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#">
+                                            <a href="{{ route('user.favorites') }}">
                                                 <img src="{{ asset('/images/svg/whitelist.svg') }}" alt="Whitelist">
-                                                <span>Sản phẩm yêu thích (103)</span>
+                                                <span>Sản phẩm yêu thích ({{ auth()->user()->favorites->count() }})</span>
                                             </a>
                                         </li>
                                         <li>

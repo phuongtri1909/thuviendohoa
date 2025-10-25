@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->belongsTo(Package::class);
     }
 
+    public function favorites()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
     public function isActive(): bool
     {
         return $this->active === self::ACTIVE_YES;

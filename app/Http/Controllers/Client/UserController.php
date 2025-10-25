@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Mail\OTPUpdateUserMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Set;
+use App\Models\Bookmark;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Intervention\Image\Facades\Image;
@@ -251,5 +253,144 @@ class UserController extends Controller
                 'message' => 'Dữ liệu không hợp lệ'
             ], 422);
         }
+    }
+
+    public function favorites()
+    {
+        $user = Auth::user();
+        $favorites = $user->favorites()
+            ->with('set')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        
+        return view('client.pages.user.favorites', compact('favorites'));
+    }
+
+    public function addFavorite(Request $request)
+    {
+        try {
+            $request->validate([
+                'set_id' => 'required|exists:sets,id',
+            ], [
+                'set_id.required' => 'ID bộ thiết kế không được để trống',
+                'set_id.exists' => 'Bộ thiết kế không tồn tại',
+            ]);
+
+            $user = Auth::user();
+            
+            $existingFavorite = $user->favorites()->where('set_id', $request->set_id)->first();
+            
+            if ($existingFavorite) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn đã yêu thích bộ thiết kế này rồi'
+                ], 400);
+            }
+
+            $user->favorites()->create([
+                'set_id' => $request->set_id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã thêm vào danh sách yêu thích'
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi thêm yêu thích'
+            ], 500);
+        }
+    }
+
+    public function removeFavorite(Request $request)
+    {
+        try {
+            $request->validate([
+                'favorite_id' => 'required|exists:bookmarks,id',
+            ], [
+                'favorite_id.required' => 'ID yêu thích không được để trống',
+                'favorite_id.exists' => 'Yêu thích không tồn tại',
+            ]);
+
+            $user = Auth::user();
+            
+            $favorite = $user->favorites()->where('id', $request->favorite_id)->first();
+            
+            if (!$favorite) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không có quyền xóa yêu thích này'
+                ], 403);
+            }
+
+            $favorite->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa khỏi danh sách yêu thích'
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi xóa yêu thích'
+            ], 500);
+        }
+    }
+
+    public function toggleFavorite(Request $request, $setId)
+    {
+        $set = Set::find($setId);
+        
+        if (!$set) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Set not found'
+            ], 404);
+        }
+
+        $userId = auth()->id();
+        
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated'
+            ], 401);
+        }
+
+        $existingBookmark = Bookmark::where('user_id', $userId)
+            ->where('set_id', $setId)
+            ->first();
+
+        if ($existingBookmark) {
+            $existingBookmark->delete();
+            $isFavorited = false;
+        } else {
+            Bookmark::create([
+                'user_id' => $userId,
+                'set_id' => $setId
+            ]);
+            $isFavorited = true;
+        }
+
+        $favoriteCount = Bookmark::where('set_id', $setId)->count();
+
+        return response()->json([
+            'success' => true,
+            'isFavorited' => $isFavorited,
+            'favoriteCount' => $favoriteCount
+        ]);
     }
 }

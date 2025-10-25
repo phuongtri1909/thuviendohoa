@@ -15,8 +15,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::post('/search/filter', [SearchController::class, 'filter'])->name('search.filter');
-Route::get('/search/set/{setId}', [SearchController::class, 'getSetDetails'])->name('search.set.details');
-Route::post('/search/set/{setId}/favorite', [SearchController::class, 'toggleFavorite'])->name('search.set.favorite');
+Route::get('/search/set/{setSlug}', [SearchController::class, 'getSetDetailsBySlug'])->name('search.set.details');
+Route::get('/search/set/id/{setId}', [SearchController::class, 'getSetDetails'])->name('search.set.details.id');
+
 Route::get('/albums', [AlbumsController::class, 'index'])->name('albums');
 
 Route::get('/blog', function () {
@@ -45,6 +46,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('payment', [PaymentController::class, 'index'])->name('payment');
         Route::post('payment/store', [PaymentController::class, 'store'])->name('payment.store');
         Route::get('payment/sse', [PaymentController::class, 'sse'])->name('payment.sse');
+
+        Route::get('favorites', [UserController::class, 'favorites'])->name('favorites');
+        Route::post('favorites/add', [UserController::class, 'addFavorite'])->name('favorites.add');
+        Route::post('favorites/remove', [UserController::class, 'removeFavorite'])->name('favorites.remove');
+
+        // dùng ở search-result.blade.php
+        Route::post('/search/set/{setId}/favorite', [UserController::class, 'toggleFavorite'])->name('search.set.favorite');
     });
 });
 

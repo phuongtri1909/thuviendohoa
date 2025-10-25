@@ -251,6 +251,18 @@
             window.addEventListener('resize', function() {
                 setTimeout(adjustBannerMargin, 100);
             });
+
+            const modalUrlParams = new URLSearchParams(window.location.search);
+            const setSlug = modalUrlParams.get('set');
+            if (setSlug) {
+                setTimeout(() => {
+                    const imageModal = document.getElementById('imageModal');
+                    if (imageModal) {
+                        const event = new CustomEvent('openSetModal', { detail: { setSlug: setSlug } });
+                        document.dispatchEvent(event);
+                    }
+                }, 1000);
+            }
         });
     </script>
 @endpush
