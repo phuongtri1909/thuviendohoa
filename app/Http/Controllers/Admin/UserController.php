@@ -100,6 +100,12 @@ class UserController extends Controller
             ->orderBy('processed_at', 'desc')
             ->paginate(10, ['*'], 'monthly_bonuses_page');
         
-        return view('admin.pages.users.show', compact('user', 'payments', 'purchases', 'coinTransactions', 'monthlyBonuses'));
+        // Get user's coin histories
+        $coinHistories = \App\Models\CoinHistory::with('admin')
+            ->where('user_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'coin_histories_page');
+        
+        return view('admin.pages.users.show', compact('user', 'payments', 'purchases', 'coinTransactions', 'monthlyBonuses', 'coinHistories'));
     }
 }

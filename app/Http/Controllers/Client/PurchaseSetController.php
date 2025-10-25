@@ -249,10 +249,26 @@ class PurchaseSetController extends Controller
                 $user->coins -= $price;
                 $user->save();
 
-                PurchaseSet::create([
+                $purchase = PurchaseSet::create([
                     'user_id' => $user->id,
                     'set_id' => $set->id,
                     'coins' => $price
+                ]);
+                
+                // Tạo CoinHistory record
+                \App\Models\CoinHistory::create([
+                    'user_id' => $user->id,
+                    'amount' => -$price,
+                    'type' => \App\Models\CoinHistory::TYPE_PURCHASE,
+                    'source' => $purchase->id,
+                    'reason' => 'Mua file premium',
+                    'description' => "Mua file '{$set->name}' với {$price} xu",
+                    'metadata' => json_encode([
+                        'purchase_id' => $purchase->id,
+                        'set_id' => $set->id,
+                        'set_name' => $set->name,
+                        'set_type' => $set->type
+                    ])
                 ]);
             }
 

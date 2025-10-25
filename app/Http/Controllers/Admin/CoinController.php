@@ -145,6 +145,7 @@ class CoinController extends Controller
                 $users = User::whereIn('id', $userIds)->get();
                 
                 $transactions = [];
+                $coinHistories = [];
                 foreach ($users as $user) {
                     // Cập nhật coins
                     $user->increment('coins', $actualAmount);
@@ -161,10 +162,31 @@ class CoinController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ];
+                    
+                    // Tạo CoinHistory record
+                    $coinHistories[] = [
+                        'user_id' => $user->id,
+                        'admin_id' => $adminId,
+                        'amount' => $actualAmount,
+                        'type' => \App\Models\CoinHistory::TYPE_MANUAL,
+                        'source' => 'manual_' . $adminId . '_' . time(),
+                        'reason' => $reason,
+                        'description' => $note,
+                        'metadata' => json_encode([
+                            'admin_name' => Auth::user()->full_name,
+                            'operation_type' => 'individual',
+                            'user_count' => count($userIds)
+                        ]),
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
                 }
                 
                 // Bulk insert transactions
                 CoinTransaction::insert($transactions);
+                
+                // Bulk insert coin histories
+                \App\Models\CoinHistory::insert($coinHistories);
                 
                 $action = $amountType === 'add' ? 'cộng' : 'trừ';
                 $message = "Đã {$action} {$amount} xu cho " . count($userIds) . " người dùng";
@@ -183,6 +205,7 @@ class CoinController extends Controller
                 }
                 
                 $transactions = [];
+                $coinHistories = [];
                 foreach ($users as $user) {
                     // Cập nhật coins
                     $user->increment('coins', $actualAmount);
@@ -199,10 +222,32 @@ class CoinController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ];
+                    
+                    // Tạo CoinHistory record
+                    $coinHistories[] = [
+                        'user_id' => $user->id,
+                        'admin_id' => $adminId,
+                        'amount' => $actualAmount,
+                        'type' => \App\Models\CoinHistory::TYPE_MANUAL,
+                        'source' => 'package_' . $packageId . '_' . time(),
+                        'reason' => $reason,
+                        'description' => $note,
+                        'metadata' => json_encode([
+                            'admin_name' => Auth::user()->full_name,
+                            'operation_type' => 'package',
+                            'package_id' => $packageId,
+                            'user_count' => $users->count()
+                        ]),
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
                 }
                 
                 // Bulk insert transactions
                 CoinTransaction::insert($transactions);
+                
+                // Bulk insert coin histories
+                \App\Models\CoinHistory::insert($coinHistories);
                 
                 $action = $amountType === 'add' ? 'cộng' : 'trừ';
                 $message = "Đã {$action} {$amount} xu cho " . $users->count() . " người dùng có gói này";

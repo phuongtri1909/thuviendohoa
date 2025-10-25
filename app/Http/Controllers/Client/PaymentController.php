@@ -241,6 +241,23 @@ class PaymentController extends Controller
             if ($user) {
                 $user->increment('coins', $payment->coins);
                 
+                // Tạo CoinHistory record
+                \App\Models\CoinHistory::create([
+                    'user_id' => $user->id,
+                    'amount' => $payment->coins,
+                    'type' => \App\Models\CoinHistory::TYPE_PAYMENT,
+                    'source' => $payment->id,
+                    'reason' => 'Nạp tiền thành công',
+                    'description' => "Nạp {$payment->coins} xu từ gói {$payment->package_plan}",
+                    'metadata' => json_encode([
+                        'payment_id' => $payment->id,
+                        'transaction_code' => $transactionCode,
+                        'package_plan' => $payment->package_plan,
+                        'amount_paid' => $payment->amount,
+                        'bank_name' => $bankName
+                    ])
+                ]);
+                
                 $currentPackage = $user->package_id;
                 $newPackage = $payment->package_plan;
                 

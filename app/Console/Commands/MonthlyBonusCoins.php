@@ -248,8 +248,34 @@ class MonthlyBonusCoins extends Command
         DB::beginTransaction();
         
         try {
+            $coinHistories = [];
+            $now = now();
+            
             foreach ($users as $user) {
                 $user->increment('coins', $package->bonus_coins);
+                
+                // Tạo CoinHistory record
+                $coinHistories[] = [
+                    'user_id' => $user->id,
+                    'amount' => $package->bonus_coins,
+                    'type' => \App\Models\CoinHistory::TYPE_MONTHLY_BONUS,
+                    'source' => 'monthly_bonus_' . $package->id . '_' . $now->format('Y-m'),
+                    'reason' => 'Thưởng xu hàng tháng',
+                    'description' => "Nhận {$package->bonus_coins} xu từ gói {$package->name}",
+                    'metadata' => json_encode([
+                        'package_id' => $package->id,
+                        'package_name' => $package->name,
+                        'month' => $now->format('Y-m'),
+                        'bonus_coins' => $package->bonus_coins
+                    ]),
+                    'created_at' => $now,
+                    'updated_at' => $now
+                ];
+            }
+            
+            // Bulk insert coin histories
+            if (!empty($coinHistories)) {
+                \App\Models\CoinHistory::insert($coinHistories);
             }
             
             DB::commit();

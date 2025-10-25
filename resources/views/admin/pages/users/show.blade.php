@@ -4,14 +4,7 @@
 
 @section('main-content')
     <div class="category-container">
-        <!-- Breadcrumb -->
-        <div class="content-breadcrumb">
-            <ol class="breadcrumb-list">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Người dùng</a></li>
-                <li class="breadcrumb-item current">Chi tiết người dùng</li>
-            </ol>
-        </div>
+       
 
         <div class="content-card">
             <div class="card-top">
@@ -283,6 +276,82 @@
                                 </div>
                             @endif
                         </div>
+
+                        <!-- Coin Histories -->
+                        <div class="user-details mt-4">
+                            <h6 class="section-title">Lịch sử xu chi tiết</h6>
+                            @if($coinHistories->count() > 0)
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Loại</th>
+                                                <th>Số xu</th>
+                                                <th>Lý do</th>
+                                                <th>Admin</th>
+                                                <th>Trạng thái</th>
+                                                <th>Thời gian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($coinHistories as $history)
+                                                <tr class="{{ !$history->is_read ? 'unread-row' : '' }}">
+                                                    <td>
+                                                        <span class="type-badge type-{{ $history->type }}">
+                                                            {{ $history->type_label }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="amount-badge {{ $history->amount > 0 ? 'positive' : 'negative' }}">
+                                                            {{ $history->formatted_amount }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="reason-text">
+                                                            <strong>{{ $history->reason }}</strong>
+                                                            @if($history->description)
+                                                                <br>
+                                                                <small class="text-muted">{{ $history->description }}</small>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if($history->admin)
+                                                            <div class="admin-info">
+                                                                <strong>{{ $history->admin->full_name }}</strong>
+                                                            </div>
+                                                        @else
+                                                            <span class="text-muted">Hệ thống</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($history->is_read)
+                                                            <span class="status-badge status-read">
+                                                                <i class="fas fa-check"></i> Đã đọc
+                                                            </span>
+                                                        @else
+                                                            <span class="status-badge status-unread">
+                                                                <i class="fas fa-clock"></i> Chưa đọc
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <small>{{ $history->created_at->format('d/m/Y H:i') }}</small>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination-wrapper">
+                                    {{ $coinHistories->links('components.paginate') }}
+                                </div>
+                            @else
+                                <div class="empty-state">
+                                    <p class="text-muted">Chưa có lịch sử xu nào.</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="col-md-4">
@@ -342,6 +411,73 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+<style>
+.unread-row {
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+.type-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.type-badge.type-payment {
+    background: #d4edda;
+    color: #155724;
+}
+
+.type-badge.type-purchase {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.type-badge.type-manual {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.type-badge.type-monthly_bonus {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-badge.status-read {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-unread {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.reason-text {
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+.admin-info {
+    max-width: 150px;
+    word-wrap: break-word;
+}
+</style>
+@endpush
 
 @push('styles')
     <style>
@@ -549,7 +685,7 @@
         .stat-icon {
             width: 40px;
             height: 40px;
-            background: #667eea;
+            background: var(--primary-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
