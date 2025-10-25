@@ -9,8 +9,8 @@
     không giới hạn, đồng thời nhận được hỗ trợ chỉnh sửa file từ đội ngũ. Với nền tảng chia sẻ file thiết kế,
     liên tục cải tiến nhằm mang đến cho bạn trải nghiệm tốt hơn.')
 
-    @push('styles')
-        <style>
+@push('styles')
+    <style>
             .package-grid {
                 display: flex;
                 flex-direction: column;
@@ -41,7 +41,7 @@
             .package-img {
                 width: 100%;
                 height: 100%;
-                object-fit: contain;
+            object-fit: contain;
                 border-radius: 6px;
                 transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
                 max-width: 100%;
@@ -124,7 +124,7 @@
                 justify-content: center;
                 align-items: center;
                 padding: 8px;
-                position: relative;
+            position: relative;
                 text-align: center;
             }
 
@@ -204,7 +204,7 @@
                 height: 100%;
                 object-fit: contain;
                 border-radius: 6px;
-                max-width: 100%;
+            max-width: 100%;
                 max-height: 100%;
                 opacity: 0;
                 transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -499,7 +499,7 @@
                 letter-spacing: 0.5px;
             }
 
-            .payment-info-value {
+        .payment-info-value {
                 font-size: 16px;
                 font-weight: 700;
                 display: flex;
@@ -510,12 +510,12 @@
 
             .payment-info-value-text {
                 flex: 1;
-                user-select: all;
-                cursor: text;
-                padding: 3px 5px;
+            user-select: all;
+            cursor: text;
+            padding: 3px 5px;
                 border-radius: 5px;
-                transition: background-color 0.2s;
-            }
+            transition: background-color 0.2s;
+        }
 
             .payment-info-value-text:hover {
                 background-color: rgba(255, 255, 255, 0.1);
@@ -565,8 +565,8 @@
             }
 
             .alert-gradient ul {
-                margin-bottom: 0;
-            }
+            margin-bottom: 0;
+        }
 
             .alert-gradient li {
                 margin-bottom: 5px;
@@ -609,15 +609,15 @@
 
             .selected-package-display {
                 text-align: center;
-            }
-        </style>
-    @endpush
+        }
+    </style>
+@endpush
 
 @section('info_content')
 
     <div class="package-grid">
         @foreach ($packages as $index => $package)
-            <div class="package-item" data-package-id="{{ $package->id }}">
+            <div class="package-item" data-package-id="{{ $package->id }}" data-package-plan="{{ $package->plan }}">
                 <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="{{ $package->name }}" class="package-img">
 
                 <div class="package-content package-bg-content">
@@ -641,20 +641,20 @@
                 <div class="package-content package-hover-content">
                     <div class="package-left">
                         <div class="package-register">Đăng kí</div>
-                    </div>
+                                                        </div>
                     <div class="package-divider"></div>
                     <div class="package-right">
                         <div class="package-feature package-feature-colored-{{ $index + 1 }}">Sử dụng: <span
                                 class="fw-bold">{{ $package->expiry }} tháng</span></div>
                         <div class="package-feature package-feature-colored-{{ $index + 1 }}">Không giới hạn lượt tải
-                        </div>
+                                                    </div>
                         <div class="package-feature package-feature-colored-{{ $index + 1 }}">Vĩnh viên nhận <span
                                 class="fw-bold">+ {{ $package->bonus_coins }} XU </span> mỗi tháng</div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                            </div>
 
 
     <!-- Payment Modal -->
@@ -666,17 +666,17 @@
                         <i class="fas fa-credit-card me-2"></i>Thông tin thanh toán
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+                                </div>
                 <div class="modal-body" id="paymentModalBody">
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Đang tải...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                                            </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
     <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
@@ -687,18 +687,18 @@
                         <i class="fas fa-check-circle me-2"></i>Thanh toán thành công
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+                                    </div>
                 <div class="modal-body text-center py-5" id="successModalBody">
                     <div class="success-icon-container mb-4">
                         <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
-                    </div>
+                                </div>
                     <h3 class="mb-3 fw-bold">Giao dịch thành công!</h3>
                     <p class="text-muted fs-5" id="successMessage"></p>
                     <div class="mt-4">
                         <button type="button" class="btn btn-success btn-lg px-5" onclick="window.location.reload()">
                             <i class="fas fa-sync-alt me-2"></i>Tải lại trang
-                        </button>
-                    </div>
+                                </button>
+                            </div>
                 </div>
             </div>
         </div>
@@ -712,6 +712,22 @@
                 let currentTransactionCode = null;
                 let sseConnection = null;
 
+                const urlParams = new URLSearchParams(window.location.search);
+                const packagePlan = urlParams.get('package');
+                if (packagePlan) {
+                    const $targetPackage = $(`.package-item[data-package-plan="${packagePlan}"]`);
+
+                    if ($targetPackage.length > 0) {
+                        setTimeout(() => {
+                            $targetPackage.trigger('click');
+                            
+                            urlParams.delete('package');
+                            const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                            window.history.replaceState({}, '', newUrl);
+                        }, 500);
+                    }
+                }
+
                 $('.package-item').on('click', function() {
                     const packageId = $(this).data('package-id');
                     const $packageItem = $(this);
@@ -719,34 +735,34 @@
                     const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
                     modal.show();
 
-                    $.ajax({
+                            $.ajax({
                         url: '{{ route('user.payment.store') }}',
-                        type: 'POST',
-                        data: {
+                                type: 'POST',
+                                data: {
                             package_id: packageId,
                             _token: '{{ csrf_token() }}'
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
+                                },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
                                 currentTransactionCode = response.transaction_code;
                                 showPaymentInfo(response, $packageItem);
-                            } else {
+                                    } else {
                                 showError(response.message || 'Có lỗi xảy ra khi tạo giao dịch');
                             }
                         },
                         error: function(xhr) {
-                            let errorMessage = 'Đã xảy ra lỗi khi xử lý yêu cầu';
+                                let errorMessage = 'Đã xảy ra lỗi khi xử lý yêu cầu';
 
-                            if (xhr.responseJSON) {
-                                if (xhr.responseJSON.errors) {
-                                    const errors = xhr.responseJSON.errors;
-                                    const firstError = Object.values(errors)[0];
-                                    errorMessage = firstError[0] || errorMessage;
-                                } else if (xhr.responseJSON.message) {
-                                    errorMessage = xhr.responseJSON.message;
+                                if (xhr.responseJSON) {
+                                    if (xhr.responseJSON.errors) {
+                                        const errors = xhr.responseJSON.errors;
+                                        const firstError = Object.values(errors)[0];
+                                        errorMessage = firstError[0] || errorMessage;
+                                    } else if (xhr.responseJSON.message) {
+                                        errorMessage = xhr.responseJSON.message;
+                                    }
                                 }
-                            }
 
                             showError(errorMessage);
                         }
@@ -754,10 +770,10 @@
                 });
 
                 function showPaymentInfo(response, $packageItem) {
-                    const bankInfo = response.bank_info;
-                    const transactionCode = response.transaction_code;
-                    const amount = response.amount;
-                    const coins = response.coins;
+                const bankInfo = response.bank_info;
+                const transactionCode = response.transaction_code;
+                const amount = response.amount;
+                const coins = response.coins;
                     const packageName = response.package_name;
                     const expiry = response.expiry;
 
@@ -787,7 +803,7 @@
                                             <div class="payment-qr-section">
                                                 <div class="payment-qr-code">
                                                     <img src="${bankInfo.qr_code}" alt="QR Code" style="max-width: 100%; height: auto;">
-                                                </div>
+                                        </div>
                                                 <p class="text-muted mt-3 mb-0">
                                                     <i class="fas fa-qrcode me-1"></i>Quét mã QR để thanh toán nhanh
                                                 </p>
@@ -796,8 +812,8 @@
                                                         <i class="fas fa-info-circle me-1"></i>
                                                         QR code chứa thông tin: STK, số tiền và nội dung chuyển khoản
                                                     </small>
-                                                </div>
                                             </div>
+                                        </div>
                                         ` : ''}
                                 
                         
@@ -818,7 +834,7 @@
                                 <div class="payment-info-item">
                                     <div class="payment-info-label">
                                         <i class="fas fa-user me-1"></i>Chủ tài khoản
-                                        </div>
+                                            </div>
                                     <div class="payment-info-value">
                                         <span class="payment-info-value-text">${bankInfo.account_name}</span>
                                     </div>
@@ -827,14 +843,14 @@
                                 <div class="payment-info-item">
                                     <div class="payment-info-label">
                                         <i class="fas fa-money-bill-wave me-1"></i>Số tiền
-                                    </div>
+                                            </div>
                                     <div class="payment-info-value">
                                         <span class="payment-info-value-text" tabindex="0" onclick="this.focus();this.select()" onfocus="this.select()">${amountFormatted} VNĐ</span>
                                         <button type="button" class="copy-button" onclick="copyToClipboardFallback('${amount}', this)" title="Sao chép">
                                                     <i class="fas fa-copy"></i>
                                                 </button>
-                                            </div>
                                         </div>
+                                </div>
                                 
                                 <div class="payment-info-item">
                                     <div class="payment-info-label">
@@ -844,10 +860,10 @@
                                         <span class="payment-info-value-text" tabindex="0" onclick="this.focus();this.select()" onfocus="this.select()">${transactionCode}</span>
                                         <button type="button" class="copy-button" onclick="copyToClipboardFallback('${transactionCode}', this)" title="Sao chép">
                                                     <i class="fas fa-copy"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                                 </div>
                                 
                                 <div class="alert alert-gradient mt-3">
@@ -890,18 +906,18 @@
                     selection.addRange(range);
 
                     try {
-                        const successful = document.execCommand('copy');
+                    const successful = document.execCommand('copy');
                         document.body.removeChild(tempElement);
                         selection.removeAllRanges();
 
-                        if (successful) {
+                    if (successful) {
                             $button.html('<i class="fas fa-check"></i>');
                             setTimeout(() => $button.html(originalHtml), 1500);
-                        } else {
+                    } else {
                             $button.html('<i class="fas fa-times"></i>');
                             setTimeout(() => $button.html(originalHtml), 1500);
-                        }
-                    } catch (err) {
+                    }
+                } catch (err) {
                         document.body.removeChild(tempElement);
                         selection.removeAllRanges();
                         $button.html('<i class="fas fa-times"></i>');
@@ -918,24 +934,24 @@
                     `);
                 }
 
-                function startSSEConnection(transactionCode) {
+            function startSSEConnection(transactionCode) {
 
-                    if (sseConnection) {
-                        sseConnection.close();
-                    }
+                if (sseConnection) {
+                    sseConnection.close();
+                }
 
                     const sseUrl = '{{ route('user.payment.sse') }}?transaction_code=' + encodeURIComponent(
                         transactionCode);
-                    sseConnection = new EventSource(sseUrl);
+                sseConnection = new EventSource(sseUrl);
 
-                    sseConnection.onmessage = function(event) {
-                        try {
-                            const data = JSON.parse(event.data);
+                sseConnection.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
 
-                            if (data.type === 'close') {
-                                sseConnection.close();
-                                return;
-                            }
+                        if (data.type === 'close') {
+                            sseConnection.close();
+                            return;
+                        }
 
                             if (data.type === 'payment' && data.status === 'success') {
                                 if (sseConnection) {
@@ -958,17 +974,17 @@
                                 const successModal = new bootstrap.Modal(document.getElementById('successModal'));
                                 successModal.show();
 
-                                setTimeout(() => {
-                                    window.location.reload();
+                            setTimeout(() => {
+                                window.location.reload();
                                 }, 5000);
-                            }
-                        } catch (error) {
-                            console.error('SSE parsing error:', error);
                         }
-                    };
+                    } catch (error) {
+                        console.error('SSE parsing error:', error);
+                    }
+                };
 
-                    sseConnection.onerror = function(event) {
-                        console.error('SSE connection error:', event);
+                sseConnection.onerror = function(event) {
+                    console.error('SSE connection error:', event);
                         sseConnection.close();
                     };
                 }

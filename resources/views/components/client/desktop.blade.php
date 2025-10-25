@@ -11,6 +11,10 @@
 
 @push('scripts')
     <script>
+        function redirectToPayment(packagePlan) {
+            window.location.href = '{{ route("user.payment") }}?package=' + packagePlan;
+        }
+
         function togglePackageView() {
             const desktopScreenArea = document.querySelector('.desktop-screen-area');
             const desktopPackageOverlay = document.querySelector('.desktop-package-overlay');
@@ -54,121 +58,36 @@
         
         <div class="desktop-package-content" style="display: none;">
             <div class="package-grid">
-                <!-- GÓI ĐỒNG - 199k -->
-                <div class="package-item" data-package="1">
-                    <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="Package 1" class="package-img">
+                @foreach ($sharedPackages as $index => $package)
+                <!-- {{ strtoupper($package->name) }} -->
+                <div class="package-item" data-package-plan="{{ $package->plan }}" onclick="event.stopPropagation(); redirectToPayment('{{ $package->plan }}')" style="cursor: pointer;">
+                    <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="{{ $package->name }}" class="package-img">
                     <div class="package-content package-bg-content">
                         <div class="package-left">
-                            <div class="package-title">GÓI ĐỒNG - 199k</div>
-                            <div class="package-price">300 xu</div>
+                            <div class="package-title">{{ strtoupper($package->name) }}</div>
+                            <div class="package-price">{{ number_format($package->coins) }} xu</div>
                         </div>
                         <div class="package-divider"></div>
                         <div class="package-right">
-                            <div class="package-feature">Sử dụng: 3 tháng</div>
+                            <div class="package-feature">Sử dụng: {{ $package->expiry }} tháng</div>
                             <div class="package-feature">Không giới hạn lượt tải</div>
                             <div class="package-feature">Cập nhật file mới mỗi ngày</div>
                         </div>
                     </div>
-                    <img src="{{ asset('images/d/packages/package1.png') }}" alt="Package 1 Hover" class="package-hover-img">
+                    <img src="{{ asset('images/d/packages/package' . ($index + 1) . '.png') }}" alt="{{ $package->name }} Hover" class="package-hover-img">
                     <div class="package-content package-hover-content">
                         <div class="package-left">
                             <div class="package-register">Đăng kí</div>
                         </div>
                         <div class="package-divider"></div>
                         <div class="package-right">
-                            <div class="package-feature package-feature-colored-1">Sử dụng: 3 tháng</div>
-                            <div class="package-feature package-feature-colored-1">Không giới hạn lượt tải</div>
-                            <div class="package-feature package-feature-colored-1">Cập nhật file mới mỗi ngày</div>
+                            <div class="package-feature package-feature-colored-{{ $index + 1 }}">Sử dụng: {{ $package->expiry }} tháng</div>
+                            <div class="package-feature package-feature-colored-{{ $index + 1 }}">Không giới hạn lượt tải</div>
+                            <div class="package-feature package-feature-colored-{{ $index + 1 }}">Cập nhật file mới mỗi ngày</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- GÓI BẠC - 499k -->
-                <div class="package-item" data-package="2">
-                    <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="Package 2" class="package-img">
-                    <div class="package-content package-bg-content">
-                        <div class="package-left">
-                            <div class="package-title">GÓI BẠC - 499k</div>
-                            <div class="package-price">800 xu</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature">Sử dụng: 6 tháng</div>
-                            <div class="package-feature">Không giới hạn lượt tải</div>
-                            <div class="package-feature">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                    <img src="{{ asset('images/d/packages/package2.png') }}" alt="Package 2 Hover" class="package-hover-img">
-                    <div class="package-content package-hover-content">
-                        <div class="package-left">
-                            <div class="package-register">Đăng kí</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature package-feature-colored-2">Sử dụng: 6 tháng</div>
-                            <div class="package-feature package-feature-colored-2">Không giới hạn lượt tải</div>
-                            <div class="package-feature package-feature-colored-2">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GÓI VÀNG - 999k -->
-                <div class="package-item" data-package="3">
-                    <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="Package 3" class="package-img">
-                    <div class="package-content package-bg-content">
-                        <div class="package-left">
-                            <div class="package-title">GÓI VÀNG - 999k</div>
-                            <div class="package-price">1800 xu</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature">Sử dụng: 9 tháng</div>
-                            <div class="package-feature">Không giới hạn lượt tải</div>
-                            <div class="package-feature">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                    <img src="{{ asset('images/d/packages/package3.png') }}" alt="Package 3 Hover" class="package-hover-img">
-                    <div class="package-content package-hover-content">
-                        <div class="package-left">
-                            <div class="package-register">Đăng kí</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature package-feature-colored-3">Sử dụng: 9 tháng</div>
-                            <div class="package-feature package-feature-colored-3">Không giới hạn lượt tải</div>
-                            <div class="package-feature package-feature-colored-3">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GÓI BẠCH KIM - 1499k -->
-                <div class="package-item" data-package="4">
-                    <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="Package 4" class="package-img">
-                    <div class="package-content package-bg-content">
-                        <div class="package-left">
-                            <div class="package-title">GÓI BẠCH KIM - 1499k</div>
-                            <div class="package-price">3000 xu</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature">Sử dụng: 12 tháng</div>
-                            <div class="package-feature">Không giới hạn lượt tải</div>
-                            <div class="package-feature">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                    <img src="{{ asset('images/d/packages/package4.png') }}" alt="Package 4 Hover" class="package-hover-img">
-                    <div class="package-content package-hover-content">
-                        <div class="package-left">
-                            <div class="package-register">Đăng kí</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature package-feature-colored-4">Sử dụng: 12 tháng</div>
-                            <div class="package-feature package-feature-colored-4">Không giới hạn lượt tải</div>
-                            <div class="package-feature package-feature-colored-4">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
 

@@ -45,5 +45,14 @@ class AppServiceProvider extends ServiceProvider
 
         view()->share('faviconPath', $faviconPath);
         view()->share('logoPath', $logoPath);
+
+        try {
+            if (Schema::hasTable('packages')) {
+                $packages = \App\Models\Package::orderBy('amount', 'asc')->get();
+                view()->share('sharedPackages', $packages);
+            }
+        } catch (\Exception $e) {
+            view()->share('sharedPackages', collect());
+        }
     }
 }
