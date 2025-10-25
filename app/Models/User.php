@@ -46,6 +46,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'package_expired_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -79,7 +80,7 @@ class User extends Authenticatable
             return false;
         }
 
-        return \Carbon\Carbon::parse($this->package_expired_at)->isFuture();
+        return $this->package_expired_at->isFuture();
     }
 
     public function canDownloadFree()

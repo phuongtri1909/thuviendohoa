@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PaymentCassoController;
+use App\Http\Controllers\Admin\PurchaseSetController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -64,5 +66,9 @@ Route::group(['as' => 'admin.'], function () {
         Route::resource('packages', PackageController::class)->only(['index', 'edit', 'update']);
 
         Route::resource('payments', PaymentCassoController::class)->only(['index', 'show', 'destroy']);
+        
+        Route::resource('purchase-sets', PurchaseSetController::class)->only(['index', 'show']);
+        
+        Route::resource('users', AdminUserController::class)->only(['index', 'show']);
     });
 });

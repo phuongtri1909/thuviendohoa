@@ -86,7 +86,7 @@
                     </li>
 
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*', 'admin.payments.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.banks.*', 'admin.packages.*', 'admin.payments.*', 'admin.purchase-sets.*', 'admin.users.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-money-bill"></i>
                             <span>Quản lý bán hàng</span>
@@ -99,6 +99,14 @@
                                     <span>Giao dịch thanh toán</span>
                                 </a>
                             </li>
+
+                            <li class="{{ Route::currentRouteNamed('admin.purchase-sets.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.purchase-sets.index') }}">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span>Mua sản phẩm</span>
+                                </a>
+                            </li>
+
 
                             <li class="{{ Route::currentRouteNamed('admin.packages.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.packages.index') }}">
@@ -116,6 +124,13 @@
                            
 
                         </ul>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed('admin.users.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.users.index') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Người dùng</span>
+                        </a>
                     </li>
 
                     <!-- Cấu hình hệ thống -->
