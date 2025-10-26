@@ -60,6 +60,12 @@ Route::group(['middleware' => 'auth'], function () {
         // Purchase & Download routes
         Route::get('purchase/check/{setId}', [PurchaseSetController::class, 'checkDownloadCondition'])->name('purchase.check');
         Route::post('purchase/confirm/{setId}', [PurchaseSetController::class, 'confirmPurchase'])->name('purchase.confirm');
+        
+        // Coin History routes
+        Route::get('coin-history', [\App\Http\Controllers\Client\CoinHistoryController::class, 'index'])->name('coin-history');
+        Route::post('coin-history/mark-read', [\App\Http\Controllers\Client\CoinHistoryController::class, 'markAsRead'])->name('coin-history.mark-read');
+        Route::get('coin-history/unread-count', [\App\Http\Controllers\Client\CoinHistoryController::class, 'getUnreadCount'])->name('coin-history.unread-count');
+        Route::get('coin-history/unread', [\App\Http\Controllers\Client\CoinHistoryController::class, 'getUnreadHistories'])->name('coin-history.unread');
     });
 });
 

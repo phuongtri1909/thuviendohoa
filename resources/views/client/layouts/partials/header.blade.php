@@ -237,10 +237,34 @@
                 <div class="user-section">
                     @auth
                         <div class="user-dropdown">
-                            <button class="notification-btn">
+                            <button class="notification-btn" id="notificationBtn">
                                 <img src="{{ asset('/images/svg/notification.svg') }}" alt="Notification">
-                                <span class="notification-badge">3</span>
+                                <span class="notification-badge" id="notificationBadge">0</span>
                             </button>
+                            
+                            <div class="notification-dropdown" id="notificationDropdown">
+                                <div class="notification-header">
+                                    <h6 class="notification-title">Thông báo xu</h6>
+                                    <button class="mark-all-read-btn" id="markAllReadBtn">
+                                        <i class="fas fa-check-double me-1"></i>
+                                        Đọc tất cả
+                                    </button>
+                                </div>
+                                
+                                <div class="notification-list" id="notificationList">
+                                    <div class="notification-loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Đang tải...
+                                    </div>
+                                </div>
+                                
+                                <div class="notification-footer">
+                                    <a href="{{ route('user.coin-history') }}" class="notification-view-all">
+                                        <i class="fas fa-history me-1"></i>
+                                        Xem tất cả
+                                    </a>
+                                </div>
+                            </div>
 
                             <button class="user-profile-btn" id="userDropdownBtn">
                                 <div class="user-avatar-container">
@@ -618,6 +642,189 @@
                     userDropdown.classList.remove('active');
                 }
             });
+
+            // Notification Dropdown Toggle
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const notificationList = document.getElementById('notificationList');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+
+            if (notificationBtn && notificationDropdown) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationDropdown.classList.toggle('active');
+                    
+                    if (notificationDropdown.classList.contains('active')) {
+                        loadNotifications();
+                    }
+                });
+            }
+
+            // Close notification dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (notificationBtn && notificationDropdown && !notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                    notificationDropdown.classList.remove('active');
+                }
+            });
+
+            // Load notifications
+            function loadNotifications() {
+                fetch('{{ route("user.coin-history.unread") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        displayNotifications(data.histories);
+                    })
+                    .catch(error => {
+                        console.error('Error loading notifications:', error);
+                        notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-exclamation-triangle"></i>Không thể tải thông báo</div>';
+                    });
+            }
+
+            // Display notifications
+            function displayNotifications(histories) {
+                if (histories.length === 0) {
+                    notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                    return;
+                }
+
+                let html = '';
+                histories.forEach(history => {
+                    const iconClass = getNotificationIcon(history.type);
+                    const amountClass = history.amount > 0 ? 'positive' : 'negative';
+                    
+                    html += `
+                        <div class="notification-item unread" data-history-id="${history.id}">
+                            <div class="notification-icon ${history.type}">
+                                <i class="fas ${iconClass}"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title-text">${history.reason}</div>
+                                ${history.description ? `<div class="notification-desc">${history.description}</div>` : ''}
+                                <div class="notification-meta">
+                                    <span>${formatDate(history.created_at)}</span>
+                                    <span class="notification-amount ${amountClass}">${history.amount > 0 ? '+' : ''}${formatNumber(history.amount)} xu</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                notificationList.innerHTML = html;
+                
+                // Add click handlers for notification items
+                document.querySelectorAll('.notification-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const historyId = this.dataset.historyId;
+                        markAsRead(historyId);
+                    });
+                });
+            }
+
+            // Mark as read
+            function markAsRead(historyId) {
+                fetch('{{ route("user.coin-history.mark-read") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ id: historyId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove item from dropdown
+                        const item = document.querySelector(`[data-history-id="${historyId}"]`);
+                        if (item) {
+                            item.remove();
+                        }
+                        
+                        // Check if dropdown is empty
+                        const remainingItems = document.querySelectorAll('.notification-item');
+                        if (remainingItems.length === 0) {
+                            notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                        }
+                        
+                        updateNotificationCount();
+                    }
+                })
+                .catch(error => console.error('Error marking as read:', error));
+            }
+
+            // Mark all as read
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    fetch('{{ route("user.coin-history.mark-read") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Clear all items from dropdown
+                            notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                            updateNotificationCount();
+                        }
+                    })
+                    .catch(error => console.error('Error marking all as read:', error));
+                });
+            }
+
+            // Update notification count
+            function updateNotificationCount() {
+                fetch('{{ route("user.coin-history.unread-count") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        const count = data.count;
+                        if (count > 0) {
+                            notificationBadge.textContent = count;
+                            notificationBadge.style.display = 'flex';
+                        } else {
+                            notificationBadge.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Error updating notification count:', error));
+            }
+
+            // Helper functions
+            function getNotificationIcon(type) {
+                switch(type) {
+                    case 'payment': return 'fa-credit-card';
+                    case 'purchase': return 'fa-shopping-cart';
+                    case 'manual': return 'fa-user-cog';
+                    case 'monthly_bonus': return 'fa-gift';
+                    default: return 'fa-coins';
+                }
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(diff / 3600000);
+                const days = Math.floor(diff / 86400000);
+                
+                if (minutes < 1) return 'Vừa xong';
+                if (minutes < 60) return `${minutes} phút trước`;
+                if (hours < 24) return `${hours} giờ trước`;
+                if (days < 7) return `${days} ngày trước`;
+                
+                return date.toLocaleDateString('vi-VN');
+            }
+
+            function formatNumber(num) {
+                return new Intl.NumberFormat('vi-VN').format(num);
+            }
+
+            // Load initial notification count
+            updateNotificationCount();
 
             // Mobile Category Dropdown Toggle
             if (mobileCategoryDropdownBtn && mobileCategoryDropdown) {
