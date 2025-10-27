@@ -255,7 +255,6 @@ class PurchaseSetController extends Controller
                     'coins' => $price
                 ]);
                 
-                // Tạo CoinHistory record
                 \App\Models\CoinHistory::create([
                     'user_id' => $user->id,
                     'amount' => -$price,

@@ -35,6 +35,10 @@ Route::get('get-link', function () {
 
 Route::post('payment/casso/callback', [PaymentController::class, 'cassoCallback'])->name('payment.casso.callback');
 
+// Feedback routes
+Route::post('feedback', [\App\Http\Controllers\Client\FeedbackController::class, 'store'])->name('feedback.store');
+Route::get('feedback/captcha', [\App\Http\Controllers\Client\FeedbackController::class, 'generateCaptcha'])->name('feedback.captcha');
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -66,6 +70,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('coin-history/mark-read', [\App\Http\Controllers\Client\CoinHistoryController::class, 'markAsRead'])->name('coin-history.mark-read');
         Route::get('coin-history/unread-count', [\App\Http\Controllers\Client\CoinHistoryController::class, 'getUnreadCount'])->name('coin-history.unread-count');
         Route::get('coin-history/unread', [\App\Http\Controllers\Client\CoinHistoryController::class, 'getUnreadHistories'])->name('coin-history.unread');
+        
+        // User Feedback routes
+        Route::get('my-feedback', [\App\Http\Controllers\Client\UserFeedbackController::class, 'index'])->name('my-feedback');
     });
 });
 

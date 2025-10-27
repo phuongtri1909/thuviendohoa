@@ -150,7 +150,6 @@ class CoinController extends Controller
                     // Cập nhật coins
                     $user->increment('coins', $actualAmount);
                     
-                    // Tạo transaction record
                     $transactions[] = [
                         'user_id' => $user->id,
                         'admin_id' => $adminId,
@@ -163,7 +162,6 @@ class CoinController extends Controller
                         'updated_at' => now()
                     ];
                     
-                    // Tạo CoinHistory record
                     $coinHistories[] = [
                         'user_id' => $user->id,
                         'admin_id' => $adminId,
@@ -210,7 +208,6 @@ class CoinController extends Controller
                     // Cập nhật coins
                     $user->increment('coins', $actualAmount);
                     
-                    // Tạo transaction record
                     $transactions[] = [
                         'user_id' => $user->id,
                         'admin_id' => $adminId,
@@ -223,7 +220,6 @@ class CoinController extends Controller
                         'updated_at' => now()
                     ];
                     
-                    // Tạo CoinHistory record
                     $coinHistories[] = [
                         'user_id' => $user->id,
                         'admin_id' => $adminId,

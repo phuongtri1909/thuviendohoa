@@ -79,5 +79,10 @@ Route::group(['as' => 'admin.'], function () {
         
         Route::resource('monthly-bonuses', MonthlyBonusController::class)->only(['index', 'show']);
         Route::resource('coin-histories', CoinHistoryController::class)->only(['index', 'show']);
+
+// Feedback routes
+Route::resource('feedback', \App\Http\Controllers\Admin\FeedbackController::class);
+Route::post('feedback/{id}/reply', [\App\Http\Controllers\Admin\FeedbackController::class, 'reply'])->name('feedback.reply');
+Route::post('feedback/{id}/mark-read', [\App\Http\Controllers\Admin\FeedbackController::class, 'markAsRead'])->name('feedback.mark-read');
     });
 });

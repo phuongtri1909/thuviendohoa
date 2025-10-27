@@ -91,6 +91,13 @@
                             </a>
                         </div>
 
+                        <div class="user-nav-item">
+                            <a href="{{ route('user.my-feedback') }}"
+                                class="user-nav-link text-decoration-none hover-color-7 {{ request()->routeIs('user.my-feedback') ? 'active' : '' }}">
+                                <i class="fa-solid fa-comments user-nav-icon"></i>
+                                <span class="user-nav-text">Góp ý của tôi</span>
+                            </a>
+                        </div>
 
                         <div class="user-nav-item user-nav-logout">
                             <a href="{{ route('logout') }}" class="user-nav-link text-danger text-decoration-none">

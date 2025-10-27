@@ -129,7 +129,6 @@ class MonthlyBonusCoins extends Command
             return;
         }
         
-        // Kiểm tra xem đã có monthly bonus cho package này trong tháng này chưa
         $currentMonth = now()->format('Y-m');
         $existingBonus = MonthlyBonus::where('package_id', $packageId)
             ->where('month', $currentMonth)
@@ -169,7 +168,6 @@ class MonthlyBonusCoins extends Command
         $allUserIds = [];
         $currentMonth = now()->format('Y-m');
         
-        // Xử lý theo batch để tránh overload
         do {
             $users = User::where('package_id', $packageId)
                 ->where('package_expired_at', '>', now())
@@ -221,7 +219,6 @@ class MonthlyBonusCoins extends Command
             
         } while ($processed < $totalUsers);
         
-        // Lưu MonthlyBonus record
         if ($processed > 0) {
             MonthlyBonus::create([
                 'package_id' => $package->id,
@@ -254,7 +251,6 @@ class MonthlyBonusCoins extends Command
             foreach ($users as $user) {
                 $user->increment('coins', $package->bonus_coins);
                 
-                // Tạo CoinHistory record
                 $coinHistories[] = [
                     'user_id' => $user->id,
                     'amount' => $package->bonus_coins,

@@ -9,12 +9,14 @@
 <div class="contribution-section ">
     <div class="container-custom">
         <h3 class="text-md-4">Đóng góp của bạn sẽ giúp tôi hoàn thiện hơn</h3>
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Góp ý của bạn về trang...">
-            <button class="btn btn-submit" type="button">
-                <img src="{{ asset('/images/svg/submit-form.svg') }}" alt="Submit">
-            </button>
-        </div>
+        <form id="feedbackForm" class="feedback-form">
+            <div class="input-group">
+                <input type="text" id="feedbackMessage" class="form-control" placeholder="Góp ý của bạn về trang..." required>
+                <button class="btn btn-submit" type="submit">
+                    <img src="{{ asset('/images/svg/submit-form.svg') }}" alt="Submit">
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -104,6 +106,142 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v17.0"
         nonce="random_nonce"></script>
+    
+    @include('components.sweetalert')
+    
+    <script>
+        $(document).ready(function() {
+            let captchaQuestion = '';
+            let captchaAnswer = '';
+            let submitCount = 0;
+            let lastSubmitTime = 0;
+            const SPAM_THRESHOLD = 2;
+            const SPAM_TIME_WINDOW = 60000;
+
+            function loadCaptcha(callback) {
+                $.get('{{ route("feedback.captcha") }}')
+                    .done(function(data) {
+                        captchaQuestion = data.question;
+                        captchaAnswer = data.answer;
+                        if (callback) callback();
+                    })
+                    .fail(function() {
+                        showAlert('Lỗi', 'Không thể tải captcha. Vui lòng thử lại.', 'error');
+                    });
+            }
+
+            function checkSpamAndSubmit() {
+                const message = $('#feedbackMessage').val().trim();
+                
+                const now = Date.now();
+                if (lastSubmitTime > 0 && (now - lastSubmitTime) < SPAM_TIME_WINDOW) {
+                    submitCount++;
+                } else {
+                    submitCount = 1;
+                }
+                lastSubmitTime = now;
+
+
+                if (submitCount < SPAM_THRESHOLD) {
+                    submitFeedback({ message: message, captcha: '' });
+                    return;
+                }
+
+                showCaptchaModal(message);
+            }
+
+            function showCaptchaModal(message) {
+                loadCaptcha(function() {
+                    Swal.fire({
+                        title: 'Mã xác thực',
+                        html: `
+                            <div class="captcha-modal">
+                                <p class="mb-3">Bạn đã gửi quá nhiều góp ý. Vui lòng nhập mã xác thực để tiếp tục:</p>
+                                <div class="captcha-question-modal text-center">
+                                    <div class="mb-3">
+                                        <span id="modalCaptchaQuestion" style="font-size: 18px; font-weight: bold; color: #333;">${captchaQuestion}</span>
+                                    </div>
+                                    <input type="text" id="modalCaptchaAnswer" class="form-control text-center" placeholder="Nhập kết quả" style="width: 150px; margin: 0 auto; font-size: 16px; font-weight: bold;">
+                                </div>
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác thực',
+                        cancelButtonText: 'Hủy',
+                        confirmButtonColor: 'var(--primary-color-3)',
+                        cancelButtonColor: '#6c757d',
+                        width: '400px',
+                        didOpen: function() {
+                            $('#modalCaptchaAnswer').focus();
+                        },
+                        preConfirm: function() {
+                            const modalCaptcha = $('#modalCaptchaAnswer').val().trim();
+                            
+                            
+                            if (!modalCaptcha) {
+                                Swal.showValidationMessage('Vui lòng nhập mã xác thực.');
+                                return false;
+                            }
+
+                            if (parseInt(modalCaptcha) !== parseInt(captchaAnswer)) {
+                                Swal.showValidationMessage('Mã xác thực không đúng.');
+                                return false;
+                            }
+
+                            return {
+                                message: message,
+                                captcha: modalCaptcha
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            submitFeedback(result.value);
+                        }
+                    });
+                });
+            }
+
+            function submitFeedback(formData) {
+                $.ajax({
+                    url: '{{ route("feedback.store") }}',
+                    method: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showAlert('Thành công', response.message, 'success');
+                            $('#feedbackForm')[0].reset();
+                        } else {
+                            showAlert('Lỗi', response.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 429) {
+                            showAlert('Cảnh báo', 'Bạn đã gửi quá nhiều góp ý. Vui lòng thử lại sau.', 'warning');
+                        } else {
+                            const response = xhr.responseJSON;
+                            showAlert('Lỗi', response.message || 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                        }
+                    }
+                });
+            }
+
+            $('#feedbackForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const message = $('#feedbackMessage').val().trim();
+                if (message.length < 10) {
+                    showAlert('Lỗi', 'Vui lòng nhập ít nhất 10 ký tự cho góp ý.', 'error');
+                    return;
+                }
+
+                checkSpamAndSubmit();
+            });
+        });
+    </script>
+    
     @stack('scripts')
     </body>
 
