@@ -81,8 +81,36 @@
     --color-bg-light: rgba(242, 245, 252, 1);
 }
 
+@font-face {
+    font-family: 'UTM Neo Sans Intel';
+    src: url('../../../../../public/fonts/UTM Neo Sans Intel.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Neo Sans Intel';
+    src: url('../../../../../public/fonts/UTM Neo Sans Intel_Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'UTM Neo Sans Intel';
+    src: url('../../../../../public/fonts/UTM Neo Sans IntelBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UTM Neo Sans Intel';
+    src: url('../../../../../public/fonts/UTM Neo Sans IntelBold_Italic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'UTM Neo Sans Intel', sans-serif;
     margin-top: 56px;
 }
 
