@@ -61,6 +61,7 @@ Route::group(['as' => 'admin.'], function () {
         Route::resource('albums', AlbumController::class);
 
         Route::resource('sets', SetController::class);
+        Route::post('sets/{set}/clean-files', [SetController::class, 'cleanFiles'])->name('sets.clean-files');
 
         Route::resource('banners', BannerController::class);
 

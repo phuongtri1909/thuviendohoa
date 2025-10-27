@@ -16,10 +16,17 @@ use App\Models\ColorSet;
 use App\Models\SoftwareSet;
 use App\Models\TagSet;
 use App\Models\Photo;
+use App\Services\FileCleanupService;
 use Illuminate\Support\Str;
 
 class SetController extends Controller
 {
+    protected $cleanupService;
+
+    public function __construct(FileCleanupService $cleanupService)
+    {
+        $this->cleanupService = $cleanupService;
+    }
     public function index(Request $request)
     {
         $query = Set::query();
@@ -188,6 +195,11 @@ class SetController extends Controller
             'tag_ids.*' => 'integer|exists:tags,id',
         ]);
 
+        // Check if photos or drive_url changed
+        $shouldCleanFiles = $request->hasFile('photos') || 
+                           $request->filled('delete_photos') || 
+                           $request->drive_url !== $set->drive_url;
+
         $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
@@ -268,6 +280,11 @@ class SetController extends Controller
             return back()->withErrors(['photos' => 'Set phải có ít nhất 1 ảnh'])->withInput();
         }
 
+        // Clean temp files and ZIP if photos or drive_url changed
+        if ($shouldCleanFiles) {
+            $this->cleanupService->cleanupSetCompletely($set->id);
+        }
+
         return redirect()->route('admin.sets.index')->with('success', 'Set đã được cập nhật thành công!');
     }
 
@@ -283,7 +300,40 @@ class SetController extends Controller
         ColorSet::where('set_id', $set->id)->delete();
         SoftwareSet::where('set_id', $set->id)->delete();
         TagSet::where('set_id', $set->id)->delete();
+        
+        // Clean temp files and ZIP before deleting set
+        $this->cleanupService->cleanupSetCompletely($set->id);
+        
         $set->delete();
         return redirect()->route('admin.sets.index')->with('success', 'Set đã được xóa thành công!');
+    }
+
+    public function cleanFiles(Set $set)
+    {
+        $result = $this->cleanupService->cleanupSetCompletely($set->id);
+        
+        $totalCount = $result['total_count'];
+        $totalSize = $result['total_size'];
+        $zipCount = $result['zip']['count'];
+        $tempFilesCount = $result['set_files']['count'];
+        
+        if ($totalCount > 0) {
+            $parts = [];
+            
+            if ($tempFilesCount > 0) {
+                $parts[] = "{$tempFilesCount} file tạm";
+            }
+            
+            if ($zipCount > 0) {
+                $parts[] = "{$zipCount} file ZIP";
+            }
+            
+            $filesList = implode(' và ', $parts);
+            $message = "Đã xóa {$filesList} (" . $this->cleanupService->formatBytes($totalSize) . ").";
+        } else {
+            $message = "Không có file nào cần xóa.";
+        }
+        
+        return redirect()->back()->with('success', $message);
     }
 }

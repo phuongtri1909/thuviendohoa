@@ -11,6 +11,12 @@
                     <h5>Chi tiết set</h5>
                 </div>
                 <div class="card-actions">
+                    <form method="POST" action="{{ route('admin.sets.clean-files', $set) }}" id="clean-files-form" style="display: inline-block;">
+                        @csrf
+                        <button type="button" class="action-button clean-button" onclick="confirmCleanFiles()">
+                            <i class="fas fa-broom"></i> Làm sạch file
+                        </button>
+                    </form>
                     <a href="{{ route('admin.sets.edit', $set) }}" class="action-button">
                         <i class="fas fa-edit"></i> Chỉnh sửa
                     </a>
@@ -181,6 +187,30 @@
     </div>
 @endsection
 
+@include('components.sweetalert')
+
+@push('scripts')
+<script>
+function confirmCleanFiles() {
+    Swal.fire({
+        title: 'Xác nhận làm sạch file',
+        html: 'Bạn có chắc muốn xóa file tạm và file ZIP của set này?<br><br><small class="text-muted">Hành động này sẽ buộc người dùng download lại file mới từ Drive.</small>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ff5722',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fas fa-broom me-1"></i> Làm sạch',
+        cancelButtonText: 'Hủy',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('clean-files-form').submit();
+        }
+    });
+}
+</script>
+@endpush
+
 <style>
     .category-details { padding: 20px; }
     .detail-section { background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
@@ -192,6 +222,27 @@
     .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
     .photo-item { text-align: center; }
     .tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
+    
+    .clean-button {
+        background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .clean-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4);
+    }
+    
     @media (max-width: 768px) { 
         .detail-item { flex-direction: column; gap: 5px; } 
         .detail-label { min-width: auto; margin-right: 0; }
