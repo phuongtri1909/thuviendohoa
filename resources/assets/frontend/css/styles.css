@@ -24,11 +24,11 @@
     --color-silver: #7e7e7e;
     --color-gold: #F5C42E;
     --color-platinum: #be40e8;
-    --filter-bronze: invert(61%) sepia(52%) saturate(565%) hue-rotate(339deg) brightness(95%) contrast(95%);
-    --filter-silver: invert(47%) sepia(0%) saturate(0%) hue-rotate(178deg) brightness(94%) contrast(84%);
-    --filter-gold: invert(80%) sepia(83%) saturate(917%) hue-rotate(357deg) brightness(100%) contrast(97%);
-    --filter-platinum: invert(53%) sepia(95%) saturate(3740%) hue-rotate(266deg) brightness(97%) contrast(92%);
-    --filter-primary-color-3: invert(74%) sepia(56%) saturate(639%) hue-rotate(313deg) brightness(102%) contrast(101%);
+    --filter-bronze: invert(62%) sepia(45%) saturate(831%) hue-rotate(340deg) brightness(95%) contrast(88%);
+    --filter-silver: invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(98%) contrast(88%);
+    --filter-gold: invert(88%) sepia(66%) saturate(1803%) hue-rotate(360deg) brightness(99%) contrast(92%);
+    --filter-platinum: invert(47%) sepia(96%) saturate(4062%) hue-rotate(266deg) brightness(96%) contrast(95%);
+    --filter-primary-color-3: invert(65%) sepia(89%) saturate(2029%) hue-rotate(316deg) brightness(101%) contrast(101%);
     --primary-hover: #444444;
     --secondary-color: #8C5E3B;
     --accent-color: #D1A66E;

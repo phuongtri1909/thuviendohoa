@@ -298,8 +298,8 @@
                                             <div class="user-type mt-2">
                                                 @if (auth()->user()->package_id)
                                                     <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+"
-                                                        class="{{ auth()->user()->package->getPlanFilter() }}">
-                                                    <span class="text-md {{ auth()->user()->package->getPlanColor() }}">
+                                                        class="{{ auth()->user()->package ? auth()->user()->package->getPlanFilter() : 'filter-primary-color-3' }}">
+                                                    <span class="text-md {{ auth()->user()->package ? auth()->user()->package->getPlanColor() : 'color-primary-3' }}">
                                                         {{ auth()->user()->package->getPlanName() }}</span>
                                                 @else
                                                     <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+"
@@ -317,7 +317,7 @@
                                             <p class="text-md color-primary-4 mb-0">Số dư:</p>
                                             <div class="count-display">
                                                 <span
-                                                    class="count-number text-6xl {{ auth()->user()->package->getPlanColor() }}">{{ auth()->user()->coins }}</span>
+                                                    class="count-number text-6xl {{ auth()->user()->package ? auth()->user()->package->getPlanColor() : 'color-primary-12' }}">{{ auth()->user()->coins }}</span>
                                                 <span class="count-text text-md color-primary-4">XU</span>
                                             </div>
                                         </div>
@@ -326,7 +326,7 @@
                                             <p class="text-md color-primary-4 mb-0">Lượt tải file của bạn:</p>
                                             <div class="count-display">
                                                 <span
-                                                    class="count-number text-6xl {{ auth()->user()->package->getPlanColor() }}">{{ auth()->user()->free_downloads }}</span>
+                                                    class="count-number text-6xl {{ auth()->user()->package ? auth()->user()->package->getPlanColor() : 'color-primary-3' }}">{{ auth()->user()->free_downloads }}</span>
                                                 <span class="count-text text-md color-primary-4">Lượt</span>
                                             </div>
                                         </div>
@@ -337,12 +337,12 @@
                                     <div class="d-flex justify-content-center text-center">
                                         @if (auth()->user()->package_id)
                                             <a href="{{ route('user.payment') }}"
-                                                class="text-decoration-none text-white unlimited-btn rounded-5 {{ auth()->user()->package->getPlanGradient() }}">
+                                                class="text-decoration-none text-white unlimited-btn rounded-5 {{ auth()->user()->package ? auth()->user()->package->getPlanGradient() : 'bg-gradient-to-r from-primary-4 to-primary-5' }}">
                                                 NẠP XU
                                             </a>
                                         @else
                                             <a href="{{ route('user.payment') }}"
-                                                class="text-decoration-none text-white unlimited-btn rounded-5 {{ auth()->user()->package->getPlanGradient() }}">
+                                                class="text-decoration-none text-white unlimited-btn rounded-5 {{ auth()->user()->package ? auth()->user()->package->getPlanGradient() : 'bg-gradient-to-r from-primary-4 to-primary-5' }}">
                                                 Đăng kí tải không giới hạn
                                             </a>
                                         @endif
@@ -412,11 +412,11 @@
     <div class="register-download-section">
         <div class="container-custom">
             <div class="d-flex justify-content-end">
-                <button class="btn btn-danger px-4 py-2 fw-bold text-uppercase">
+                <a href="{{ route('user.payment') }}" class="text-decoration-none btn btn-danger px-4 py-2 fw-bold text-uppercase">
                     <img src="{{ asset('/images/svg/user.svg') }}" alt="User" class="me-2" width="16"
                         height="16">
                     ĐĂNG KÍ GÓI TẢI
-                </button>
+                </a>
             </div>
         </div>
     </div>
