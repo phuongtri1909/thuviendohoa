@@ -80,6 +80,7 @@ class BlogController extends Controller
             'user_id' => Auth::id(),
             'create_by' => Auth::user()->name,
             'views' => 0,
+            'is_featured' => $request->has('is_featured') ? 1 : 0,
         ]);
 
         // Save tags
@@ -133,6 +134,7 @@ class BlogController extends Controller
             'slug' => Str::slug($request->title),
             'content' => $content,
             'category_id' => $request->category_id,
+            'is_featured' => $request->has('is_featured') ? 1 : 0,
         ];
 
         if ($request->hasFile('image')) {

@@ -50,6 +50,18 @@
                             </span>
                         </div>
                         <div class="detail-item">
+                            <label class="detail-label">Nổi bật:</label>
+                            <span class="detail-value">
+                                @if($blog->is_featured)
+                                    <span class="featured-badge">
+                                        <i class="fas fa-star"></i> Nổi bật
+                                    </span>
+                                @else
+                                    <span class="not-featured-text">Không</span>
+                                @endif
+                            </span>
+                        </div>
+                        <div class="detail-item">
                             <label class="detail-label">Tác giả:</label>
                             <span class="detail-value">{{ $blog->user->name ?? $blog->create_by }}</span>
                         </div>
@@ -208,6 +220,23 @@
 
     .text-muted {
         color: #6c757d;
+    }
+
+    .featured-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff3cd;
+        color: #ff9800;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .not-featured-text {
+        color: #6c757d;
+        font-size: 14px;
     }
 
     @media (max-width: 768px) {

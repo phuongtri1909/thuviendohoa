@@ -57,6 +57,18 @@
                         </div>
 
                         <div class="form-group">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $blog->is_featured) ? 'checked' : '' }}>
+                                <label for="is_featured" class="checkbox-label">Nổi bật</label>
+                            </div>
+                            <div class="error-message" id="error-is_featured">
+                                @error('is_featured')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="tag_ids" class="form-label-custom">
                                 Tags (tùy chọn)
                             </label>

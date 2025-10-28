@@ -12,7 +12,11 @@ use Illuminate\Http\UploadedFile;
 class Blog extends Model
 {
     protected $table = 'blogs';
-    protected $fillable = ['title', 'slug', 'content', 'image','image_left','user_id', 'category_id','views','create_by'];
+    protected $fillable = ['title', 'slug', 'content', 'image','image_left','user_id', 'category_id','views','create_by','is_featured'];
+    
+    protected $casts = [
+        'is_featured' => 'boolean',
+    ];
 
     public function category()
     {

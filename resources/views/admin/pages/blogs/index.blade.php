@@ -95,6 +95,7 @@
                                     <th class="column-small">STT</th>
                                     <th class="column-large">Tiêu đề</th>
                                     <th class="column-medium">Danh mục</th>
+                                    <th class="column-small text-center">Nổi bật</th>
                                     <th class="column-medium">Tác giả</th>
                                     <th class="column-medium">Ngày tạo</th>
                                     <th class="column-small text-center">Thao tác</th>
@@ -111,6 +112,15 @@
                                         </td>
                                         <td>
                                             <span class="category-badge">{{ $blog->category->name ?? 'N/A' }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            @if($blog->is_featured)
+                                                <span class="featured-badge">
+                                                    <i class="fas fa-star"></i>
+                                                </span>
+                                            @else
+                                                <span class="not-featured-badge">-</span>
+                                            @endif
                                         </td>
                                         <td>
                                             <span class="author-name">{{ $blog->user->name ?? $blog->create_by }}</span>
@@ -177,6 +187,23 @@
         .category-date {
             font-size: 14px;
             color: #6c757d;
+        }
+
+        .featured-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #fff3cd;
+            color: #ff9800;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .not-featured-badge {
+            color: #dee2e6;
+            font-size: 14px;
         }
     </style>
 @endpush
