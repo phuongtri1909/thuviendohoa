@@ -117,7 +117,7 @@
                     </a>
                 </div>
 
-                <div class="d-flex align-items-center" style="gap: 10px">
+                <div class="d-flex align-items-center header-center" style="gap: 10px">
                     <div class="header-search d-none d-xl-block">
                         <div class="search-container rounded-5 ps-3">
                             <div class="category-dropdown">
