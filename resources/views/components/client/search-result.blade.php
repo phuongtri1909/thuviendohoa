@@ -269,6 +269,7 @@
                         setTimeout(() => {
                             initMasonry();
                             attachImageClickEvents();
+                            attachPaginationEvents();
                         }, 100);
                     }
                 })
@@ -293,6 +294,87 @@
                         modal.style.display = 'flex';
                         document.body.style.overflow = 'hidden';
                     });
+                });
+            }
+
+            function attachPaginationEvents() {
+                const paginationLinks = document.querySelectorAll('.pagination-wrapper .pagination-item');
+                
+                paginationLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const url = this.getAttribute('href');
+                        if (!url || url === '#') return;
+                        
+                        const pageMatch = url.match(/[?&]page=(\d+)/);
+                        if (pageMatch) {
+                            loadFilteredPage(parseInt(pageMatch[1]));
+                        }
+                    });
+                });
+            }
+
+            function loadFilteredPage(page) {
+                if (isLoading) return;
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const category = urlParams.get('category') || '';
+                const album = urlParams.get('album') || '';
+                const query = urlParams.get('q') || '';
+                
+                const formData = new FormData();
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                formData.append('category', category);
+                formData.append('album', album);
+                formData.append('q', query);
+                formData.append('page', page);
+                
+                selectedColors.forEach(color => {
+                    formData.append('colors[]', color);
+                });
+                
+                selectedSoftware.forEach(software => {
+                    formData.append('software[]', software);
+                });
+                
+                selectedTagsArray.forEach(tag => {
+                    formData.append('tags[]', tag);
+                });
+                
+                isLoading = true;
+                const container = document.getElementById('search-results-container');
+                container.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+
+                fetch('{{ route("search.filter") }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        container.innerHTML = data.html;
+                        
+                        // Scroll to top of results
+                        const searchResult = document.querySelector('.search-result');
+                        if (searchResult) {
+                            searchResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        
+                        setTimeout(() => {
+                            initMasonry();
+                            attachImageClickEvents();
+                            attachPaginationEvents();
+                        }, 100);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                })
+                .finally(() => {
+                    isLoading = false;
                 });
             }
 

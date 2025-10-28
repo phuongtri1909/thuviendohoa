@@ -21,6 +21,12 @@
             </div>
         </div>
     </div>
+    
+    @if($sets->hasPages())
+        <div class="pagination-wrapper mt-4">
+            {{ $sets->links('components.paginate') }}
+        </div>
+    @endif
 @else
     <div class="d-flex flex-column align-items-center justify-content-center py-5">
         <div class="text-center">

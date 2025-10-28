@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="mt-4 mt-md-5 px-0">
+    <div class="mt-4 mt-md-5 container-custom">
         <x-client.content-image :image-src="asset('/images/d/contents/content1.png')" image-alt="" button-text="> Xem thêm" position-x="31%" position-y="80%"
             button-class="px-3 py-2" />
     </div>

@@ -77,7 +77,7 @@ class SearchController extends Controller
             });
         }
         
-        $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(12);
+        $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(30);
         
         $selectedCategory = $categorySlug ? Category::where('slug', $categorySlug)->first() : null;
         $selectedAlbum = $albumSlug ? Album::where('slug', $albumSlug)->first() : null;
@@ -164,6 +164,7 @@ class SearchController extends Controller
         $tags = $request->get('tags', []);
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
+        $page = $request->get('page', 1);
         
         $setsQuery = Set::select('id', 'name', 'image', 'created_at')
             ->with([
@@ -217,7 +218,7 @@ class SearchController extends Controller
             });
         }
         
-        $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(12);
+        $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(30);
         
         return response()->json([
             'success' => true,
