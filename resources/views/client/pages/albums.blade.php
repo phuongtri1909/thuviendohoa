@@ -17,7 +17,7 @@
                 <div class="row g-3" id="albums-container">
                     @foreach ($albums as $album)
                         <div class="col-lg-3 col-md-6 col-sm-12">
-                            <x-client.collection-card :title="$album->name" :image="$album->image" />
+                            <x-client.collection-card :title="$album->name" :image="$album->image" :album-slug="$album->slug" />
                         </div>
                     @endforeach
                 </div>

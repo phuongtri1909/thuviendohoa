@@ -1,4 +1,4 @@
-/* Collection Card Component - Aspect Ratio 1:1 */
+/* Collection Card Component - Aspect Ratio 4:3 */
 .collection-card {
     background: #fff;
     border-radius: 16px;
@@ -9,11 +9,11 @@
     width: 100%;
 }
 
-/* Aspect ratio 1:1 trick */
+/* Aspect ratio 4:3 trick */
 .collection-card::before {
     content: '';
     display: block;
-    padding-top: 100%; /* 1:1 aspect ratio */
+    padding-top: 75%; /* 4:3 aspect ratio (3/4 = 0.75) */
 }
 
 .collection-card:hover {
