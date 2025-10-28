@@ -114,30 +114,61 @@ body {
     margin-top: 56px;
 }
 
-/* Custom Container */
+/* Custom Container - Rộng hơn, padding nhỏ hơn */
 .container-custom {
     width: 100%;
-    padding-left: 114px;
-    padding-right: 114px;
+    max-width: 1600px;
+    padding-left: clamp(15px, 3vw, 60px);
+    padding-right: clamp(15px, 3vw, 60px);
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
 }
 
-@media (max-width: 1200px) {
+/* Smooth padding transition - bung rộng content */
+@media (min-width: 1600px) {
     .container-custom {
         padding-left: 60px;
         padding-right: 60px;
     }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 1400px) and (max-width: 1599px) {
     .container-custom {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: calc(50px + (60 - 50) * ((100vw - 1400px) / (1600 - 1400)));
+        padding-right: calc(50px + (60 - 50) * ((100vw - 1400px) / (1600 - 1400)));
     }
 }
 
-@media (max-width: 576px) {
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .container-custom {
+        padding-left: calc(40px + (50 - 40) * ((100vw - 1200px) / (1400 - 1200)));
+        padding-right: calc(40px + (50 - 40) * ((100vw - 1200px) / (1400 - 1200)));
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .container-custom {
+        padding-left: calc(30px + (40 - 30) * ((100vw - 992px) / (1200 - 992)));
+        padding-right: calc(30px + (40 - 30) * ((100vw - 992px) / (1200 - 992)));
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .container-custom {
+        padding-left: calc(24px + (30 - 24) * ((100vw - 768px) / (992 - 768)));
+        padding-right: calc(24px + (30 - 24) * ((100vw - 768px) / (992 - 768)));
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    .container-custom {
+        padding-left: calc(20px + (24 - 20) * ((100vw - 576px) / (768 - 576)));
+        padding-right: calc(20px + (24 - 20) * ((100vw - 576px) / (768 - 576)));
+    }
+}
+
+@media (max-width: 575px) {
     .container-custom {
         padding-left: 15px;
         padding-right: 15px;

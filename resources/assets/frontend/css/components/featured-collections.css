@@ -1,17 +1,50 @@
-/* Featured Collections Component */
+/* Featured Collections Component - Grid Layout như Piklab */
 .featured-collections-title {
     margin-bottom: 0;
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
     text-align: center;
     padding: 0.5rem 0;
     color: var(--primary-color);
     font-weight: 700;
 }
 
+/* CSS Grid responsive - Scale 1:1 */
 .featured-collections-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: clamp(12px, 1.5vw, 24px);
+}
+
+/* Responsive breakpoints */
+@media (min-width: 1440px) {
+    .featured-collections-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1439px) {
+    .featured-collections-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .featured-collections-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    .featured-collections-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 575px) {
+    .featured-collections-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
 }
 
 .view-all-collections {

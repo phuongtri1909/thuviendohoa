@@ -400,7 +400,7 @@
                 </div>
 
                 <div class="d-lg-none">
-                    <button class="btn border rounded-circle bg-white" id="mobileMenuToggle">
+                    <button class="btn border rounded-circle bg-white" id="mobileMenuToggle" style="width: 45px; height: 45px;">
                         <img src="{{ asset('/images/svg/menu.svg') }}" alt="">
                     </button>
                 </div>

@@ -19,7 +19,7 @@
 @section('content')
     @include('components.toast')
 
-    <div class="container mt-80 mb-5 user-container">
+    <div class="container-custom mt-80 mb-5 user-container">
         <div class="row g-4">
             <!-- Sidebar -->
             <div class="col-12 col-lg-3">
