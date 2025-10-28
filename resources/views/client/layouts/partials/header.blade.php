@@ -597,7 +597,6 @@
                 }
             });
 
-            // Category Dropdown Toggle
             if (categoryDropdownBtn && categoryDropdown) {
                 categoryDropdownBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -611,7 +610,6 @@
                 });
             }
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 if (!categoryDropdownBtn.contains(e.target) && !categoryDropdown.contains(e.target)) {
                     categoryDropdown.classList.remove('active');
@@ -619,7 +617,6 @@
                 }
             });
 
-            // Close dropdown on escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && categoryDropdown.classList.contains('active')) {
                     categoryDropdown.classList.remove('active');
@@ -627,7 +624,6 @@
                 }
             });
 
-            // User Dropdown Toggle
             if (userDropdownBtn && userDropdown) {
                 userDropdownBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -635,7 +631,6 @@
                 });
             }
 
-            // Close user dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 if (userDropdownBtn && userDropdown && !userDropdownBtn.contains(e.target) && !userDropdown
                     .contains(e.target)) {
@@ -643,7 +638,7 @@
                 }
             });
 
-            // Notification Dropdown Toggle
+            @auth
             const notificationBtn = document.getElementById('notificationBtn');
             const notificationDropdown = document.getElementById('notificationDropdown');
             const notificationList = document.getElementById('notificationList');
@@ -661,17 +656,20 @@
                 });
             }
 
-            // Close notification dropdown when clicking outside
             document.addEventListener('click', function(e) {
                 if (notificationBtn && notificationDropdown && !notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
                     notificationDropdown.classList.remove('active');
                 }
             });
 
-            // Load notifications
             function loadNotifications() {
+                if (!notificationList) return;
+                
                 fetch('{{ route("user.coin-history.unread") }}')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
                     .then(data => {
                         displayNotifications(data.histories);
                     })
@@ -681,8 +679,9 @@
                     });
             }
 
-            // Display notifications
             function displayNotifications(histories) {
+                if (!notificationList) return;
+                
                 if (histories.length === 0) {
                     notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
                     return;
@@ -712,7 +711,6 @@
                 
                 notificationList.innerHTML = html;
                 
-                // Add click handlers for notification items
                 document.querySelectorAll('.notification-item').forEach(item => {
                     item.addEventListener('click', function() {
                         const historyId = this.dataset.historyId;
@@ -721,7 +719,6 @@
                 });
             }
 
-            // Mark as read
             function markAsRead(historyId) {
                 fetch('{{ route("user.coin-history.mark-read") }}', {
                     method: 'POST',
@@ -731,18 +728,19 @@
                     },
                     body: JSON.stringify({ id: historyId })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
-                        // Remove item from dropdown
                         const item = document.querySelector(`[data-history-id="${historyId}"]`);
                         if (item) {
                             item.remove();
                         }
                         
-                        // Check if dropdown is empty
                         const remainingItems = document.querySelectorAll('.notification-item');
-                        if (remainingItems.length === 0) {
+                        if (remainingItems.length === 0 && notificationList) {
                             notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
                         }
                         
@@ -752,7 +750,6 @@
                 .catch(error => console.error('Error marking as read:', error));
             }
 
-            // Mark all as read
             if (markAllReadBtn) {
                 markAllReadBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -764,10 +761,12 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
                     .then(data => {
-                        if (data.success) {
-                            // Clear all items from dropdown
+                        if (data.success && notificationList) {
                             notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
                             updateNotificationCount();
                         }
@@ -776,10 +775,14 @@
                 });
             }
 
-            // Update notification count
             function updateNotificationCount() {
+                if (!notificationBadge) return;
+                
                 fetch('{{ route("user.coin-history.unread-count") }}')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
                     .then(data => {
                         const count = data.count;
                         if (count > 0) {
@@ -792,7 +795,6 @@
                     .catch(error => console.error('Error updating notification count:', error));
             }
 
-            // Helper functions
             function getNotificationIcon(type) {
                 switch(type) {
                     case 'payment': return 'fa-credit-card';
@@ -823,8 +825,8 @@
                 return new Intl.NumberFormat('vi-VN').format(num);
             }
 
-            // Load initial notification count
             updateNotificationCount();
+            @endauth
 
             // Mobile Category Dropdown Toggle
             if (mobileCategoryDropdownBtn && mobileCategoryDropdown) {
