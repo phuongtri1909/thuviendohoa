@@ -12,5 +12,4 @@
             <img src="{{ Storage::url($image) }}" alt="{{ $title }}">
         </div>
     </div>
-    <div class="label-collection">{{ $title }}</div>
 </a>

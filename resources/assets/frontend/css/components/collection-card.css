@@ -45,7 +45,7 @@
     position: relative;
 }
 
-.collection-wrapper::after {
+/* .collection-wrapper::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -55,7 +55,7 @@
     background: rgba(255, 255, 255, 0.50);
     transform: translateY(-50%);
     z-index: 1;
-}
+} */
 
 /* Responsive */
 @media (max-width: 991px) {

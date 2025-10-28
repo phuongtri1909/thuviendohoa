@@ -105,7 +105,7 @@
                         sẻ file thiết kế, Hidesign liên tục cải tiến nhằm mang đến cho bạn trải nghiệm tốt hơn với các
                         ưu thế:</P>
 
-                    <div class="row">
+                    <div class="row mt-xxl-5">
                         <div class="col-3 desktop-feature-item">
                             <img src="{{ asset('/images/svg/desktops/big-data.svg') }}" alt="Big Data">
                             <p class="fw-bold">Kho dữ liệu lớn</p>
