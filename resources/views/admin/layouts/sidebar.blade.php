@@ -172,6 +172,36 @@
                         </a>
                     </li>
 
+                    <!-- Quản lý blog -->
+                    <li
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.blogs.*', 'admin.category-blogs.*', 'admin.tag-blogs.*']) ? 'open' : '' }}">
+                        <a href="#" class="submenu-toggle">
+                            <i class="fas fa-blog"></i>
+                            <span>Quản lý blog</span>
+                            <i class="fas fa-chevron-down submenu-arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li class="{{ Route::currentRouteNamed('admin.blogs.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.blogs.index') }}">
+                                    <i class="fas fa-newspaper"></i>
+                                    <span>Bài viết</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.category-blogs.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.category-blogs.index') }}">
+                                    <i class="fas fa-folder"></i>
+                                    <span>Danh mục blog</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.tag-blogs.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.tag-blogs.index') }}">
+                                    <i class="fas fa-tags"></i>
+                                    <span>Tag blog</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <!-- Cấu hình hệ thống -->
                     <li
                         class="has-submenu {{ Route::currentRouteNamed(['admin.socials.*', 'admin.logo-site.*', 'admin.languages.*', 'admin.seo.*', 'admin.setting.*']) ? 'open' : '' }}">

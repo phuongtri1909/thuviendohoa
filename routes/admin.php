@@ -22,6 +22,9 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CoinController;
 use App\Http\Controllers\Admin\CoinHistoryController;
 use App\Http\Controllers\Admin\MonthlyBonusController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\CategoryBlogController;
+use App\Http\Controllers\Admin\TagBlogController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -81,9 +84,17 @@ Route::group(['as' => 'admin.'], function () {
         Route::resource('monthly-bonuses', MonthlyBonusController::class)->only(['index', 'show']);
         Route::resource('coin-histories', CoinHistoryController::class)->only(['index', 'show']);
 
-// Feedback routes
-Route::resource('feedback', \App\Http\Controllers\Admin\FeedbackController::class);
-Route::post('feedback/{id}/reply', [\App\Http\Controllers\Admin\FeedbackController::class, 'reply'])->name('feedback.reply');
-Route::post('feedback/{id}/mark-read', [\App\Http\Controllers\Admin\FeedbackController::class, 'markAsRead'])->name('feedback.mark-read');
+        // Feedback routes
+        Route::resource('feedback', \App\Http\Controllers\Admin\FeedbackController::class);
+        Route::post('feedback/{id}/reply', [\App\Http\Controllers\Admin\FeedbackController::class, 'reply'])->name('feedback.reply');
+        Route::post('feedback/{id}/mark-read', [\App\Http\Controllers\Admin\FeedbackController::class, 'markAsRead'])->name('feedback.mark-read');
+        
+        // Blog routes
+        Route::resource('blogs', BlogController::class);
+        Route::post('blogs/upload-image', [BlogController::class, 'uploadImage'])->name('blogs.upload-image');
+        Route::post('blogs/cleanup-temp-images', [BlogController::class, 'cleanupTempImages'])->name('blogs.cleanup-temp-images');
+        
+        Route::resource('category-blogs', CategoryBlogController::class);
+        Route::resource('tag-blogs', TagBlogController::class);
     });
 });
