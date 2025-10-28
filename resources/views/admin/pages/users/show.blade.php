@@ -447,6 +447,11 @@
     color: #1976d2;
 }
 
+.type-badge.type-getlink {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
 .status-badge {
     padding: 4px 8px;
     border-radius: 12px;

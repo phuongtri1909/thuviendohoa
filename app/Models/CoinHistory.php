@@ -31,6 +31,7 @@ class CoinHistory extends Model
     const TYPE_PURCHASE = 'purchase';
     const TYPE_MANUAL = 'manual';
     const TYPE_MONTHLY_BONUS = 'monthly_bonus';
+    const TYPE_GETLINK = 'getlink';
 
     // Relationships
     public function user()
@@ -78,6 +79,7 @@ class CoinHistory extends Model
             self::TYPE_PURCHASE => 'Mua file',
             self::TYPE_MANUAL => 'Thủ công',
             self::TYPE_MONTHLY_BONUS => 'Thưởng tháng',
+            self::TYPE_GETLINK => 'Get link',
             default => 'Khác'
         };
     }

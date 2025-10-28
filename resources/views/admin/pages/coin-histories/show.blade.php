@@ -162,6 +162,10 @@
     color: #1976d2;
 }
 
+.type-badge.type-getlink {
+    background: #e3f2fd;
+    color: #1976d2;
+}
 
 .metadata-container {
     background: #f8f9fa;

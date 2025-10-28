@@ -264,6 +264,11 @@
     color: #1976d2;
 }
 
+.type-badge.type-getlink {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
 
 .reason-text {
     max-width: 200px;

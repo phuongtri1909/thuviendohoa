@@ -172,6 +172,37 @@
                         </a>
                     </li>
 
+                    <!-- Quản lý Get Link -->
+                    <li
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.get-link-config.*', 'admin.get-link-histories.*']) ? 'open' : '' }}">
+                        <a href="#" class="submenu-toggle">
+                            <i class="fas fa-link"></i>
+                            <span>Quản lý Get Link</span>
+                            <i class="fas fa-chevron-down submenu-arrow"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li class="{{ Route::currentRouteNamed('admin.get-link-config.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.get-link-config.edit') }}">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Cấu hình</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.get-link-histories.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.get-link-histories.index') }}">
+                                    <i class="fas fa-history"></i>
+                                    <span>Lịch sử Get Link</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed('admin.content-images.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.content-images.index') }}">
+                            <i class="fas fa-images"></i>
+                            <span>Content Images</span>
+                        </a>
+                    </li>
+
                     <!-- Quản lý blog -->
                     <li
                         class="has-submenu {{ Route::currentRouteNamed(['admin.blogs.*', 'admin.category-blogs.*', 'admin.tag-blogs.*', 'admin.blog-sidebar-setting.*']) ? 'open' : '' }}">

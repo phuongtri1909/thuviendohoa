@@ -18,18 +18,30 @@
                 <!-- Form getlink -->
                 <div class="getlink-form-wrapper mx-auto mt-5 py-0 py-md-5">
                     <div class="getlink-input-group">
-                        <input type="text" class="getlink-input"
+                        <input type="text" class="getlink-input" id="url-input"
                             placeholder="Sao chép liên kết bạn cần tải dán vào đây và nhấn nút getlink, file sẽ được tự động tải xuống" />
-                        <button class="btn-getlink-new">GETLINK</button>
+                        <button class="btn-getlink-new" id="getlink-btn">GETLINK</button>
                     </div>
 
                     <div class="getlink-meta align-items-center mt-3">
                         <div class="getlink-fee getlink-warning fw-semibold">
                             <span class="fee-label">Phí getlink:</span>
-                            <x-client.badge value="5 XU" label="Premium" />
+                            <div class="custom-badge">
+                                <div class="custom-badge-value" style="background-color: #F0A610; color: #fff;">
+                                    <span id="coins-display">{{ $config->coins }}</span> XU
+                                </div>
+                                <div class="custom-badge-divider"></div>
+                                <div class="custom-badge-label" style="background-color: #F0A610; color: #fff;">
+                                    Premium
+                                </div>
+                            </div>
                         </div>
-                        <div class="getlink-warning fw-semibold">
-                            Vui lòng đăng nhập để tải file
+                        <div class="getlink-warning fw-semibold" id="user-status">
+                            @auth
+                                Xu hiện tại: <strong id="user-coins">{{ auth()->user()->coins }}</strong> xu
+                            @else
+                                Vui lòng đăng nhập để tải file
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -37,66 +49,15 @@
                 <!-- Danh sách trang hỗ trợ -->
                 <div class="getlink-sites mt-5 py-0 py-md-5">
                     <div class="d-flex flex-wrap justify-content-center gap-3">
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=freepik.com&sz=32" alt="Freepik"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Freepik</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=shutterstock.com&sz=32" alt="Shutterstock"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Shutterstock</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=istockphoto.com&sz=32" alt="iStockphoto"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">iStockphoto</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=stock.adobe.com&sz=32" alt="Adobe Stock"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Adobe Stock</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=vecteezy.com&sz=32" alt="Vecteezy"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Vecteezy</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=elements.envato.com&sz=32"
-                                alt="Envato Elements" class="site-favicon">
-                            <span class="site-name color-primary-13">Envato Elements</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=motionarray.com&sz=32" alt="MotionArray"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">MotionArray</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=pikbest.com&sz=32" alt="Pikbest"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Pikbest</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=unsplash.com&sz=32" alt="Unsplash"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Unsplash</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=slidesgo.com&sz=32" alt="SlidesGo"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">SlidesGo</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=123rf.com&sz=32" alt="123RF"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">123RF</span>
-                        </div>
-                        <div class="site-item">
-                            <img src="https://www.google.com/s2/favicons?domain=depositphotos.com&sz=32" alt="Depositphotos"
-                                class="site-favicon">
-                            <span class="site-name color-primary-13">Depositphotos</span>
-                        </div>
+                        @foreach($supportedSites as $site)
+                            <a href="{{ $site['url'] }}" class="site-item text-decoration-none" target="_blank">
+                                <img src="{{ $site['favicon'] }}" 
+                                     alt="{{ $site['name'] }}" 
+                                     class="site-favicon"
+                                     onerror="this.src='https://www.google.com/s2/favicons?domain={{ $site['domain'] }}&sz=32'">
+                                <span class="site-name color-primary-13">{{ $site['name'] }}</span>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
 
@@ -109,7 +70,160 @@
 
 @push('styles')
     @vite('resources/assets/frontend/css/get-link.css')
+    <style>
+        .custom-badge {
+            display: inline-flex;
+            align-items: stretch;
+            font-weight: 600;
+            font-size: 16px;
+            height: 32px;
+            position: relative;
+            margin-right: 15px;
+            white-space: nowrap;
+        }
+
+        .custom-badge-value {
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-radius: 4px 0 0 4px;
+            font-size: 17px;
+            font-weight: 700;
+            min-width: 55px;
+        }
+
+        .custom-badge-divider {
+            width: 2px;
+            background-color: rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .custom-badge-label {
+            padding: 0 40px 0 5px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            font-size: 15px;
+            font-weight: 600;
+            min-width: 100px;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 70% 50%, calc(100% - 20px) 100%, 0 100%);
+        }
+    </style>
 @endpush
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlInput = document.getElementById('url-input');
+        const getlinkBtn = document.getElementById('getlink-btn');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        getlinkBtn.addEventListener('click', function() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thiếu URL',
+                    text: 'Vui lòng nhập URL cần get link',
+                    confirmButtonColor: '#667eea'
+                });
+                return;
+            }
+
+            @guest
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa đăng nhập',
+                    text: 'Vui lòng đăng nhập để sử dụng dịch vụ',
+                    confirmButtonText: 'Đăng nhập',
+                    confirmButtonColor: '#667eea',
+                    showCancelButton: true,
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '{{ route("login") }}';
+                    }
+                });
+                return;
+            @endguest
+
+            Swal.fire({
+                title: 'Đang xử lý...',
+                text: 'Vui lòng đợi',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch('{{ route("get.link.process") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Get link thành công!',
+                        html: `
+                            <div class="text-start">
+                                <p><strong>URL:</strong> <a href="${data.data.url}" target="_blank" class="text-break">${data.data.url}</a></p>
+                                <p><strong>Title:</strong> ${data.data.title}</p>
+                                <p><strong>Xu đã trừ:</strong> <span class="text-danger">${data.data.coins_spent} xu</span></p>
+                                <p><strong>Xu còn lại:</strong> <span class="text-success">${data.data.remaining_coins} xu</span></p>
+                            </div>
+                        `,
+                        confirmButtonColor: '#667eea',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        urlInput.value = '';
+                        
+                        @auth
+                            const userCoins = document.getElementById('user-coins');
+                            if (userCoins) {
+                                userCoins.textContent = data.data.remaining_coins;
+                            }
+                        @endauth
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: data.message,
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.close();
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra khi xử lý yêu cầu',
+                    confirmButtonColor: '#667eea'
+                });
+            });
+        });
+
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getlinkBtn.click();
+            }
+        });
+    });
+</script>
 @endpush

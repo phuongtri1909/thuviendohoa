@@ -72,6 +72,10 @@
             color: white;
         }
 
+        .coin-history-icon.getlink {
+            background: var(--bg-gradient);
+        }
+
         .coin-history-icon.payment {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }

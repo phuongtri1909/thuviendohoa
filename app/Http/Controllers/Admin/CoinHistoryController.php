@@ -55,7 +55,8 @@ class CoinHistoryController extends Controller
             CoinHistory::TYPE_PAYMENT => 'Nạp tiền',
             CoinHistory::TYPE_PURCHASE => 'Mua file',
             CoinHistory::TYPE_MANUAL => 'Thủ công',
-            CoinHistory::TYPE_MONTHLY_BONUS => 'Thưởng tháng'
+            CoinHistory::TYPE_MONTHLY_BONUS => 'Thưởng tháng',
+            CoinHistory::TYPE_GETLINK => 'Get link'
         ];
 
         return view('admin.pages.coin-histories.index', compact(

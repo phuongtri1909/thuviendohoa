@@ -12,6 +12,7 @@ use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
 use App\Http\Controllers\Client\PurchaseSetController;
+use App\Http\Controllers\Client\GetLinkController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -26,9 +27,7 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/blog/search/ajax', [BlogController::class, 'search'])->name('blog.search');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.item');
 
-Route::get('get-link', function () {
-    return view('client.pages.get-link');
-})->name('get.link');
+Route::get('get-link', [GetLinkController::class, 'index'])->name('get.link');
 
 Route::post('payment/casso/callback', [PaymentController::class, 'cassoCallback'])->name('payment.casso.callback');
 
@@ -38,6 +37,8 @@ Route::get('feedback/captcha', [\App\Http\Controllers\Client\FeedbackController:
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('get-link/process', [GetLinkController::class, 'processGetLink'])->name('get.link.process');
+    Route::get('get-link/config', [GetLinkController::class, 'getConfig'])->name('get.link.config');
 
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         Route::get('profile', [UserController::class, 'userProfile'])->name('profile');
@@ -69,7 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('coin-history/unread', [\App\Http\Controllers\Client\CoinHistoryController::class, 'getUnreadHistories'])->name('coin-history.unread');
         
         // User Feedback routes
-        Route::get('my-feedback', [\App\Http\Controllers\Client\UserFeedbackController::class, 'index'])->name('my-feedback');
+        Route::get('my-feedback', [\App\Http\Controllers\Client\UserFeedbackController::class, 'index'])->name('my-feedback');       
     });
 });
 

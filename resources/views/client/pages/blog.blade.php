@@ -79,43 +79,54 @@
         </div>
         <div class="mt-2 blogs-knowledge-items">
             <div class="row gx-3 gy-2" id="blogListContainer">
-                @foreach($blogs as $blog)
+                @foreach ($blogs as $blog)
                     @include('components.blog.blog-item', ['blog' => $blog])
                 @endforeach
             </div>
-            
+
             <div class="mt-4" id="blogPaginationContainer">
                 {{ $blogs->links('components.paginate') }}
             </div>
         </div>
 
-        <div class="mt-4 mt-md-5 px-0">
-            <x-client.content-image :image-src="asset('/images/d/contents/content1.png')" image-alt="" button-text="> Xem thêm" position-x="31%"
-                position-y="80%" button-class="px-3 py-2" />
-        </div> 
+        @if ($contentImage1 && $contentImage1->image)
+            <div class="mt-4 mt-md-5 px-0">
+                <x-client.content-image :image-src="str_starts_with($contentImage1->image, 'content-images/')
+                    ? Storage::url($contentImage1->image)
+                    : asset($contentImage1->image)" image-alt="{{ $contentImage1->name }}"
+                    button-text="{{ $contentImage1->button_text ?? '> Xem thêm' }}"
+                    position-x="{{ $contentImage1->button_position_x ?? '50%' }}"
+                    position-y="{{ $contentImage1->button_position_y ?? '50%' }}" button-class="px-3 py-2"
+                    :url="$contentImage1->url" />
+            </div>
+        @endif
     </div>
 
     <div class="pt-3 pt-md-5 mt-md-5">
-        <x-client.desktop desktop-image="images/d/desktops/desktop.png"
-            background-image="images/d/desktops/background.png" frame-image="images/d/desktops/khung.png"
-            alt="Desktop Screenshot" />
+        <x-client.desktop desktop-image="images/d/desktops/desktop.png" background-image="images/d/desktops/background.png"
+            frame-image="images/d/desktops/khung.png" alt="Desktop Screenshot" />
     </div>
 @endsection
 
 @push('scripts')
     <script>
         const slides = [
-            @foreach($featuredBlogs as $featuredBlog)
-            {
-                title: {!! json_encode($featuredBlog->title) !!},
-                category: {!! json_encode($featuredBlog->category->name ?? 'Uncategorized') !!},
-                date: '{{ $featuredBlog->created_at->format('d/m/Y') }}',
-                views: {{ $featuredBlog->views ?? 0 }},
-                image: {!! json_encode($featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/vertical.png')) !!},
-                contentImage: {!! json_encode($featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/blog-content.png')) !!},
-                description: {!! json_encode(cleanDescription($featuredBlog->subtitle, 300)) !!},
-                slug: '{{ $featuredBlog->slug }}'
-            }{{ $loop->last ? '' : ',' }}
+            @foreach ($featuredBlogs as $featuredBlog)
+                {
+                    title: {!! json_encode($featuredBlog->title) !!},
+                    category: {!! json_encode($featuredBlog->category->name ?? 'Uncategorized') !!},
+                    date: '{{ $featuredBlog->created_at->format('d/m/Y') }}',
+                    views: {{ $featuredBlog->views ?? 0 }},
+                    image: {!! json_encode(
+                        $featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/vertical.png'),
+                    ) !!},
+                    contentImage: {!! json_encode(
+                        $featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/blog-content.png'),
+                    ) !!},
+                    description: {!! json_encode(cleanDescription($featuredBlog->subtitle, 300)) !!},
+                    slug: '{{ $featuredBlog->slug }}'
+                }
+                {{ $loop->last ? '' : ',' }}
             @endforeach
         ];
 
@@ -286,46 +297,46 @@
         // AJAX search function
         function performSearch(page = 1) {
             const query = searchInput.value;
-            
+
             fetch(`{{ route('blog.search') }}?q=${encodeURIComponent(query)}&page=${page}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                blogListContainer.innerHTML = data.html;
-                paginationContainer.innerHTML = data.pagination;
-                
-                // Attach click event to new pagination links
-                attachPaginationEvents();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    blogListContainer.innerHTML = data.html;
+                    paginationContainer.innerHTML = data.pagination;
+
+                    // Attach click event to new pagination links
+                    attachPaginationEvents();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
 
         // Attach pagination click events
         function attachPaginationEvents() {
             const paginationLinks = paginationContainer.querySelectorAll('.pagination-item');
-            
+
             paginationLinks.forEach(link => {
                 if (link.tagName === 'A') {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         const url = new URL(this.href);
                         const page = url.searchParams.get('page') || 1;
-                        
+
                         performSearch(page);
-                        
+
                         // Scroll to blog list
-                        document.querySelector('.blogs-knowledge').scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start' 
+                        document.querySelector('.blogs-knowledge').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
                     });
                 }

@@ -5,6 +5,7 @@
     'positionX' => '50%',
     'positionY' => '50%',
     'buttonClass' => 'px-3 py-2',
+    'url' => '',
 ])
 
 @push('styles')
@@ -26,6 +27,10 @@
             position: absolute;
             transition: all 0.3s ease;
             z-index: 10;
+        }
+
+        .view-more-btn:hover {
+            color: var(--primary-color-5);
         }
 
         .view-more-btn[data-position-x][data-position-y] {
@@ -132,8 +137,8 @@
 
 <div class="content-image-wrapper">
     <img src="{{ $imageSrc }}" alt="{{ $imageAlt }}" class="img-fluid">
-    <button class="view-more-btn {{ $buttonClass }}" data-position-x="{{ $positionX }}"
-        data-position-y="{{ $positionY }}">
+    <a href="{{ $url }}" class="view-more-btn {{ $buttonClass }} text-decoration-none primary-color-5"
+        data-position-x="{{ $positionX }}" data-position-y="{{ $positionY }}" target="_blank">
         {{ $buttonText }}
-    </button>
+    </a>
 </div>

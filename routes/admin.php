@@ -25,6 +25,9 @@ use App\Http\Controllers\Admin\MonthlyBonusController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\CategoryBlogController;
 use App\Http\Controllers\Admin\TagBlogController;
+use App\Http\Controllers\Admin\GetLinkConfigController;
+use App\Http\Controllers\Admin\GetLinkHistoryController;
+use App\Http\Controllers\Admin\ContentImageController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -100,5 +103,17 @@ Route::group(['as' => 'admin.'], function () {
         Route::get('blog-sidebar-setting', [\App\Http\Controllers\Admin\BlogSidebarSettingController::class, 'edit'])->name('blog-sidebar-setting.edit');
         Route::put('blog-sidebar-setting', [\App\Http\Controllers\Admin\BlogSidebarSettingController::class, 'update'])->name('blog-sidebar-setting.update');
         Route::delete('blog-sidebar-setting/banner', [\App\Http\Controllers\Admin\BlogSidebarSettingController::class, 'deleteBanner'])->name('blog-sidebar-setting.delete-banner');
+        
+        Route::get('get-link-config', [GetLinkConfigController::class, 'edit'])->name('get-link-config.edit');
+        Route::put('get-link-config', [GetLinkConfigController::class, 'update'])->name('get-link-config.update');
+        
+        Route::get('get-link-histories', [GetLinkHistoryController::class, 'index'])->name('get-link-histories.index');
+        Route::get('get-link-histories/{id}', [GetLinkHistoryController::class, 'show'])->name('get-link-histories.show');
+        Route::delete('get-link-histories/{id}', [GetLinkHistoryController::class, 'destroy'])->name('get-link-histories.destroy');
+        
+        Route::get('content-images', [ContentImageController::class, 'index'])->name('content-images.index');
+        Route::get('content-images/{contentImage}/edit', [ContentImageController::class, 'edit'])->name('content-images.edit');
+        Route::put('content-images/{contentImage}', [ContentImageController::class, 'update'])->name('content-images.update');
+        Route::delete('content-images/{contentImage}/delete-image', [ContentImageController::class, 'deleteImage'])->name('content-images.delete-image');
     });
 });
