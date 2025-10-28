@@ -57,6 +57,21 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="subtitle" class="form-label-custom">
+                                Tiêu đề phụ <span class="required-mark">*</span> <small>(Tối đa 3000 ký tự)</small>
+                            </label>
+                            <textarea id="subtitle" name="subtitle" rows="3"
+                                class="custom-input {{ $errors->has('subtitle') ? 'input-error' : '' }}"
+                                placeholder="Mô tả ngắn gọn về nội dung blog..."
+                                required>{{ old('subtitle', $blog->subtitle) }}</textarea>
+                            <div class="error-message" id="error-subtitle">
+                                @error('subtitle')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <div class="checkbox-wrapper">
                                 <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured', $blog->is_featured) ? 'checked' : '' }}>
                                 <label for="is_featured" class="checkbox-label">Nổi bật</label>

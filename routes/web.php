@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\Client\AuthController;
+use App\Http\Controllers\Client\BlogController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\Client\AlbumsController;
@@ -21,13 +22,9 @@ Route::get('/search/set/id/{setId}', [SearchController::class, 'getSetDetails'])
 
 Route::get('/albums', [AlbumsController::class, 'index'])->name('albums');
 
-Route::get('/blog', function () {
-    return view('client.pages.blog');
-})->name('blog');
-
-Route::get('/blog/{blog}', function () {
-    return view('client.pages.blog-item');
-})->name('blog.item');
+Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+Route::get('/blog/search/ajax', [BlogController::class, 'search'])->name('blog.search');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.item');
 
 Route::get('get-link', function () {
     return view('client.pages.get-link');

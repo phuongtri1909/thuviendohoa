@@ -2,72 +2,51 @@
     <div>
         <h4 class="fw-semibold title-tab">DANH MỤC BLOG</h4>
         <div class="mt-3 category-blog">
-            <span class="color-primary-12 category-blog-item">
-                <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
-                Thương hiệu (15)
-            </span>
+            @foreach($categories as $category)
+                <span class="color-primary-12 category-blog-item">
+                    <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
+                    {{ $category->name }} ({{ $category->blogs->count() }})
+                </span>
+            @endforeach
 
-            <span class="color-primary-12 category-blog-item">
-                <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
-                Công nghệ (10)
-            </span>
-
-            <span class="color-primary-12 category-blog-item">
-                <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
-                Xu hướng (12)
-            </span>
-
-            <span class="color-primary-12 category-blog-item">
-                <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
-                Bài học kinh doanh (15)
-            </span>
-
-            <a href="#" class="color-primary-12 fw-semibold text-decoration category-blog-item">
-                <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
-                Part chia sẻ file miễn phí
-            </a>
+            @if($sidebarSetting->extra_link_title && $sidebarSetting->extra_link_url)
+                <a href="{{ $sidebarSetting->extra_link_url }}" class="color-primary-12 fw-semibold text-decoration category-blog-item">
+                    <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
+                    {{ $sidebarSetting->extra_link_title }}
+                </a>
+            @endif
         </div>
     </div>
 
     <div class="mt-4">
-        <h6 class="color-primary-12">CẬP NHẬT XU HƯỚNG THIẾT KẾ</h6>
-        <h4 class="fw-semibold title-tab">CÂU CHUYỆN ĐỒ HỌA</h4>
+        <h6 class="color-primary-12">{{ $sidebarSetting->section_title ?? 'CẬP NHẬT XU HƯỚNG THIẾT KẾ' }}</h6>
+        <h4 class="fw-semibold title-tab">{{ $sidebarSetting->section_subtitle ?? 'CÂU CHUYỆN ĐỒ HỌA' }}</h4>
         <div class="mt-3">
-            <div class="design-item">
-                <img class="img-design" src="{{ asset('/images/d/dev/blogs/design1.jpg') }}" alt="design1">
-                <div>
-                    <h6 class="fw-semibold">Tìm hiều nguồn gốc và ý nghĩa của Tết Trung Thu. Thiết kế Catalogue
-                    </h6>
-                    <span>
-                        <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                        <span>02/10/2025</span>
-                    </span>
+            @forelse($sidebarBlogs as $sidebarBlog)
+                <a href="{{ route('blog.item', $sidebarBlog->slug) }}" class="design-item text-decoration-none">
+                    <img class="img-design" 
+                         src="{{ $sidebarBlog->image ? asset('storage/' . $sidebarBlog->image) : asset('/images/d/dev/blogs/design1.jpg') }}" 
+                         alt="{{ $sidebarBlog->title }}">
+                    <div>
+                        <h6 class="fw-semibold color-primary-12">{{ Str::limit($sidebarBlog->title, 80) }}</h6>
+                        <span class="color-primary-12">
+                            <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
+                            <span>{{ $sidebarBlog->created_at->format('d/m/Y') }}</span>
+                        </span>
+                    </div>
+                </a>
+            @empty
+                <div class="design-item">
+                    <img class="img-design" src="{{ asset('/images/d/dev/blogs/design1.jpg') }}" alt="design1">
+                    <div>
+                        <h6 class="fw-semibold">Chưa có bài viết nào</h6>
+                        <span>
+                            <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
+                            <span>--/--/----</span>
+                        </span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="design-item">
-                <img class="img-design" src="{{ asset('/images/d/dev/blogs/design2.jpg') }}" alt="design1">
-                <div>
-                    <h6 class="fw-semibold">Tìm hiều nguồn gốc và ý nghĩa của Tết Trung Thu. Thiết kế Catalogue
-                    </h6>
-                    <span>
-                        <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                        <span>02/10/2025</span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="design-item">
-                <img class="img-design" src="{{ asset('/images/d/dev/blogs/design3.png') }}" alt="design1">
-                <div>
-                    <h6 class="fw-semibold">Tìm hiều nguồn gốc và ý nghĩa của Tết Trung Thu. Thiết kế Catalogue
-                    </h6>
-                    <span>
-                        <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                        <span>02/10/2025</span>
-                    </span>
-                </div>
-            </div>
+            @endforelse
         </div>
     </div>
 </div>

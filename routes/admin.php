@@ -96,5 +96,9 @@ Route::group(['as' => 'admin.'], function () {
         
         Route::resource('category-blogs', CategoryBlogController::class);
         Route::resource('tag-blogs', TagBlogController::class);
+        
+        Route::get('blog-sidebar-setting', [\App\Http\Controllers\Admin\BlogSidebarSettingController::class, 'edit'])->name('blog-sidebar-setting.edit');
+        Route::put('blog-sidebar-setting', [\App\Http\Controllers\Admin\BlogSidebarSettingController::class, 'update'])->name('blog-sidebar-setting.update');
+        Route::delete('blog-sidebar-setting/banner', [\App\Http\Controllers\Admin\BlogSidebarSettingController::class, 'deleteBanner'])->name('blog-sidebar-setting.delete-banner');
     });
 });

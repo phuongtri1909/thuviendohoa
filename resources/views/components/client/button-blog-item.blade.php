@@ -95,6 +95,9 @@
             padding: 15px 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             width: 70px;
+            position: sticky;
+            top: 85px;
+            align-self: flex-start;
         }
 
         .social-button {
@@ -217,6 +220,56 @@
             to {
                 transform: translateY(0);
                 opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .social-sidebar {
+                width: 50px;
+                padding: 10px 6px;
+            }
+
+            .social-button {
+                height: 45px;
+                margin-bottom: 10px;
+            }
+
+            .icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .comment-btn,
+            .news-btn {
+                font-size: 10px;
+                padding: 8px 4px;
+            }
+
+            .divider {
+                margin: 6px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .social-sidebar {
+                width: 45px;
+                padding: 8px 4px;
+            }
+
+            .social-button {
+                height: 40px;
+                margin-bottom: 8px;
+            }
+
+            .icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .comment-btn,
+            .news-btn {
+                font-size: 9px;
+                padding: 6px 2px;
             }
         }
     </style>

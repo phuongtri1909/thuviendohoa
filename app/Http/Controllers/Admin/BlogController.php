@@ -45,6 +45,7 @@ class BlogController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255|unique:blogs,title',
+            'subtitle' => 'required|string|max:3000',
             'content' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'image_left' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
@@ -54,6 +55,8 @@ class BlogController extends Controller
         ], [
             'title.required' => 'Tiêu đề là bắt buộc',
             'title.unique' => 'Tiêu đề đã tồn tại',
+            'subtitle.required' => 'Tiêu đề phụ là bắt buộc',
+            'subtitle.max' => 'Tiêu đề phụ không được vượt quá 3000 ký tự',
             'content.required' => 'Nội dung là bắt buộc',
             'image.required' => 'Ảnh đại diện là bắt buộc',
             'image.max' => 'Ảnh không được vượt quá 10MB',
@@ -72,6 +75,7 @@ class BlogController extends Controller
 
         $blog = Blog::create([
             'title' => $request->title,
+            'subtitle' => $request->subtitle,
             'slug' => Str::slug($request->title),
             'content' => $content,
             'image' => $mainImagePath,
@@ -118,6 +122,7 @@ class BlogController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255|unique:blogs,title,' . $blog->id,
+            'subtitle' => 'required|string|max:3000',
             'content' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'image_left' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
@@ -131,6 +136,7 @@ class BlogController extends Controller
 
         $data = [
             'title' => $request->title,
+            'subtitle' => $request->subtitle,
             'slug' => Str::slug($request->title),
             'content' => $content,
             'category_id' => $request->category_id,

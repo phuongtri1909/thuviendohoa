@@ -23,7 +23,7 @@
         </div>
         <div class="row">
             <div class="col-12 col-lg-9">
-                <div class="blog-featured rounded-4 h-100" id="blogCarousel">
+                <div class="blog-featured rounded-4 h-100" id="blogCarousel" style="cursor: pointer;">
                     <div class="image-vertical ">
                         <img class="rounded-4" id="featuredImage" src="{{ asset('/images/d/dev/blogs/vertical.png') }}"
                             alt="Blog Featured">
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="col-12 col-lg-3 mt-4">
-                <x-blog-sidebar />
+                <x-blog-sidebar :categories="$categories" :sidebarSetting="$sidebarSetting" :sidebarBlogs="$sidebarBlogs" />
             </div>
         </div>
 
@@ -68,8 +68,8 @@
                     <p class="color-primary-12 fw-semibold mb-0">KIẾN THỨC THÚ VỊ</p>
                 </div>
 
-                <form action="#" method="GET" class="search-box position-relative">
-                    <input type="text" name="q" class="form-control search-input"
+                <form action="#" method="GET" class="search-box position-relative" id="blogSearchForm">
+                    <input type="text" name="q" id="blogSearchInput" class="form-control search-input"
                         placeholder="Tìm kiếm bài viết..">
                     <button type="submit" class="search-btn">
                         <i class="bi bi-search"></i>
@@ -78,249 +78,45 @@
             </div>
         </div>
         <div class="mt-2 blogs-knowledge-items">
-            <div class="row gx-3 gy-2">
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                    <a href="{{ route('blog.item', 'aaa') }}"  class="blog-item  text-decoration-none">
-                        <img class="img-blog-item img-fluid" src="{{ asset('images/d/dev/blogs/blog1.png') }}"
-                            alt="blog1">
-                        <div class="blogs-knowledge-item-info text-center py-2 text-sm color-primary-12">
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
-                                <span id="blogDate">02/10/2025</span>
-                            </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
-                                <span id="blogViews">232</span>
-                            </span>
-                        </div>
-                        <p class="px-4 color-primary-12 fw-semibold text-md mb-2">
-                            Những Bức Minh Họa ‘Dân Tộc Tự Hào’ Bằng gạch khảm sắc màu: Khi vết nứt biến thành Rực Rỡ Cảm
-                            Xúc, Lan Tỏa Niềm...
-                        </p>
-                    </a>
-                </div>
-                
-
-                
-                
-                
-                
-                
-                
-                
+            <div class="row gx-3 gy-2" id="blogListContainer">
+                @foreach($blogs as $blog)
+                    @include('components.blog.blog-item', ['blog' => $blog])
+                @endforeach
+            </div>
+            
+            <div class="mt-4" id="blogPaginationContainer">
+                {{ $blogs->links('components.paginate') }}
             </div>
         </div>
 
         <div class="mt-4 mt-md-5 px-0">
             <x-client.content-image :image-src="asset('/images/d/contents/content1.png')" image-alt="" button-text="> Xem thêm" position-x="31%"
                 position-y="80%" button-class="px-3 py-2" />
-        </div>
+        </div> 
+    </div>
 
-        <div class="pt-3 pt-md-5 mt-md-5">
-            <x-client.desktop desktop-image="images/d/desktops/desktop.png"
-                background-image="images/d/desktops/background.png" frame-image="images/d/desktops/khung.png"
-                alt="Desktop Screenshot" />
-        </div>
+    <div class="pt-3 pt-md-5 mt-md-5">
+        <x-client.desktop desktop-image="images/d/desktops/desktop.png"
+            background-image="images/d/desktops/background.png" frame-image="images/d/desktops/khung.png"
+            alt="Desktop Screenshot" />
     </div>
 @endsection
 
 @push('scripts')
     <script>
-        const slides = [{
-                title: 'Khi các thương hiệu Việt Nam mừng 80 năm Quốc khánh- Sáng tạo lan tỏa niềm tự hào dân tộc',
-                category: 'Kiến thức thú vị',
-                date: '02/10/2025',
-                views: 232,
-                image: '{{ asset('/images/d/dev/blogs/vertical.png') }}',
-                contentImage: '{{ asset('/images/d/dev/blogs/blog-content.png') }}',
-                description: 'Một năm mới nữa đã đến và chắc hẳn mọi người sẽ tự hỏi xu hướng thiết kế đồ họa trong năm 2020 sẽ như thế nào? Đồ họa luôn là một lĩnh vực quan trọng trong thời đại công nghệ số và là nguồn cảm hứng lớn đối với nhiều người. Vì vậy hãy cùng Printon khám phá những xu hướng mới sẽ lên ngôi trong năm nay nhé!'
-            },
+        const slides = [
+            @foreach($featuredBlogs as $featuredBlog)
             {
-                title: 'Xu hướng thiết kế web 2025 - Những điểm sáng mới trong công nghiệp digital',
-                category: 'Thiết kế',
-                date: '05/10/2025',
-                views: 456,
-                image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=400&fit=crop',
-                contentImage: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=300&fit=crop',
-                description: 'Năm 2025 mang đến những thay đổi lớn trong cách mà các nhà thiết kế tiếp cận công việc của họ. Các xu hướng mới không chỉ tập trung vào thẩm mỹ mà còn chú trọng đến trải nghiệm người dùng.'
-            },
-            {
-                title: 'Tối ưu hóa SEO - Bí quyết để website của bạn lên top Google',
-                category: 'SEO',
-                date: '10/10/2025',
-                views: 521,
-                image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=400&fit=crop',
-                contentImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=300&fit=crop',
-                description: 'SEO không chỉ là về từ khóa. Đó là một quá trình toàn diện để cải thiện khả năng hiển thị của website bạn trên các công cụ tìm kiếm như Google, Bing và Yahoo.'
-            }
+                title: {!! json_encode($featuredBlog->title) !!},
+                category: {!! json_encode($featuredBlog->category->name ?? 'Uncategorized') !!},
+                date: '{{ $featuredBlog->created_at->format('d/m/Y') }}',
+                views: {{ $featuredBlog->views ?? 0 }},
+                image: {!! json_encode($featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/vertical.png')) !!},
+                contentImage: {!! json_encode($featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/blog-content.png')) !!},
+                description: {!! json_encode(cleanDescription($featuredBlog->subtitle, 300)) !!},
+                slug: '{{ $featuredBlog->slug }}'
+            }{{ $loop->last ? '' : ',' }}
+            @endforeach
         ];
 
         let currentSlide = 0;
@@ -355,7 +151,12 @@
                 dot.classList.toggle('active', index === currentSlide);
             });
 
-            // Don't reset auto slide on every update, only when needed
+            // Update carousel click handler
+            carousel.onclick = (e) => {
+                if (!isDragging && Math.abs(dragStart - e.clientX) < 10) {
+                    window.location.href = '/blog/' + slide.slug;
+                }
+            };
         }
 
         function goToSlide(index) {
@@ -460,6 +261,79 @@
         initPagination();
         updateSlide();
         startAutoSlide();
+
+        // Blog Search AJAX
+        let searchTimeout;
+        const searchForm = document.getElementById('blogSearchForm');
+        const searchInput = document.getElementById('blogSearchInput');
+        const blogListContainer = document.getElementById('blogListContainer');
+        const paginationContainer = document.getElementById('blogPaginationContainer');
+
+        // Search on input with debounce
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(1);
+            }, 500);
+        });
+
+        // Prevent form submit
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch(1);
+        });
+
+        // AJAX search function
+        function performSearch(page = 1) {
+            const query = searchInput.value;
+            
+            fetch(`{{ route('blog.search') }}?q=${encodeURIComponent(query)}&page=${page}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                blogListContainer.innerHTML = data.html;
+                paginationContainer.innerHTML = data.pagination;
+                
+                // Attach click event to new pagination links
+                attachPaginationEvents();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Attach pagination click events
+        function attachPaginationEvents() {
+            const paginationLinks = paginationContainer.querySelectorAll('.pagination-item');
+            
+            paginationLinks.forEach(link => {
+                if (link.tagName === 'A') {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const url = new URL(this.href);
+                        const page = url.searchParams.get('page') || 1;
+                        
+                        performSearch(page);
+                        
+                        // Scroll to blog list
+                        document.querySelector('.blogs-knowledge').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    });
+                }
+            });
+        }
+
+        // Initial pagination events
+        attachPaginationEvents();
     </script>
 @endpush
 

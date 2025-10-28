@@ -28,6 +28,10 @@
                             <span class="detail-value">{{ $blog->title }}</span>
                         </div>
                         <div class="detail-item">
+                            <label class="detail-label">Tiêu đề phụ:</label>
+                            <span class="detail-value">{{ $blog->subtitle }}</span>
+                        </div>
+                        <div class="detail-item">
                             <label class="detail-label">Slug:</label>
                             <span class="detail-value slug-text">{{ $blog->slug }}</span>
                         </div>

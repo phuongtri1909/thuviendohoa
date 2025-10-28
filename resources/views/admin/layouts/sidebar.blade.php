@@ -174,7 +174,7 @@
 
                     <!-- Quản lý blog -->
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.blogs.*', 'admin.category-blogs.*', 'admin.tag-blogs.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.blogs.*', 'admin.category-blogs.*', 'admin.tag-blogs.*', 'admin.blog-sidebar-setting.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-blog"></i>
                             <span>Quản lý blog</span>
@@ -197,6 +197,12 @@
                                 <a href="{{ route('admin.tag-blogs.index') }}">
                                     <i class="fas fa-tags"></i>
                                     <span>Tag blog</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.blog-sidebar-setting.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.blog-sidebar-setting.edit') }}">
+                                    <i class="fas fa-sliders-h"></i>
+                                    <span>Cài đặt Sidebar</span>
                                 </a>
                             </li>
                         </ul>

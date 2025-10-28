@@ -35,6 +35,21 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="subtitle" class="form-label-custom">
+                                Tiêu đề phụ <span class="required-mark">*</span> <small>(Tối đa 3000 ký tự)</small>
+                            </label>
+                            <textarea id="subtitle" name="subtitle" rows="3"
+                                class="custom-input {{ $errors->has('subtitle') ? 'input-error' : '' }}"
+                                placeholder="Mô tả ngắn gọn về nội dung blog..."
+                                required>{{ old('subtitle') }}</textarea>
+                            <div class="error-message" id="error-subtitle">
+                                @error('subtitle')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="category_id" class="form-label-custom">
                                 Danh mục <span class="required-mark">*</span>
                             </label>

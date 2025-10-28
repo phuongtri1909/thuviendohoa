@@ -210,7 +210,7 @@
 }
 
 .blogs-knowledge .search-btn:hover {
-    background-color: #FF3F40;
+    background-color: var(--primary-color);
 }
 
 @media(min-width:600px) {
