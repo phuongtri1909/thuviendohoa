@@ -25,11 +25,12 @@ class SearchController extends Controller
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
         
-        $setsQuery = Set::select('id', 'name', 'image', 'created_at')
+        $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
             ->with([
                 'photos' => function($query) {
                     $query->select('id', 'set_id', 'path')->take(1);
-                }
+                },
+                'software.software:id,name,logo,logo_hover,logo_active'
             ])
             ->where('status', Set::STATUS_ACTIVE);
         
@@ -166,10 +167,14 @@ class SearchController extends Controller
         $software = $request->get('software', []);
         $page = $request->get('page', 1);
         
-        $setsQuery = Set::select('id', 'name', 'image', 'created_at')
+        $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
             ->with([
                 'photos' => function($query) {
                     $query->select('id', 'set_id', 'path')->take(1);
+                },
+                'software.software:id,name,logo,logo_hover,logo_active',
+                'bookmarks' => function($query) {
+                    $query->select('id', 'set_id', 'user_id');
                 }
             ])
             ->where('status', Set::STATUS_ACTIVE);
