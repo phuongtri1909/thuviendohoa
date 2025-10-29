@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
@@ -34,7 +35,17 @@ class Photo extends Model
 
         Storage::disk('public')->makeDirectory("photos/{$yearMonth}/original");
 
+        ini_set('memory_limit', '1024M');
+        
         $processed = Image::make($imageFile);
+        
+        // Resize ảnh quá lớn xuống max width 1920px để giảm memory usage
+        if ($processed->width() > 1920) {
+            $processed->resize(1920, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+        }
 
         try {
             $watermarkPath = public_path('images/logo/logo-site.webp');
@@ -62,6 +73,7 @@ class Photo extends Model
                 }
             }
         } catch (\Throwable $e) {
+            Log::warning("Failed to add watermark to photo: " . $e->getMessage());
         }
 
         $processed->encode('webp', 90);

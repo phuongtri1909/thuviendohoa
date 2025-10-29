@@ -160,7 +160,7 @@ class SetController extends Controller
     {
         $albums = Album::orderBy('name')->get(['id','name']);
         $categories = Category::orderBy('name')->get(['id','name']);
-        $colors = Color::orderBy('name')->get(['id','name']);
+        $colors = Color::orderBy('name')->get(['id','name','value']);
         $software = Software::orderBy('name')->get(['id','name']);
         $tags = Tag::orderBy('name')->get(['id','name']);
         $set->load(['albums','categories','colors','software','tags','photos']);
