@@ -1,11 +1,19 @@
 .getlink-page {
     background: rgba(255, 63, 64, 0.05);
+    width: 100%;
+    min-height: calc(100vh - 200px);
 }
 
 .getlink-page .container-getlink {
     background: white;
     padding: 2rem 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+    .getlink-page {
+        padding: 1rem 0;
+    }
 }
 
 /* Nút GETLINK */

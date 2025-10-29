@@ -4,9 +4,19 @@
 @section('keyword', 'getlink, download, premium')
 
 @section('content')
-    <div class="getlink-page container-custom">
-        <div class="p-2 pt-5 p-lg-5 container-getlink bg-white shadow-sm">
-            <div class="px-0 p-lg-5">
+    <div class="getlink-page">
+        <div class="container-custom">
+            <div class="pt-0 p-2 px-lg-5 pb-lg-5  container-getlink bg-white shadow-sm">
+                <div class="pt-3">
+                    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                        <ol class="breadcrumb color-primary-12">
+                            <li class="breadcrumb-item "><a class="color-primary-12 text-decoration-none"
+                                    href="{{ route('home') }}">TRANG CHỦ</a></li>
+                            <li class="breadcrumb-item color-primary-12 active fw-semibold" aria-current="page">Getlink</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="px-0 p-lg-5">
                 <div class="text-center mb-4">
                     <h2 class="text-uppercase fw-bold fs-3 color-primary">GETLINK CHẤT LƯỢNG CAO</h2>
                     <p class="color-primary-12 mt-2 px-2 px-md-5">
@@ -63,6 +73,7 @@
 
                 <x-client.about-content :title="'HƯỚNG DẪN TẢI FILE:'" :content="'Xu hướng 3D đã đạt đến đỉnh điểm vào năm 2019 và chắc chắn xu hướng này sẽ không “giảm nhiệt” trong năm nay. Các công nghệ hiện đại và các phần mềm mang lại nhiều cơ hội cho xu hướng 3D phát triển, chúng ta sẽ tiếp tục thấy nhiều tác phẩm thiết kế đồ họa 3D tuyệt vời hơn vào năm 2020. Để tăng sự sáng tạo, các nhà thiết kế thường kết hợp chúng với các yếu tố khác, chẳng hạn như hình ảnh và các yếu tố 2D. Số lượt tìm kiếm “quần áo giá rẻ” bắt đầu giảm mạnh, trong khi cùng thời điểm này, số lượt tìm kiếm “quần áo bền vững” tăng mạnh. Trong cuốn Thế giới không rác thải, tác giả Ron Gonen cho rằng sự chú ý vào xu hướng phát triển bền vững trong ngành thời trang đang tăng đột phá. Trong cuốn Thế giới không rác thải, tác giả Ron Gonen cho rằng sự chú ý vào xu hướng phát triển bền vững trong ngành thời trang đang tăng đột phá'" />
 
+                </div>
             </div>
         </div>
     </div>

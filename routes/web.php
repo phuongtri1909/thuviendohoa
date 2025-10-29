@@ -13,8 +13,12 @@ use App\Http\Controllers\Client\TwitterController;
 use App\Http\Controllers\Client\FacebookController;
 use App\Http\Controllers\Client\PurchaseSetController;
 use App\Http\Controllers\Client\GetLinkController;
+use App\Http\Controllers\Client\PageController as ClientPageController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Page routes
+Route::get('/page/{slug}', [ClientPageController::class, 'show'])->name('page.show');
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::post('/search/filter', [SearchController::class, 'filter'])->name('search.filter');

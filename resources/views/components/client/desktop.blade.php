@@ -96,15 +96,36 @@
 
             <div class="desktop-content">
                 <div class="text-center">
-                    <img src="{{ asset('/images/d/desktops/logo.png') }}" alt="Desktop logo"
-                        class="desktop-content-logo">
-                    <h5 class="fw-bold mt-2 mt-xl-4">CHỌN GÓI TÀI KHOẢN VIP ĐỂ TẢI FILE</h5>
-                    <P class="text-justify">Bạn thân mến! Việc <span class="fw-bold">đăng kí VIP</span>, bạn sẽ nhận
-                        được các gói XU tương ứng và kích hoạt quyền tải
-                        không giới hạn, đồng thời nhận được hỗ trợ chỉnh sửa file từ đội ngũ Hidesign. Với nền tảng chia
-                        sẻ file thiết kế, Hidesign liên tục cải tiến nhằm mang đến cho bạn trải nghiệm tốt hơn với các
-                        ưu thế:</P>
+                    @if($desktopContent && $desktopContent->logo)
+                        @if(str_starts_with($desktopContent->logo, 'desktop-content/'))
+                            <img src="{{ Storage::url($desktopContent->logo) }}" alt="Desktop logo" class="desktop-content-logo">
+                        @else
+                            <img src="{{ asset($desktopContent->logo) }}" alt="Desktop logo" class="desktop-content-logo">
+                        @endif
+                    @else
+                        <img src="{{ asset('/images/d/desktops/logo.png') }}" alt="Desktop logo" class="desktop-content-logo">
+                    @endif
+                    
+                    <h5 class="fw-bold mt-2 mt-xl-4">{{ $desktopContent->title ?? 'CHỌN GÓI TÀI KHOẢN VIP ĐỂ TẢI FILE' }}</h5>
+                    <P class="text-justify">{!! $desktopContent->description ?? 'Bạn thân mến! Việc <span class="fw-bold">đăng kí VIP</span>, bạn sẽ nhận được các gói XU tương ứng và kích hoạt quyền tải không giới hạn...' !!}</P>
 
+                    @if($desktopContent && !empty($desktopContent->features))
+                    <div class="row mt-xxl-5">
+                        @foreach($desktopContent->features as $feature)
+                        <div class="col-3 desktop-feature-item">
+                            @if(!empty($feature['icon']))
+                                @if(str_starts_with($feature['icon'], 'desktop-content/'))
+                                    <img src="{{ Storage::url($feature['icon']) }}" alt="{{ $feature['title'] ?? '' }}">
+                                @else
+                                    <img src="{{ asset($feature['icon']) }}" alt="{{ $feature['title'] ?? '' }}">
+                                @endif
+                            @endif
+                            <p class="fw-bold">{{ $feature['title'] ?? '' }}</p>
+                            <p>{{ $feature['description'] ?? '' }}</p>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
                     <div class="row mt-xxl-5">
                         <div class="col-3 desktop-feature-item">
                             <img src="{{ asset('/images/svg/desktops/big-data.svg') }}" alt="Big Data">
@@ -127,6 +148,7 @@
                             <p>Sở hữu những file chất lượng cao</p>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -32,6 +32,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'payment/casso/callback'
         ]);
     })
+    ->withSchedule(function ($schedule) {
+        // Cleanup temp images daily at 3:00 AM
+        $schedule->command('blog:cleanup-temp-images')->dailyAt('03:00');
+        $schedule->command('page:cleanup-temp-images')->dailyAt('03:00');
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         // ...
     })

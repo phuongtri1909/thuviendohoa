@@ -199,7 +199,14 @@
                     <li class="{{ Route::currentRouteNamed('admin.content-images.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.content-images.index') }}">
                             <i class="fas fa-images"></i>
-                            <span>Content Images</span>
+                            <span>Content ảnh banner</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed('admin.desktop-contents.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.desktop-contents.index') }}">
+                            <i class="fas fa-desktop"></i>
+                            <span>Content gói</span>
                         </a>
                     </li>
 
@@ -241,7 +248,7 @@
 
                     <!-- Cấu hình hệ thống -->
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.socials.*', 'admin.logo-site.*', 'admin.languages.*', 'admin.seo.*', 'admin.setting.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.socials.*', 'admin.logo-site.*', 'admin.languages.*', 'admin.seo.*', 'admin.setting.*', 'admin.pages.*', 'admin.footer-setting.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-cogs"></i>
                             <span>Cấu hình hệ thống</span>
@@ -258,6 +265,18 @@
                                 <a href="{{ route('admin.logo-site.edit') }}">
                                     <i class="fas fa-image"></i>
                                     <span>Logo Site</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.pages.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pages.index') }}">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Quản lý trang</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.footer-setting.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.footer-setting.edit') }}">
+                                    <i class="fas fa-shoe-prints"></i>
+                                    <span>Cài đặt Footer</span>
                                 </a>
                             </li>
                             <li class="{{ Route::currentRouteNamed('admin.setting.*') ? 'active' : '' }}">

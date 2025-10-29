@@ -28,6 +28,9 @@ use App\Http\Controllers\Admin\TagBlogController;
 use App\Http\Controllers\Admin\GetLinkConfigController;
 use App\Http\Controllers\Admin\GetLinkHistoryController;
 use App\Http\Controllers\Admin\ContentImageController;
+use App\Http\Controllers\Admin\DesktopContentController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\FooterSettingController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -115,5 +118,21 @@ Route::group(['as' => 'admin.'], function () {
         Route::get('content-images/{contentImage}/edit', [ContentImageController::class, 'edit'])->name('content-images.edit');
         Route::put('content-images/{contentImage}', [ContentImageController::class, 'update'])->name('content-images.update');
         Route::delete('content-images/{contentImage}/delete-image', [ContentImageController::class, 'deleteImage'])->name('content-images.delete-image');
+        
+        Route::get('desktop-contents', [DesktopContentController::class, 'index'])->name('desktop-contents.index');
+        Route::get('desktop-contents/{desktopContent}/edit', [DesktopContentController::class, 'edit'])->name('desktop-contents.edit');
+        Route::put('desktop-contents/{desktopContent}', [DesktopContentController::class, 'update'])->name('desktop-contents.update');
+        Route::delete('desktop-contents/{desktopContent}/delete-logo', [DesktopContentController::class, 'deleteLogo'])->name('desktop-contents.delete-logo');
+        Route::delete('desktop-contents/{desktopContent}/delete-feature-icon', [DesktopContentController::class, 'deleteFeatureIcon'])->name('desktop-contents.delete-feature-icon');
+        
+        // Pages routes
+        Route::resource('pages', PageController::class);
+        Route::post('pages/upload-image', [PageController::class, 'uploadImage'])->name('pages.upload-image');
+        Route::post('pages/cleanup-temp-images', [PageController::class, 'cleanupTempImages'])->name('pages.cleanup-temp-images');
+        
+        // Footer Setting routes
+        Route::get('footer-setting', [FooterSettingController::class, 'edit'])->name('footer-setting.edit');
+        Route::put('footer-setting', [FooterSettingController::class, 'update'])->name('footer-setting.update');
+        Route::delete('footer-setting/delete-partner', [FooterSettingController::class, 'deletePartner'])->name('footer-setting.delete-partner');
     });
 });

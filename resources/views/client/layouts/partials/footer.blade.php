@@ -29,10 +29,12 @@
                 <div class="col-12 col-sm-6 col-md-4 col-xl-3 mb-4 col-footer">
                     <h5 class="footer-title">Về tôi</h5>
                     <div class="footer-card text-center">
-                        <div class="fb-page" data-href="https://www.facebook.com/thuvien24hh?locale=vi_VN"
-                            data-small-header="false" data-adapt-container-width="true" data-hide-cover="false"
-                            data-show-facepile="true">
-                        </div>
+                        @if($footerSetting && $footerSetting->facebook_url)
+                            <div class="fb-page" data-href="{{ $footerSetting->facebook_url }}"
+                                data-small-header="false" data-adapt-container-width="true" data-hide-cover="false"
+                                data-show-facepile="true">
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -40,39 +42,51 @@
                 <div class="col-12 col-sm-6 col-md-4 col-xl-3 mb-4 col-footer">
                     <h5 class="footer-title">Hỗ trợ</h5>
                     <div class="contact-info text-center">
-                        <p>Hotline/Zalo: <a class="text-decoration-none color-primary-3" href="tel:0944133994">0944 133
-                                994</a></p>
-                        <p>Email: <a class="text-decoration-none color-primary-7"
-                                href="mailto:printon.hcm@gmail.com">printon.hcm@gmail.com</a></p>
-                        <p>Fanpage: <a class="text-decoration-none color-primary-7" href="#">Printon</a></p>
+                        @if($footerSetting && $footerSetting->support_hotline)
+                            <p>Hotline/Zalo: <a class="text-decoration-none color-primary-3" href="tel:{{ preg_replace('/\s+/', '', $footerSetting->support_hotline) }}">{{ $footerSetting->support_hotline }}</a></p>
+                        @endif
+                        @if($footerSetting && $footerSetting->support_email)
+                            <p>Email: <a class="text-decoration-none color-primary-7" href="mailto:{{ $footerSetting->support_email }}">{{ $footerSetting->support_email }}</a></p>
+                        @endif
+                        @if($footerSetting && $footerSetting->support_fanpage)
+                            <p>Fanpage: 
+                                @if($footerSetting->support_fanpage_url)
+                                    <a class="text-decoration-none color-primary-7" href="{{ $footerSetting->support_fanpage_url }}" target="_blank" rel="noopener">{{ $footerSetting->support_fanpage }}</a>
+                                @else
+                                    <span class="color-primary-7">{{ $footerSetting->support_fanpage }}</span>
+                                @endif
+                            </p>
+                        @endif
                     </div>
                 </div>
 
                 <!-- Information Section -->
                 <div class="col-12 col-sm-6 col-md-4 col-xl-3 mb-4 col-footer">
                     <h5 class="footer-title">Thông tin</h5>
-                    <a href="#" class="footer-link">Giới thiệu về Printon</a>
-                    <a href="#" class="footer-link">Điều khoản chung</a>
-                    <a href="#" class="footer-link">Chính sách bảo mật</a>
+                    @if(isset($footerPages) && $footerPages->count() > 0)
+                        @foreach($footerPages as $page)
+                            <a href="{{ route('page.show', $page->slug) }}" class="footer-link">{{ $page->title }}</a>
+                        @endforeach
+                    @endif
                 </div>
 
                 <!-- Partner Section -->
                 <div class="col-12 col-sm-6 col-md-12 col-xl-3 mb-4 col-footer text-center">
                     <h5 class="footer-title">Đối tác chính</h5>
                     <div class="row align-items-center">
-                        <div class="col-6">
-                            <img class="img-fluid" src="{{ asset('images/d/doi-tac/thegioiinan.png') }}"
-                                alt="TheGioiInAn">
-                        </div>
-                        <div class="col-6">
-                            <img class="img-fluid" src="{{ asset('images/d/doi-tac/gifgo.png') }}" alt="Gifgo">
-                        </div>
-                        <div class="col-6">
-                            <img class="img-fluid" src="{{ asset('images/d/doi-tac/checkgo.png') }}" alt="CheckGo">
-                        </div>
-                        <div class="col-6">
-                            <img class="img-fluid" src="{{ asset('images/d/doi-tac/pakgo.png') }}" alt="PakGo">
-                        </div>
+                        @if($footerSetting && $footerSetting->partners && count($footerSetting->partners) > 0)
+                            @foreach($footerSetting->partners as $partner)
+                                <div class="col-6 mb-3">
+                                    @if(!empty($partner['url']))
+                                        <a href="{{ $partner['url'] }}" target="_blank" rel="noopener">
+                                            <img class="img-fluid" src="{{ Storage::url($partner['image']) }}" alt="{{ $partner['name'] ?? 'Partner' }}">
+                                        </a>
+                                    @else
+                                        <img class="img-fluid" src="{{ Storage::url($partner['image']) }}" alt="{{ $partner['name'] ?? 'Partner' }}">
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
