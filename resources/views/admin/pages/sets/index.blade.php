@@ -22,14 +22,17 @@
                         <div class="col-4">
                             <label for="name_filter">Tên set</label>
                             <input type="text" id="name_filter" name="name" class="filter-input"
-                                   placeholder="Tìm theo tên set" value="{{ request('name') }}">
+                                placeholder="Tìm theo tên set" value="{{ request('name') }}">
                         </div>
                         <div class="col-4">
                             <label for="type_filter">Loại</label>
                             <select id="type_filter" name="type" class="filter-input">
                                 <option value="">-- Tất cả --</option>
-                                <option value="{{ \App\Models\Set::TYPE_FREE }}" {{ request('type') === \App\Models\Set::TYPE_FREE ? 'selected' : '' }}>Miễn phí</option>
-                                <option value="{{ \App\Models\Set::TYPE_PREMIUM }}" {{ request('type') === \App\Models\Set::TYPE_PREMIUM ? 'selected' : '' }}>Premium</option>
+                                <option value="{{ \App\Models\Set::TYPE_FREE }}"
+                                    {{ request('type') === \App\Models\Set::TYPE_FREE ? 'selected' : '' }}>Miễn phí</option>
+                                <option value="{{ \App\Models\Set::TYPE_PREMIUM }}"
+                                    {{ request('type') === \App\Models\Set::TYPE_PREMIUM ? 'selected' : '' }}>Premium
+                                </option>
                             </select>
                         </div>
                         <div class="col-4">
@@ -58,7 +61,7 @@
                         <div class="empty-state-icon">
                             <i class="fas fa-layer-group"></i>
                         </div>
-                        @if (request()->hasAny(['name','type','status']))
+                        @if (request()->hasAny(['name', 'type', 'status']))
                             <h4>Không tìm thấy set nào</h4>
                             <p>Không có set nào phù hợp với bộ lọc hiện tại.</p>
                             <a href="{{ route('admin.sets.index') }}" class="action-button">
@@ -92,11 +95,13 @@
                             <tbody>
                                 @foreach ($sets as $index => $set)
                                     <tr>
-                                        <td class="text-center">{{ ($sets->currentPage() - 1) * $sets->perPage() + $index + 1 }}</td>
+                                        <td class="text-center">
+                                            {{ ($sets->currentPage() - 1) * $sets->perPage() + $index + 1 }}</td>
                                         <td class="item-title"><strong>{{ $set->name }}</strong></td>
                                         <td>
                                             @if ($set->image)
-                                                <img src="{{ Storage::url($set->image) }}" alt="image" style="max-height: 40px; border-radius: 6px;">
+                                                <img src="{{ Storage::url($set->image) }}" alt="image"
+                                                    style="max-height: 40px; border-radius: 6px;">
                                             @else
                                                 <span class="text-muted">Không có</span>
                                             @endif
@@ -106,19 +111,23 @@
                                         <td>{{ $set->size }}</td>
                                         <td>{{ number_format($set->price) }}</td>
                                         <td>
-                                            @if($set->is_featured)
-                                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Có</span>
+                                            @if ($set->is_featured)
+                                                <span
+                                                    class="badge bg-success-subtle text-success-emphasis rounded-pill">Có</span>
                                             @else
-                                                <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Không</span>
+                                                <span
+                                                    class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Không</span>
                                             @endif
                                         </td>
                                         <td class="category-date">{{ $set->created_at->format('d/m/Y H:i') }}</td>
                                         <td>
                                             <div class="action-buttons-wrapper">
-                                                <a href="{{ route('admin.sets.show', $set) }}" class="action-icon view-icon text-decoration-none" title="Xem chi tiết">
+                                                <a href="{{ route('admin.sets.show', $set) }}"
+                                                    class="action-icon view-icon text-decoration-none" title="Xem chi tiết">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('admin.sets.edit', $set) }}" class="action-icon edit-icon text-decoration-none" title="Chỉnh sửa">
+                                                <a href="{{ route('admin.sets.edit', $set) }}"
+                                                    class="action-icon edit-icon text-decoration-none" title="Chỉnh sửa">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 @include('components.delete-form', [
@@ -126,6 +135,16 @@
                                                     'route' => route('admin.sets.destroy', $set),
                                                     'message' => "Bạn có chắc chắn muốn xóa set '{$set->name}'?",
                                                 ])
+                                                <form method="POST" action="{{ route('admin.sets.clean-files', $set) }}"
+                                                    id="clean-files-form-{{ $set->id }}"
+                                                    style="display: inline-block;">
+                                                    @csrf
+                                                    <button type="button" class="action-icon text-decoration-none"
+                                                        onclick="confirmCleanFiles({{ $set->id }})"
+                                                        title="Làm sạch file">
+                                                        <i class="fas fa-broom" style="color: #ff5722;"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -136,7 +155,8 @@
 
                     <div class="pagination-wrapper">
                         <div class="pagination-info">
-                            Hiển thị {{ $sets->firstItem() ?? 0 }} đến {{ $sets->lastItem() ?? 0 }} của {{ $sets->total() }} set
+                            Hiển thị {{ $sets->firstItem() ?? 0 }} đến {{ $sets->lastItem() ?? 0 }} của
+                            {{ $sets->total() }} set
                         </div>
                         <div class="pagination-controls">
                             {{ $sets->appends(request()->query())->links('components.paginate') }}
@@ -148,4 +168,24 @@
     </div>
 @endsection
 
-
+@push('scripts')
+    <script>
+        function confirmCleanFiles(setId) {
+            Swal.fire({
+                title: 'Xác nhận làm sạch file',
+                html: 'Bạn có chắc muốn xóa file tạm và file ZIP của set này?<br><br><small class="text-muted">Hành động này sẽ buộc người dùng download lại file mới từ Drive.</small>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff5722',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-broom me-1"></i> Làm sạch',
+                cancelButtonText: 'Hủy',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('clean-files-form-' + setId).submit();
+                }
+            });
+        }
+    </script>
+@endpush
