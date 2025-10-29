@@ -24,6 +24,7 @@ class SearchController extends Controller
         $tags = $request->get('tags', []);
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
+        $type = $request->get('type');
         
         $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
             ->with([
@@ -52,6 +53,10 @@ class SearchController extends Controller
             $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
                 $q->where('slug', $albumSlug);
             });
+        }
+        
+        if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+            $setsQuery->where('type', $type);
         }
         
         if ($tagSlug) {
@@ -150,6 +155,7 @@ class SearchController extends Controller
             'albumSlug',
             'colors',
             'software',
+            'type',
             'allColors',
             'allSoftware',
             'relatedTags'
@@ -165,6 +171,7 @@ class SearchController extends Controller
         $tags = $request->get('tags', []);
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
+        $type = $request->get('type');
         $page = $request->get('page', 1);
         
         $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
@@ -197,6 +204,10 @@ class SearchController extends Controller
             $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
                 $q->where('slug', $albumSlug);
             });
+        }
+        
+        if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+            $setsQuery->where('type', $type);
         }
         
         if ($tagSlug) {

@@ -14,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 class Album extends Model
 {
     protected $table = 'albums';
-    protected $fillable = ['name', 'slug', 'image'];
+    protected $fillable = ['name', 'slug', 'image', 'icon'];
 
     public function albumSets(): HasMany
     {
@@ -96,11 +96,17 @@ class Album extends Model
 
         Storage::disk('public')->makeDirectory("albums/{$yearMonth}/original");
 
-        $processed = Image::make($imageFile);
-        $processed->encode('webp', 90);
-
-        $relativePath = "albums/{$yearMonth}/original/{$fileName}.webp";
-        Storage::disk('public')->put($relativePath, $processed->stream());
+        $extension = strtolower($imageFile->getClientOriginalExtension());
+        
+        if ($extension === 'svg') {
+            $relativePath = "albums/{$yearMonth}/original/{$fileName}.svg";
+            Storage::disk('public')->put($relativePath, file_get_contents($imageFile->getRealPath()));
+        } else {
+            $processed = Image::make($imageFile);
+            $processed->encode('webp', 90);
+            $relativePath = "albums/{$yearMonth}/original/{$fileName}.webp";
+            Storage::disk('public')->put($relativePath, $processed->stream());
+        }
 
         return $relativePath;
     }

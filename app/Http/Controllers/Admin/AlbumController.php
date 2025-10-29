@@ -49,7 +49,8 @@ class AlbumController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:albums,name',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image' => 'required|file|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
+            'icon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             'featured' => 'nullable|boolean',
             'trending' => 'nullable|boolean',
         ], [
@@ -58,9 +59,12 @@ class AlbumController extends Controller
             'name.max' => 'Tên album không được vượt quá 255 ký tự',
             'name.unique' => 'Tên album đã tồn tại',
             'image.required' => 'Ảnh album là bắt buộc',
-            'image.image' => 'Ảnh album phải là ảnh',
-            'image.mimes' => 'Ảnh album chỉ chấp nhận jpeg, png, jpg, gif, webp',
+            'image.file' => 'Ảnh album phải là file',
+            'image.mimes' => 'Ảnh album chỉ chấp nhận jpeg, png, jpg, gif, webp, svg',
             'image.max' => 'Ảnh album không được vượt quá 10MB',
+            'icon.file' => 'Icon album phải là file',
+            'icon.mimes' => 'Icon album chỉ chấp nhận jpeg, png, jpg, gif, webp, svg',
+            'icon.max' => 'Icon album không được vượt quá 2MB',
         ]);
 
         $imagePath = null;
@@ -68,10 +72,16 @@ class AlbumController extends Controller
             $imagePath = Album::processAndSaveImage($request->file('image'));
         }
 
+        $iconPath = null;
+        if ($request->hasFile('icon')) {
+            $iconPath = Album::processAndSaveImage($request->file('icon'));
+        }
+
         $album = Album::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'image' => $imagePath,
+            'icon' => $iconPath,
         ]);
 
         if ($request->boolean('featured')) {
@@ -114,7 +124,8 @@ class AlbumController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:albums,name,' . $album->id,
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
+            'icon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             'featured' => 'nullable|boolean',
             'trending' => 'nullable|boolean',
         ], [
@@ -122,9 +133,12 @@ class AlbumController extends Controller
             'name.string' => 'Tên album phải là chuỗi',
             'name.max' => 'Tên album không được vượt quá 255 ký tự',
             'name.unique' => 'Tên album đã tồn tại',
-            'image.image' => 'Ảnh album phải là ảnh',
-            'image.mimes' => 'Ảnh album chỉ chấp nhận jpeg, png, jpg, gif, webp',
+            'image.file' => 'Ảnh album phải là file',
+            'image.mimes' => 'Ảnh album chỉ chấp nhận jpeg, png, jpg, gif, webp, svg',
             'image.max' => 'Ảnh album không được vượt quá 10MB',
+            'icon.file' => 'Icon album phải là file',
+            'icon.mimes' => 'Icon album chỉ chấp nhận jpeg, png, jpg, gif, webp, svg',
+            'icon.max' => 'Icon album không được vượt quá 2MB',
         ]);
 
         $data = [
@@ -135,6 +149,11 @@ class AlbumController extends Controller
         if ($request->hasFile('image')) {
             Album::deleteImage($album->image);
             $data['image'] = Album::processAndSaveImage($request->file('image'));
+        }
+
+        if ($request->hasFile('icon')) {
+            Album::deleteImage($album->icon);
+            $data['icon'] = Album::processAndSaveImage($request->file('icon'));
         }
 
         $album->update($data);
@@ -160,6 +179,7 @@ class AlbumController extends Controller
     public function destroy(Album $album)
     {
         Album::deleteImage($album->image);
+        Album::deleteImage($album->icon);
         $album->albumTypes()->delete();
         $album->delete();
         return redirect()->route('admin.albums.index')->with('success', 'Album đã được xóa thành công!');

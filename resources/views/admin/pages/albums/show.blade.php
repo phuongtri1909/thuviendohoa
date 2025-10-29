@@ -39,6 +39,17 @@
                             </div>
                         </div>
                         <div class="detail-item">
+                            <label class="detail-label">Icon (Header):</label>
+                            <div class="detail-value">
+                                @if ($album->icon)
+                                    <img src="{{ Storage::url($album->icon) }}" alt="icon"
+                                        style="max-height: 60px; max-width: 60px; object-fit: contain;">
+                                @else
+                                    <span class="text-muted">Không có icon (sẽ dùng ảnh)</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="detail-item">
                             <label class="detail-label">Featured:</label>
                             <span class="detail-value">{{ $album->featuredType ? 'Yes' : 'No' }}</span>
                         </div>

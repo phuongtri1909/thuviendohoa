@@ -56,10 +56,31 @@
                         @endif
                         <div class="form-hint">
                             <i class="fas fa-info-circle"></i>
-                            <span>Định dạng: jpeg, png, jpg, gif, webp. Tối đa 10MB</span>
+                            <span>Định dạng: jpeg, png, jpg, gif, webp, svg. Tối đa 10MB</span>
                         </div>
                         <div class="error-message" id="error-image">
                             @error('image')
+                                {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="icon" class="form-label-custom">
+                            Icon album (dùng cho header)
+                        </label>
+                        <input type="file" id="icon" name="icon" accept="image/*" class="custom-input {{ $errors->has('icon') ? 'input-error' : '' }}">
+                        @if($album->icon)
+                            <div class="mt-2">
+                                <img src="{{ Storage::url($album->icon) }}" alt="album icon" style="max-height: 50px; border-radius: 6px;">
+                            </div>
+                        @endif
+                        <div class="form-hint">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Định dạng: jpeg, png, jpg, gif, webp, svg. Tối đa 2MB. Nếu không có, sẽ dùng ảnh album</span>
+                        </div>
+                        <div class="error-message" id="error-icon">
+                            @error('icon')
                                 {{ $message }}
                             @enderror
                         </div>

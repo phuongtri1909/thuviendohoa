@@ -137,26 +137,20 @@
                                                 </div>
                                                 <div class="vip-content px-3 pb-3 bg-white">
                                                     <div class="row">
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/image.svg') }}"
-                                                                alt="Image">
-                                                            <span>Hộp quà đẹp 2016</span>
-                                                        </div>
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/pttx.svg') }}"
-                                                                alt="Image">
-                                                            <span>Chủ đề 20/11</span>
-                                                        </div>
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/device.svg') }}"
-                                                                alt="Image">
-                                                            <span>Thiết kế nổi bật 2026</span>
-                                                        </div>
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/image.svg') }}"
-                                                                alt="Image">
-                                                            <span>Hộp quà đẹp 2016</span>
-                                                        </div>
+                                                        @forelse($headerVipAlbums as $album)
+                                                            <div class="col-6 p-3 pb-0">
+                                                                <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
+                                                                    <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
+                                                                         alt="{{ $album->name }}"
+                                                                         style="width: 24px; height: 24px; object-fit: contain;">
+                                                                    <span>{{ $album->name }}</span>
+                                                                </a>
+                                                            </div>
+                                                        @empty
+                                                            <div class="col-12 p-3 pb-0 text-center text-muted">
+                                                                Chưa có album VIP
+                                                            </div>
+                                                        @endforelse
                                                     </div>
                                                 </div>
                                             </div>
@@ -170,26 +164,20 @@
                                                 </div>
                                                 <div class="free-content px-3 pb-3 bg-white">
                                                     <div class="row">
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/image.svg') }}"
-                                                                alt="Image">
-                                                            <span>Hộp quà đẹp 2016</span>
-                                                        </div>
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/pttx.svg') }}"
-                                                                alt="Image">
-                                                            <span>Chủ đề 20/11</span>
-                                                        </div>
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/device.svg') }}"
-                                                                alt="Image">
-                                                            <span>Thiết kế nổi bật 2026</span>
-                                                        </div>
-                                                        <div class="col-6 p-3 pb-0">
-                                                            <img src="{{ asset('/images/svg/image.svg') }}"
-                                                                alt="Image">
-                                                            <span>Hộp quà đẹp 2016</span>
-                                                        </div>
+                                                        @forelse($headerFreeAlbums as $album)
+                                                            <div class="col-6 p-3 pb-0">
+                                                                <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
+                                                                    <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
+                                                                         alt="{{ $album->name }}"
+                                                                         style="width: 24px; height: 24px; object-fit: contain;">
+                                                                    <span>{{ $album->name }}</span>
+                                                                </a>
+                                                            </div>
+                                                        @empty
+                                                            <div class="col-12 p-3 pb-0 text-center text-muted">
+                                                                Chưa có album miễn phí
+                                                            </div>
+                                                        @endforelse
                                                     </div>
                                                 </div>
                                             </div>
@@ -477,22 +465,20 @@
                                     </div>
                                     <div class="vip-content px-3 pb-3">
                                         <div class="row">
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
-                                                <span>Hộp quà đẹp 2016</span>
-                                            </div>
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/pttx.svg') }}" alt="Image">
-                                                <span>Chủ đề 20/11</span>
-                                            </div>
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/device.svg') }}" alt="Image">
-                                                <span>Thiết kế nổi bật 2026</span>
-                                            </div>
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
-                                                <span>Hộp quà đẹp 2016</span>
-                                            </div>
+                                            @forelse($headerVipAlbums as $album)
+                                                <div class="col-12 p-3 pb-0">
+                                                    <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
+                                                        <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
+                                                             alt="{{ $album->name }}"
+                                                             style="width: 24px; height: 24px; object-fit: contain;">
+                                                        <span>{{ $album->name }}</span>
+                                                    </a>
+                                                </div>
+                                            @empty
+                                                <div class="col-12 p-3 pb-0 text-center text-muted">
+                                                    Chưa có album VIP
+                                                </div>
+                                            @endforelse
                                         </div>
                                     </div>
                                 </div>
@@ -506,22 +492,20 @@
                                     </div>
                                     <div class="free-content px-3 pb-3">
                                         <div class="row">
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
-                                                <span>Hộp quà đẹp 2016</span>
-                                            </div>
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/pttx.svg') }}" alt="Image">
-                                                <span>Chủ đề 20/11</span>
-                                            </div>
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/device.svg') }}" alt="Image">
-                                                <span>Thiết kế nổi bật 2026</span>
-                                            </div>
-                                            <div class="col-12 p-3 pb-0">
-                                                <img src="{{ asset('/images/svg/image.svg') }}" alt="Image">
-                                                <span>Hộp quà đẹp 2016</span>
-                                            </div>
+                                            @forelse($headerFreeAlbums as $album)
+                                                <div class="col-12 p-3 pb-0">
+                                                    <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
+                                                        <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
+                                                             alt="{{ $album->name }}"
+                                                             style="width: 24px; height: 24px; object-fit: contain;">
+                                                        <span>{{ $album->name }}</span>
+                                                    </a>
+                                                </div>
+                                            @empty
+                                                <div class="col-12 p-3 pb-0 text-center text-muted">
+                                                    Chưa có album miễn phí
+                                                </div>
+                                            @endforelse
                                         </div>
                                     </div>
                                 </div>
