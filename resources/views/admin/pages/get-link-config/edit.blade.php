@@ -56,10 +56,10 @@
                     </div>
 
                     <div class="form-actions">
-                        <a href="{{ route('admin.dashboard') }}" class="btn-cancel">
+                        <a href="{{ route('admin.dashboard') }}" class="back-button">
                             <i class="fas fa-times"></i> Hủy
                         </a>
-                        <button type="submit" class="btn-save">
+                        <button type="submit" class="save-button">
                             <i class="fas fa-save"></i> Lưu cấu hình
                         </button>
                     </div>
@@ -67,37 +67,5 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            opacity: 0.5;
-        }
-
-        .btn-close:hover {
-            opacity: 1;
-        }
-    </style>
 @endsection
 
