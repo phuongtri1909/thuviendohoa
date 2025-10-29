@@ -14,7 +14,7 @@
             </div>
 
             <div class="card-content">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 @if ($contentImages->isEmpty())
                     <div class="empty-state">

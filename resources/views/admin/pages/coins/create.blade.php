@@ -13,7 +13,7 @@
             </div>
 
             <div class="form-body">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 <form action="{{ route('admin.coins.store') }}" method="POST" class="category-form" id="coin-form">
                     @csrf

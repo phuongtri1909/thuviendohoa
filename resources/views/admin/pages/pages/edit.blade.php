@@ -13,7 +13,7 @@
             </div>
 
             <div class="form-body">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 <form action="{{ route('admin.pages.update', $page) }}" method="POST" class="category-form">
                     @csrf

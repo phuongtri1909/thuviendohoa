@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-body">
-            @include('components.alert', ['alertType' => 'alert'])
+            
 
             <form action="{{ route('admin.tag-blogs.update', $tagBlog) }}" method="POST" class="category-form">
                 @csrf

@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-body">
-            @include('components.alert', ['alertType' => 'alert'])
+            
 
             <form action="{{ route('admin.albums.store') }}" method="POST" class="category-form" id="album-form" enctype="multipart/form-data">
                 @csrf

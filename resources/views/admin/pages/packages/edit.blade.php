@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-body">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 <form action="{{ route('admin.packages.update', $package) }}" method="POST" class="category-form" id="package-form">
                     @csrf

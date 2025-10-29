@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-body">
-            @include('components.alert', ['alertType' => 'alert'])
+            
 
             <form action="{{ route('admin.categories.store') }}" method="POST" class="category-form" id="category-form" enctype="multipart/form-data">
                 @csrf

@@ -31,7 +31,7 @@
             </div>
 
             <div class="form-body">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 <form action="{{ route('admin.banks.update', $bank) }}" method="POST" class="category-form" id="bank-form" enctype="multipart/form-data">
                     @csrf

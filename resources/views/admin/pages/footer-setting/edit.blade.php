@@ -14,7 +14,7 @@
             </div>
 
             <div class="form-body">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 <form action="{{ route('admin.footer-setting.update') }}" method="POST" class="category-form" enctype="multipart/form-data">
                     @csrf

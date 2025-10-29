@@ -37,7 +37,7 @@
             </div>
 
             <div class="card-content">
-                @include('components.alert', ['alertType' => 'alert'])
+                
 
                 @if ($software->isEmpty())
                     <div class="empty-state">

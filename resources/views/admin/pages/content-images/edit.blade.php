@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-body">
-            @include('components.alert', ['alertType' => 'alert'])
+            
 
             <form action="{{ route('admin.content-images.update', $contentImage) }}" method="POST" class="category-form" id="content-image-form" enctype="multipart/form-data">
                 @csrf
