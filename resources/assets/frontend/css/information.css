@@ -750,3 +750,377 @@
 body.modal-open {
   padding-right: 0 !important;
 }
+
+
+.user-header-content .coin-balance-wrapper {
+  padding: 0 1rem;
+  position: relative;
+}
+
+.user-header-content .coin-balance-wrapper .coin-balance-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: 
+      0 4px 15px rgba(255, 255, 255, 0.1),
+      0 8px 25px rgba(255, 255, 255, 0.05),
+      inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: default;
+}
+
+.user-header-content .coin-balance-card.package-bronze {
+  background: linear-gradient(135deg, #e6a07a 0%, #cd8053 50%, #b4633e 100%);
+  box-shadow: 
+      0 4px 15px rgba(205, 128, 83, 0.4),
+      0 8px 25px rgba(180, 99, 62, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.user-header-content .coin-balance-card.package-bronze:hover {
+  box-shadow: 
+      0 6px 20px rgba(205, 128, 83, 0.5),
+      0 10px 35px rgba(180, 99, 62, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Silver Package */
+.user-header-content .coin-balance-card.package-silver {
+  background: linear-gradient(135deg, #e8e8e8 0%, #bfbfbf 50%, #999999 100%);
+  box-shadow: 
+      0 4px 15px rgba(126, 126, 126, 0.4),
+      0 8px 25px rgba(102, 102, 102, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.user-header-content .coin-balance-card.package-silver:hover {
+  box-shadow: 
+      0 6px 20px rgba(126, 126, 126, 0.5),
+      0 10px 35px rgba(102, 102, 102, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* Gold Package */
+.user-header-content .coin-balance-card.package-gold {
+  background: linear-gradient(135deg, #FFD964 0%, #F5C42E 50%, #ECB818 100%);
+  box-shadow: 
+      0 4px 15px rgba(245, 196, 46, 0.4),
+      0 8px 25px rgba(236, 184, 24, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.user-header-content .coin-balance-card.package-gold:hover {
+  box-shadow: 
+      0 6px 20px rgba(245, 196, 46, 0.5),
+      0 10px 35px rgba(236, 184, 24, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* Platinum Package */
+.user-header-content .coin-balance-card.package-platinum {
+  background: linear-gradient(135deg, #e6b3ff 0%, #d680f7 50%, #be40e8 100%);
+  box-shadow: 
+      0 4px 15px rgba(190, 64, 232, 0.4),
+      0 8px 25px rgba(168, 50, 219, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.user-header-content .coin-balance-card.package-platinum:hover {
+  box-shadow: 
+      0 6px 20px rgba(190, 64, 232, 0.5),
+      0 10px 35px rgba(168, 50, 219, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.user-header-content .coin-balance-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+      45deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+  );
+  animation: coin-shimmer-effect 3s infinite;
+}
+
+@keyframes coin-shimmer-effect {
+  0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.user-header-content .coin-balance-card.package-default:hover,
+.user-header-content .coin-balance-card:not([class*="package-bronze"]):not([class*="package-silver"]):not([class*="package-gold"]):not([class*="package-platinum"]):hover {
+  transform: translateY(-2px);
+  box-shadow: 
+      0 6px 20px rgba(255, 255, 255, 0.15),
+      0 10px 35px rgba(255, 255, 255, 0.1),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.user-header-content .coin-balance-card:hover {
+  transform: translateY(-2px);
+}
+
+.user-header-content .coin-balance-card .coin-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 70%
+  );
+  opacity: 0;
+  animation: coin-pulse-glow-effect 2s ease-in-out infinite;
+}
+
+@keyframes coin-pulse-glow-effect {
+  0%, 100% {
+      opacity: 0;
+      transform: scale(0.95);
+  }
+  50% {
+      opacity: 1;
+      transform: scale(1);
+  }
+}
+
+.user-header-content .coin-balance-card .coin-icon-wrapper {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: coin-float-effect 3s ease-in-out infinite;
+}
+
+@keyframes coin-float-effect {
+  0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+      transform: translateY(-3px) rotate(5deg);
+  }
+  75% {
+      transform: translateY(3px) rotate(-5deg);
+  }
+}
+
+.user-header-content .coin-balance-card .coin-icon {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 2px 4px rgba(139, 90, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.user-header-content .coin-balance-card:hover .coin-icon {
+  transform: rotate(360deg) scale(1.1);
+}
+
+.user-header-content .coin-balance-card .coin-sparkle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.8) 0%,
+      transparent 40%
+  );
+  border-radius: 50%;
+  opacity: 0;
+  animation: coin-sparkle-effect 2s ease-in-out infinite;
+}
+
+@keyframes coin-sparkle-effect {
+  0%, 100% {
+      opacity: 0;
+      transform: scale(0.5);
+  }
+  50% {
+      opacity: 1;
+      transform: scale(1.2);
+  }
+}
+
+.user-header-content .coin-balance-card .coin-amount {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  z-index: 1;
+}
+
+.user-header-content .coin-balance-card .coin-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 
+      1px 1px 2px rgba(0, 0, 0, 0.3),
+      2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.5px;
+  animation: coin-number-bounce-effect 2s ease-in-out infinite;
+}
+
+@keyframes coin-number-bounce-effect {
+  0%, 100% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.05);
+  }
+}
+
+.user-header-content .coin-balance-card .coin-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 
+      1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.user-header-content .coin-balance-card.package-bronze .coin-number {
+  color: #5a2e1a;
+  text-shadow: 
+      1px 1px 0 rgba(255, 255, 255, 0.5),
+      -1px -1px 0 rgba(90, 46, 26, 0.3),
+      2px 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.user-header-content .coin-balance-card.package-bronze .coin-label {
+  color: #7a3d24;
+}
+
+.user-header-content .coin-balance-card.package-silver .coin-number {
+  color: #3a3a3a;
+  text-shadow: 
+      1px 1px 0 rgba(255, 255, 255, 0.7),
+      -1px -1px 0 rgba(58, 58, 58, 0.3),
+      2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-header-content .coin-balance-card.package-silver .coin-label {
+  color: #4a4a4a;
+}
+
+.user-header-content .coin-balance-card.package-gold .coin-number {
+  color: #8b6600;
+  text-shadow: 
+      1px 1px 0 rgba(255, 255, 255, 0.5),
+      -1px -1px 0 rgba(139, 102, 0, 0.3),
+      2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-header-content .coin-balance-card.package-gold .coin-label {
+  color: #a07800;
+}
+
+.user-header-content .coin-balance-card.package-platinum .coin-number {
+  color: #4a0070;
+  text-shadow: 
+      1px 1px 0 rgba(255, 255, 255, 0.6),
+      -1px -1px 0 rgba(74, 0, 112, 0.4),
+      2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-header-content .coin-balance-card.package-platinum .coin-label {
+  color: #6b00a3;
+}
+
+@media (max-width: 768px) {
+  .user-header-content .coin-balance-card {
+      padding: 0.875rem 1.25rem;
+  }
+
+  .user-header-content .coin-balance-card .coin-icon-wrapper {
+      width: 28px;
+      height: 28px;
+  }
+
+  .user-header-content .coin-balance-card .coin-icon {
+      width: 24px;
+      height: 24px;
+  }
+
+  .user-header-content .coin-balance-card .coin-number {
+      font-size: 1.5rem;
+  }
+
+  .user-header-content .coin-balance-card .coin-label {
+      font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-header-content .coin-balance-card {
+      padding: 0.75rem 1rem;
+      gap: 0.5rem;
+  }
+
+  .user-header-content .coin-balance-card .coin-icon-wrapper {
+      width: 24px;
+      height: 24px;
+  }
+
+  .user-header-content .coin-balance-card .coin-icon {
+      width: 20px;
+      height: 20px;
+  }
+
+  .user-header-content .coin-balance-card .coin-number {
+      font-size: 1.25rem;
+  }
+
+  .user-header-content .coin-balance-card .coin-label {
+      font-size: 0.75rem;
+  }
+}
+
+.user-header-content .coin-balance-card:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.user-header-content .coin-balance-wrapper::before,
+.user-header-content .coin-balance-wrapper::after {
+  content: '✨';
+  position: absolute;
+  font-size: 1rem;
+  opacity: 0;
+  animation: coin-star-twinkle-effect 3s ease-in-out infinite;
+}
+
+.user-header-content .coin-balance-wrapper::before {
+  left: 0;
+  animation-delay: 0s;
+}
+
+.user-header-content .coin-balance-wrapper::after {
+  right: 0;
+  animation-delay: 1.5s;
+}
+
+@keyframes coin-star-twinkle-effect {
+  0%, 100% {
+      opacity: 0;
+      transform: translateY(0) scale(0.5) rotate(0deg);
+  }
+  50% {
+      opacity: 1;
+      transform: translateY(-10px) scale(1) rotate(180deg);
+  }
+}

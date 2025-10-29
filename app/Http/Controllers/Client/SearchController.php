@@ -9,7 +9,12 @@ use App\Models\Set;
 use App\Models\Category;
 use App\Models\Album;
 use App\Models\Bookmark;
+use App\Models\SeoSetting;
 use Illuminate\Database\Eloquent\Builder;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\SEOTools;
+use Artesaos\SEOTools\Facades\SEOMeta;
 
 class SearchController extends Controller
 {
@@ -25,6 +30,60 @@ class SearchController extends Controller
         $colors = $request->get('colors', []);
         $software = $request->get('software', []);
         $type = $request->get('type');
+        
+        // SEO for search page
+        $seoSetting = SeoSetting::getByPageKey('search');
+        $thumbnail = $seoSetting && $seoSetting->thumbnail ? $seoSetting->thumbnail_url : asset('images/d/Thumbnail.png');
+        
+        if ($query) {
+            $title = "Tìm kiếm: {$query} - " . config('app.name');
+            $description = "Kết quả tìm kiếm cho từ khóa '{$query}'. Khám phá hàng ngàn mẫu thiết kế phù hợp.";
+            $keywords = "tim kiem, {$query}, mockup, template, vector";
+        } elseif ($categorySlug) {
+            $category = Category::where('slug', $categorySlug)->first();
+            $title = "{$category->name} - " . config('app.name');
+            $description = "Khám phá các mẫu thiết kế {$category->name}. Tải về miễn phí và premium.";
+            $keywords = "{$category->name}, mockup, template, vector";
+            // Use category image if available
+            if ($category && $category->image) {
+                $thumbnail = asset('storage/' . $category->image);
+            }
+        } elseif ($albumSlug) {
+            $album = Album::where('slug', $albumSlug)->first();
+            $title = "{$album->name} - " . config('app.name');
+            $description = "Bộ sưu tập {$album->name}. Các mẫu thiết kế được tuyển chọn.";
+            $keywords = "{$album->name}, album, collection, mockup, template";
+            // Use album image if available
+            if ($album && $album->image) {
+                $thumbnail = asset('storage/' . $album->image);
+            }
+        } elseif ($seoSetting) {
+            $title = $seoSetting->title;
+            $description = $seoSetting->description;
+            $keywords = $seoSetting->keywords;
+        } else {
+            $title = 'Tìm kiếm - ' . config('app.name');
+            $description = 'Tìm kiếm mẫu thiết kế đồ họa';
+            $keywords = 'tim kiem, search, mockup, template';
+        }
+        
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOMeta::setKeywords($keywords);
+        SEOTools::setCanonical(url()->current());
+
+        OpenGraph::setTitle($title);
+        OpenGraph::setDescription($description);
+        OpenGraph::setUrl(url()->current());
+        OpenGraph::setSiteName(config('app.name'));
+        OpenGraph::addProperty('type', 'website');
+        OpenGraph::addProperty('locale', 'vi_VN');
+        OpenGraph::addImage($thumbnail);
+
+        TwitterCard::setTitle($title);
+        TwitterCard::setDescription($description);
+        TwitterCard::setType('summary_large_image');
+        TwitterCard::addImage($thumbnail);
         
         $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
             ->with([

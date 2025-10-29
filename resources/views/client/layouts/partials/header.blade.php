@@ -5,76 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    @php
-        $currentLocale = app()->getLocale();
-        $seoTitle = 'Home - ' . config('app.name');
-        $seoDescription = config('app.name');
-        $seoKeywords = config('app.name') . ',thu vien';
-        $seoThumbnail = asset('images/d/Thumbnail.png');
-
-        if (isset($seoSetting) && $seoSetting) {
-            $seoTitle =
-                $seoSetting->getTranslation('title', $currentLocale) ?: $seoSetting->getTranslation('title', 'vi');
-            $seoDescription =
-                $seoSetting->getTranslation('description', $currentLocale) ?:
-                $seoSetting->getTranslation('description', 'vi');
-            $seoKeywords =
-                $seoSetting->getTranslation('keywords', $currentLocale) ?:
-                $seoSetting->getTranslation('keywords', 'vi');
-            $seoThumbnail = $seoSetting->thumbnail_url;
-        } elseif (isset($seoData) && $seoData) {
-            $seoTitle = $seoData->title;
-            $seoDescription = $seoData->description;
-            $seoKeywords = $seoData->keywords;
-            $seoThumbnail = $seoData->thumbnail;
-        }
-    @endphp
-
-    <title>
-        @if ($seoTitle)
-            {{ $seoTitle }}
-        @elseif(@hasSection('title'))
-            @yield('title')
-        @else
-            Home - {{ config('app.name') }}
-        @endif
-    </title>
-    <meta name="description"
-        content="@if ($seoDescription) {{ $seoDescription }}@elseif(@hasSection('description'))@yield('description')@else {{ config('app.name') }} @endif">
-    <meta name="keywords"
-        content="@if ($seoKeywords) {{ $seoKeywords }}@elseif(@hasSection('keywords'))@yield('keywords')@else {{ config('app.name') }},park @endif">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="author" content="{{ config('app.name') }}">
     <meta name="robots" content="index, follow">
     <meta property="og:type" content="website">
-    <meta property="og:title"
-        content="@if ($seoTitle) {{ $seoTitle }}@elseif(@hasSection('title'))@yield('title')@else Home - {{ config('app.name') }} @endif">
-    <meta property="og:description"
-        content="@if ($seoDescription) {{ $seoDescription }}@elseif(@hasSection('description'))@yield('description')@else {{ config('app.name') }} @endif">
+    <meta name="theme-color" content="#ffffff">
     <meta property="og:url" content="{{ url()->full() }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:locale" content="vi_VN">
-    <meta property="og:image" content="{{ $seoThumbnail }}">
-    <meta property="og:image:secure_url" content="{{ $seoThumbnail }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt"
-        content="@if ($seoTitle) {{ $seoTitle }}@elseif(@hasSection('title'))@yield('title')@else Home - {{ config('app.name') }} @endif">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title"
-        content="@if ($seoTitle) {{ $seoTitle }}@elseif(@hasSection('title'))@yield('title')@else Home - {{ config('app.name') }} @endif">
-    <meta name="twitter:description"
-        content="@if ($seoDescription) {{ $seoDescription }}@elseif(@hasSection('description'))@yield('description')@else {{ config('app.name') }} @endif">
-    <meta name="twitter:image" content="{{ $seoThumbnail }}">
-    <meta name="twitter:image:alt"
-        content="@if ($seoTitle) {{ $seoTitle }}@elseif(@hasSection('title'))@yield('title')@else Home - {{ config('app.name') }} @endif">
+
+    {!! SEO::generate() !!}
+    
+    @stack('custom_schema')
+    
     <link rel="icon" href="{{ $faviconPath }}" type="image/x-icon">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{ $faviconPath }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ $faviconPath }}">
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <meta name="google-site-verification" content="" />
+    <meta name="google-site-verification" content="pQiP1ejMlkYnhemJmmmDhBPesa7pbMtjNjZTSZBaksM" />
     @verbatim
         <script type="application/ld+json">
         {
@@ -85,7 +36,7 @@
         }
         </script>
     @endverbatim
-
+    
     @stack('meta')
 
     <!-- Google Fonts -->

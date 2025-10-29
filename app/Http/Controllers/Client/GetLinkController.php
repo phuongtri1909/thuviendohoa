@@ -7,14 +7,43 @@ use Illuminate\Http\Request;
 use App\Models\GetLinkConfig;
 use App\Models\GetLinkHistory;
 use App\Models\CoinHistory;
+use App\Models\SeoSetting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\SEOTools;
+use Artesaos\SEOTools\Facades\SEOMeta;
 
 class GetLinkController extends Controller
 {
     public function index()
     {
+        // SEO for get-link page
+        $seoSetting = SeoSetting::getByPageKey('get-link');
+        
+        if ($seoSetting) {
+            SEOTools::setTitle($seoSetting->title);
+            SEOTools::setDescription($seoSetting->description);
+            SEOMeta::setKeywords($seoSetting->keywords);
+            SEOTools::setCanonical(url()->current());
+
+            OpenGraph::setTitle($seoSetting->title);
+            OpenGraph::setDescription($seoSetting->description);
+            OpenGraph::setUrl(url()->current());
+            OpenGraph::addProperty('type', 'website');
+            if ($seoSetting->thumbnail) {
+                OpenGraph::addImage($seoSetting->thumbnail_url);
+            }
+
+            TwitterCard::setTitle($seoSetting->title);
+            TwitterCard::setDescription($seoSetting->description);
+            if ($seoSetting->thumbnail) {
+                TwitterCard::addImage($seoSetting->thumbnail_url);
+            }
+        }
+        
         $config = GetLinkConfig::getInstance();
         
         $supportedSites = GetLinkHistory::select('title', 'url', 'favicon')

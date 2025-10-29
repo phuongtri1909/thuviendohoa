@@ -14,6 +14,10 @@ use App\Models\Bank;
 use App\Models\Package;
 use App\Models\PaymentCasso;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\SEOTools;
+use Artesaos\SEOTools\Facades\SEOMeta;
 
 class PaymentController extends Controller
 {
@@ -21,6 +25,15 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
         $packages = Package::orderBy('amount', 'asc')->get();
+        
+        // SEO for payment
+        $title = 'Nạp xu - ' . config('app.name');
+        $description = 'Nạp xu để tải các mẫu thiết kế premium. Nhiều gói xu với giá ưu đãi.';
+        $keywords = 'nap xu, payment, goi xu, premium';
+        
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOMeta::setKeywords($keywords);
         
         return view('client.pages.user.payment.index', compact(
             'user',

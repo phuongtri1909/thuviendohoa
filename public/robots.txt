@@ -1,15 +1,103 @@
-User-agent: *
-Allow: /
+# Robots.txt for Thuviendohoa
 
-# Sitemap
-Sitemap: https://site.com/sitemap.xml
+User-agent: *
+
+# Allow crawling public pages
+Allow: /
+Allow: /search
+Allow: /albums
+Allow: /blog
+Allow: /page/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.png
+Allow: /*.gif
+Allow: /*.webp
+Allow: /*.svg
+Allow: /*.ico
 
 # Disallow admin area
 Disallow: /admin/
 Disallow: /admin
+Disallow: /dashboard
 
-# Disallow login
+# Disallow authentication pages
 Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /forgot-password
+Disallow: /auth/
+Disallow: /reset-password
 
-# Allow all other pages
+# Disallow user private areas
+Disallow: /user/
+Disallow: /user/*
+Disallow: /profile
+Disallow: /my-
+
+# Disallow payment & transaction pages
+Disallow: /payment/
+Disallow: /purchase/
+Disallow: /checkout
+
+# Disallow AJAX/API endpoints
+Disallow: /*?*ajax*
+Disallow: /*/ajax
+Disallow: /api/
+Disallow: /feedback/captcha
+
+# Disallow callback URLs
+Disallow: /auth/*/callback
+Disallow: /payment/*/callback
+Disallow: /login/*/callback
+
+# Disallow duplicate content & filters
+Disallow: /*?page=
+Disallow: /*?filter=
+Disallow: /*?sort=
+Disallow: /*?search=
+
+# Disallow private actions
+Disallow: /*/favorite
+Disallow: /*/favorites
+Disallow: /get-link/process
+
+# Sitemap Index
+Sitemap: https://site.com/sitemap.xml
+
+# Sitemap Components
+Sitemap: https://site.com/sitemap/main-pages.xml
+Sitemap: https://site.com/sitemap/categories.xml
+Sitemap: https://site.com/sitemap/albums.xml
+Sitemap: https://site.com/sitemap/sets-index.xml
+Sitemap: https://site.com/sitemap/sets.xml
+Sitemap: https://site.com/sitemap/blogs.xml
+Sitemap: https://site.com/sitemap/pages.xml
+
+# Crawl delay (optional - uncomment if needed)
+# Crawl-delay: 1
+
+# Rules for specific bots (if needed)
+User-agent: Googlebot
 Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /login
+Disallow: /auth/
+
+User-agent: Googlebot-Image
+Allow: /storage/
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.png
+Allow: /*.webp
+Allow: /*.gif
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /login
+Disallow: /auth/

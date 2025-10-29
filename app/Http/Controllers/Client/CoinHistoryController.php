@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\CoinHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\SEOTools;
+use Artesaos\SEOTools\Facades\SEOMeta;
 
 class CoinHistoryController extends Controller
 {
@@ -17,6 +21,15 @@ class CoinHistoryController extends Controller
             ->with('admin')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+
+        // SEO for coin history
+        $title = 'Lịch sử xu - ' . config('app.name');
+        $description = 'Xem lịch sử giao dịch xu, cộng và trừ xu của bạn.';
+        $keywords = 'lich su xu, coin history, giao dich';
+        
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOMeta::setKeywords($keywords);
 
         return view('client.pages.user.coin-history', compact('coinHistories'));
     }

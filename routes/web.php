@@ -14,8 +14,19 @@ use App\Http\Controllers\Client\FacebookController;
 use App\Http\Controllers\Client\PurchaseSetController;
 use App\Http\Controllers\Client\GetLinkController;
 use App\Http\Controllers\Client\PageController as ClientPageController;
+use App\Http\Controllers\Client\SitemapController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Sitemap routes
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/sitemap/main-pages.xml', [SitemapController::class, 'mainPages'])->name('sitemap.main-pages');
+Route::get('/sitemap/categories.xml', [SitemapController::class, 'categories'])->name('sitemap.categories');
+Route::get('/sitemap/albums.xml', [SitemapController::class, 'albums'])->name('sitemap.albums');
+Route::get('/sitemap/sets-index.xml', [SitemapController::class, 'setsIndex'])->name('sitemap.sets-index');
+Route::get('/sitemap/sets.xml', [SitemapController::class, 'sets'])->name('sitemap.sets');
+Route::get('/sitemap/blogs.xml', [SitemapController::class, 'blogs'])->name('sitemap.blogs');
+Route::get('/sitemap/pages.xml', [SitemapController::class, 'pages'])->name('sitemap.pages');
 
 // Page routes
 Route::get('/page/{slug}', [ClientPageController::class, 'show'])->name('page.show');

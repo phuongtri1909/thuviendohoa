@@ -14,6 +14,8 @@
 
 @push('styles')
     @vite('resources/assets/frontend/css/information.css')
+   
+       
 @endpush
 
 @section('content')
@@ -39,13 +41,28 @@
                                     @endif
                                 </div>
                                 <div class="ms-3">
-                                    <h5 class="user-info-name color-1">{{ Auth::user()->name }}</h5>
+                                    <h5 class="user-info-name color-1">{{ Auth::user()->full_name }}</h5>
                                     <div class="user-info-email color-text fw-semibold">{{ Auth::user()->email }}</div>
                                 </div>
                             </div>
-                            <div class="text-white text-shadow-custom px-4 mt-3 fs-24 fw-bold d-flex align-items-center justify-content-center">
-                                <img class="me-2" src="{{ asset('images/d/cam.png') }}" alt="Coin" style="width: 20px; height: 20px;">
-                                <span>{{ number_format(Auth::user()->coins) }} Xu </span>
+                            <div class="coin-balance-wrapper mt-3">
+                                @php
+                                    $packageClass = 'default';
+                                    if (Auth::user()->package_id && Auth::user()->hasValidPackage()) {
+                                        $packageClass = Auth::user()->package->plan;
+                                    }
+                                @endphp
+                                <div class="coin-balance-card package-{{ $packageClass }}">
+                                    <div class="coin-icon-wrapper">
+                                        <img class="coin-icon" src="{{ asset('images/svg/coins.svg') }}" alt="Coin">
+                                        <div class="coin-sparkle"></div>
+                                    </div>
+                                    <div class="coin-amount">
+                                        <span class="coin-number">{{ number_format(Auth::user()->coins) }}</span>
+                                        <span class="coin-label">Xu</span>
+                                    </div>
+                                    <div class="coin-glow"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

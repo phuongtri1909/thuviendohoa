@@ -14,12 +14,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\SEOTools;
+use Artesaos\SEOTools\Facades\SEOMeta;
 
 class UserController extends Controller
 {
     public function userProfile()
     {
         $user = auth()->user();
+        
+        // SEO for user profile
+        $title = 'Trang cá nhân - ' . config('app.name');
+        $description = 'Quản lý thông tin cá nhân, cập nhật avatar, đổi mật khẩu.';
+        $keywords = 'profile, tai khoan, thong tin ca nhan';
+        
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOMeta::setKeywords($keywords);
+        SEOTools::opengraph()->addProperty('type', 'profile');
+        
         return view('client.pages.user.profile')->with('user', $user);
     }
 
@@ -263,6 +278,15 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         
+        // SEO for favorites
+        $title = 'Yêu thích - ' . config('app.name');
+        $description = 'Danh sách các bộ thiết kế yêu thích của bạn.';
+        $keywords = 'yeu thich, favorites, bookmarks';
+        
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOMeta::setKeywords($keywords);
+        
         return view('client.pages.user.favorites', compact('favorites'));
     }
 
@@ -273,6 +297,15 @@ class UserController extends Controller
             ->with('set')
             ->orderBy('created_at', 'desc')
             ->paginate(15);
+        
+        // SEO for purchases
+        $title = 'Đã mua - ' . config('app.name');
+        $description = 'Danh sách các bộ thiết kế đã mua.';
+        $keywords = 'da mua, purchases, downloaded';
+        
+        SEOTools::setTitle($title);
+        SEOTools::setDescription($description);
+        SEOMeta::setKeywords($keywords);
         
         return view('client.pages.user.purchases', compact('purchases'));
     }
