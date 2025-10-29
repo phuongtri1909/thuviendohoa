@@ -21,7 +21,7 @@ class DesktopContentServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('*', function ($view) {
+        View::composer('components.client.desktop', function ($view) {
             $desktopContent = DesktopContent::byKey(DesktopContent::KEY_DESKTOP)
                 ->active()
                 ->first();

@@ -3,10 +3,6 @@
 @section('description', config('app.name') . ' ')
 @section('keywords', config('app.name'))
 
-@php
-    use Illuminate\Support\Facades\Storage;
-@endphp
-
 @section('content')
     <x-banner-carousel :banners="$banners" :hasBanners="$has_banners" :categories="$categories" :interval="3500" />
     <div class="featured-section container-custom">
@@ -29,24 +25,15 @@
         </div>
     </div>
 
-    @if ($contentImage1 && $contentImage1->image)
-        <div class="mt-4 mt-md-5 container-custom">
-            <x-client.content-image :image-src="str_starts_with($contentImage1->image, 'content-images/')
-                ? Storage::url($contentImage1->image)
-                : asset($contentImage1->image)" image-alt="{{ $contentImage1->name }}"
-                button-text="{{ $contentImage1->button_text ?? '> Xem thêm' }}"
-                position-x="{{ $contentImage1->button_position_x ?? '50%' }}"
-                position-y="{{ $contentImage1->button_position_y ?? '50%' }}" button-class="px-3 py-2" :url="$contentImage1->url" />
-        </div>
-    @endif
 
-    @if ($contentImage2 && $contentImage2->image)
-        <div class="mt-3 mt-md-5">
-            <x-client.simple-content-image :image-src="str_starts_with($contentImage2->image, 'content-images/')
-                ? Storage::url($contentImage2->image)
-                : asset($contentImage2->image)" image-alt="{{ $contentImage2->name }}" :url="$contentImage2->url" />
-        </div>
-    @endif
+    <div class="mt-4 mt-md-5 container-custom">
+        <x-client.content-image />
+    </div>
+
+    <div class="mt-3 mt-md-5">
+        <x-client.simple-content-image />
+    </div>
+
 
     <div class="pt-3 pt-md-5 mt-md-5">
         <x-client.desktop desktop-image="images/d/desktops/desktop.png" background-image="images/d/desktops/background.png"

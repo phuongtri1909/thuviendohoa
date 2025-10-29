@@ -144,17 +144,9 @@
             </div>
         </div>
 
-        @if ($contentImage1 && $contentImage1->image)
-            <div class="mt-4 mt-md-5 px-0">
-                <x-client.content-image :image-src="str_starts_with($contentImage1->image, 'content-images/')
-                    ? Storage::url($contentImage1->image)
-                    : asset($contentImage1->image)" image-alt="{{ $contentImage1->name }}"
-                    button-text="{{ $contentImage1->button_text ?? '> Xem thêm' }}"
-                    position-x="{{ $contentImage1->button_position_x ?? '50%' }}"
-                    position-y="{{ $contentImage1->button_position_y ?? '50%' }}" button-class="px-3 py-2"
-                    :url="$contentImage1->url" />
-            </div>
-        @endif
+        <div class="mt-4 mt-md-5 px-0">
+            <x-client.content-image />
+        </div>
 
 
     </div>

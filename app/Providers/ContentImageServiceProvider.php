@@ -21,19 +21,20 @@ class ContentImageServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('*', function ($view) {
-            $content1 = ContentImage::byKey(ContentImage::KEY_CONTENT1)
-                ->active()
-                ->first();
-            
-            $content2 = ContentImage::byKey(ContentImage::KEY_CONTENT2)
+        View::composer('components.client.content-image', function ($view) {
+            $contentImage = ContentImage::byKey(ContentImage::KEY_CONTENT1)
                 ->active()
                 ->first();
 
-            $view->with([
-                'contentImage1' => $content1,
-                'contentImage2' => $content2,
-            ]);
+            $view->with('contentImage', $contentImage);
+        });
+
+        View::composer('components.client.simple-content-image', function ($view) {
+            $contentImage = ContentImage::byKey(ContentImage::KEY_CONTENT2)
+                ->active()
+                ->first();
+
+            $view->with('contentImage', $contentImage);
         });
     }
 }
