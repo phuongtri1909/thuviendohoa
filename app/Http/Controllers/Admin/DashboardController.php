@@ -62,21 +62,21 @@ class DashboardController extends Controller
         $now = Carbon::now();
         
         return [
-            'total' => PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)->sum('amount'),
+            'total' => PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)->sum('amount') ?? 0,
             'today' => PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)
                 ->whereDate('created_at', $now->toDateString())
-                ->sum('amount'),
+                ->sum('amount') ?? 0,
             'this_week' => PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)
-                ->whereBetween('created_at', [$now->startOfWeek(), $now->endOfWeek()])
-                ->sum('amount'),
+                ->whereBetween('created_at', [$now->copy()->startOfWeek(), $now->copy()->endOfWeek()])
+                ->sum('amount') ?? 0,
             'this_month' => PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)
                 ->whereMonth('created_at', $now->month)
                 ->whereYear('created_at', $now->year)
-                ->sum('amount'),
+                ->sum('amount') ?? 0,
             'last_month' => PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)
-                ->whereMonth('created_at', $now->subMonth()->month)
-                ->whereYear('created_at', $now->year)
-                ->sum('amount'),
+                ->whereMonth('created_at', $now->copy()->subMonth()->month)
+                ->whereYear('created_at', $now->copy()->subMonth()->year)
+                ->sum('amount') ?? 0,
         ];
     }
 
@@ -85,13 +85,13 @@ class DashboardController extends Controller
         $now = Carbon::now();
         
         // Tổng xu đã phát hành (từ payment + manual)
-        $totalIssued = CoinHistory::where('amount', '>', 0)->sum('amount');
+        $totalIssued = CoinHistory::where('amount', '>', 0)->sum('amount') ?? 0;
         
         // Tổng xu đã tiêu
-        $totalSpent = CoinHistory::where('amount', '<', 0)->sum('amount');
+        $totalSpent = CoinHistory::where('amount', '<', 0)->sum('amount') ?? 0;
         
         // Xu trong hệ thống (tổng coins của users)
-        $totalInSystem = User::sum('coins');
+        $totalInSystem = User::sum('coins') ?? 0;
 
         return [
             'total_issued' => $totalIssued,
@@ -99,10 +99,10 @@ class DashboardController extends Controller
             'total_in_system' => $totalInSystem,
             'today_issued' => CoinHistory::where('amount', '>', 0)
                 ->whereDate('created_at', $now->toDateString())
-                ->sum('amount'),
+                ->sum('amount') ?? 0,
             'today_spent' => abs(CoinHistory::where('amount', '<', 0)
                 ->whereDate('created_at', $now->toDateString())
-                ->sum('amount')),
+                ->sum('amount') ?? 0),
         ];
     }
 
@@ -173,7 +173,7 @@ class DashboardController extends Controller
             
             $revenue = PaymentCasso::where('status', PaymentCasso::STATUS_SUCCESS)
                 ->whereDate('created_at', $date->toDateString())
-                ->sum('amount');
+                ->sum('amount') ?? 0;
             
             $data[] = $revenue;
         }
@@ -216,8 +216,8 @@ class DashboardController extends Controller
                 'total' => GetLinkHistory::count(),
             ],
             'monthly_bonus' => [
-                'total_distributed' => MonthlyBonus::sum('total_coins'),
-                'this_month' => MonthlyBonus::where('month', $now->format('Y-m'))->sum('total_coins'),
+                'total_distributed' => MonthlyBonus::sum('total_coins') ?? 0,
+                'this_month' => MonthlyBonus::where('month', $now->format('Y-m'))->sum('total_coins') ?? 0,
                 'total_events' => MonthlyBonus::count(),
             ],
         ];
@@ -225,9 +225,43 @@ class DashboardController extends Controller
 
     private function getTopSets($limit = 10)
     {
-        return Set::select('sets.*', DB::raw('COUNT(purchase_sets.id) as purchase_count'), DB::raw('SUM(purchase_sets.coins) as total_coins'))
+        return Set::select(
+                'sets.id',
+                'sets.name',
+                'sets.slug',
+                'sets.type',
+                'sets.description',
+                'sets.image',
+                'sets.drive_url',
+                'sets.status',
+                'sets.keywords',
+                'sets.formats',
+                'sets.size',
+                'sets.price',
+                'sets.is_featured',
+                'sets.created_at',
+                'sets.updated_at',
+                DB::raw('COUNT(purchase_sets.id) as purchase_count'),
+                DB::raw('COALESCE(SUM(purchase_sets.coins), 0) as total_coins')
+            )
             ->leftJoin('purchase_sets', 'sets.id', '=', 'purchase_sets.set_id')
-            ->groupBy('sets.id')
+            ->groupBy(
+                'sets.id',
+                'sets.name',
+                'sets.slug',
+                'sets.type',
+                'sets.description',
+                'sets.image',
+                'sets.drive_url',
+                'sets.status',
+                'sets.keywords',
+                'sets.formats',
+                'sets.size',
+                'sets.price',
+                'sets.is_featured',
+                'sets.created_at',
+                'sets.updated_at'
+            )
             ->orderByDesc('purchase_count')
             ->limit($limit)
             ->get();
@@ -235,12 +269,34 @@ class DashboardController extends Controller
 
     private function getTopPackages()
     {
-        return Package::select('packages.*', DB::raw('COUNT(payment_cassos.id) as payment_count'), DB::raw('SUM(payment_cassos.amount) as total_amount'))
+        return Package::select(
+                'packages.id',
+                'packages.name',
+                'packages.plan',
+                'packages.amount',
+                'packages.coins',
+                'packages.bonus_coins',
+                'packages.expiry',
+                'packages.created_at',
+                'packages.updated_at',
+                DB::raw('COUNT(payment_cassos.id) as payment_count'),
+                DB::raw('COALESCE(SUM(payment_cassos.amount), 0) as total_amount')
+            )
             ->leftJoin('payment_cassos', function($join) {
                 $join->on('packages.plan', '=', 'payment_cassos.package_plan')
                     ->where('payment_cassos.status', '=', PaymentCasso::STATUS_SUCCESS);
             })
-            ->groupBy('packages.id')
+            ->groupBy(
+                'packages.id',
+                'packages.name',
+                'packages.plan',
+                'packages.amount',
+                'packages.coins',
+                'packages.bonus_coins',
+                'packages.expiry',
+                'packages.created_at',
+                'packages.updated_at'
+            )
             ->orderByDesc('payment_count')
             ->get();
     }

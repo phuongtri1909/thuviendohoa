@@ -15,9 +15,9 @@
     <meta property="og:locale" content="vi_VN">
 
     {!! SEO::generate() !!}
-    
+
     @stack('custom_schema')
-    
+
     <link rel="icon" href="{{ $faviconPath }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ $faviconPath }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ $faviconPath }}">
@@ -36,7 +36,7 @@
         }
         </script>
     @endverbatim
-    
+
     @stack('meta')
 
     <!-- Google Fonts -->
@@ -90,10 +90,12 @@
                                                     <div class="row">
                                                         @forelse($headerVipAlbums as $album)
                                                             <div class="col-6 p-3 pb-0">
-                                                                <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
-                                                                    <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
-                                                                         alt="{{ $album->name }}"
-                                                                         style="width: 24px; height: 24px; object-fit: contain;">
+                                                                <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}"
+                                                                    class="text-decoration-none"
+                                                                    style="display: flex; align-items: center; gap: 8px;">
+                                                                    <img src="{{ Storage::url($album->icon ?? $album->image) }}"
+                                                                        alt="{{ $album->name }}"
+                                                                        style="width: 24px; height: 24px; object-fit: contain;">
                                                                     <span>{{ $album->name }}</span>
                                                                 </a>
                                                             </div>
@@ -117,10 +119,12 @@
                                                     <div class="row">
                                                         @forelse($headerFreeAlbums as $album)
                                                             <div class="col-6 p-3 pb-0">
-                                                                <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
-                                                                    <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
-                                                                         alt="{{ $album->name }}"
-                                                                         style="width: 24px; height: 24px; object-fit: contain;">
+                                                                <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}"
+                                                                    class="text-decoration-none"
+                                                                    style="display: flex; align-items: center; gap: 8px;">
+                                                                    <img src="{{ Storage::url($album->icon ?? $album->image) }}"
+                                                                        alt="{{ $album->name }}"
+                                                                        style="width: 24px; height: 24px; object-fit: contain;">
                                                                     <span>{{ $album->name }}</span>
                                                                 </a>
                                                             </div>
@@ -180,7 +184,7 @@
                                 <img src="{{ asset('/images/svg/notification.svg') }}" alt="Notification">
                                 <span class="notification-badge" id="notificationBadge">0</span>
                             </button>
-                            
+
                             <div class="notification-dropdown" id="notificationDropdown">
                                 <div class="notification-header">
                                     <h6 class="notification-title">Thông báo xu</h6>
@@ -189,14 +193,14 @@
                                         Đọc tất cả
                                     </button>
                                 </div>
-                                
+
                                 <div class="notification-list" id="notificationList">
                                     <div class="notification-loading">
                                         <i class="fas fa-spinner fa-spin"></i>
                                         Đang tải...
                                     </div>
                                 </div>
-                                
+
                                 <div class="notification-footer">
                                     <a href="{{ route('user.coin-history') }}" class="notification-view-all">
                                         <i class="fas fa-history me-1"></i>
@@ -238,7 +242,8 @@
                                                 @if (auth()->user()->package_id)
                                                     <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+"
                                                         class="{{ auth()->user()->package ? auth()->user()->package->getPlanFilter() : 'filter-primary-color-3' }}">
-                                                    <span class="text-md {{ auth()->user()->package ? auth()->user()->package->getPlanColor() : 'color-primary-3' }}">
+                                                    <span
+                                                        class="text-md {{ auth()->user()->package ? auth()->user()->package->getPlanColor() : 'color-primary-3' }}">
                                                         {{ auth()->user()->package->getPlanName() }}</span>
                                                 @else
                                                     <img src="{{ asset('/images/svg/gplus.svg') }}" alt="G+"
@@ -288,12 +293,14 @@
                                     </div>
 
                                     <ul class="user-menu mt-2">
-                                        <li>
-                                            <a href="{{ route('admin.dashboard') }}">
-                                                <i class="fas fa-user-shield"></i>
-                                                <span>Quản trị viên</span>
-                                            </a>
-                                        </li>
+                                        @if (auth()->user()->role == App\Models\User::ROLE_ADMIN)
+                                            <li>
+                                                <a href="{{ route('admin.dashboard') }}">
+                                                    <i class="fas fa-user-shield"></i>
+                                                    <span>Quản trị viên</span>
+                                                </a>
+                                            </li>
+                                        @endif
                                         <li>
                                             <a href="{{ route('user.profile') }}">
                                                 <img src="{{ asset('/images/svg/user.svg') }}" alt="User"
@@ -304,7 +311,8 @@
                                         <li>
                                             <a href="{{ route('user.purchases') }}">
                                                 <img src="{{ asset('/images/svg/download.svg') }}" alt="Download">
-                                                <span>Lịch sử tải xuống ({{ auth()->user()->purchasedSets->count() }})</span>
+                                                <span>Lịch sử tải xuống
+                                                    ({{ auth()->user()->purchasedSets->count() }})</span>
                                             </a>
                                         </li>
                                         <li>
@@ -339,7 +347,8 @@
                 </div>
 
                 <div class="d-lg-none">
-                    <button class="btn border rounded-circle bg-white" id="mobileMenuToggle" style="width: 45px; height: 45px;">
+                    <button class="btn border rounded-circle bg-white" id="mobileMenuToggle"
+                        style="width: 45px; height: 45px;">
                         <img src="{{ asset('/images/svg/menu.svg') }}" alt="">
                     </button>
                 </div>
@@ -351,7 +360,8 @@
     <div class="register-download-section">
         <div class="container-custom">
             <div class="d-flex justify-content-end">
-                <a href="{{ route('user.payment') }}" class="text-decoration-none btn btn-danger px-4 py-2 fw-bold text-uppercase">
+                <a href="{{ route('user.payment') }}"
+                    class="text-decoration-none btn btn-danger px-4 py-2 fw-bold text-uppercase">
                     <img src="{{ asset('/images/svg/user.svg') }}" alt="User" class="me-2" width="16"
                         height="16">
                     ĐĂNG KÍ GÓI TẢI
@@ -418,10 +428,12 @@
                                         <div class="row">
                                             @forelse($headerVipAlbums as $album)
                                                 <div class="col-12 p-3 pb-0">
-                                                    <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
-                                                        <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
-                                                             alt="{{ $album->name }}"
-                                                             style="width: 24px; height: 24px; object-fit: contain;">
+                                                    <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}"
+                                                        class="text-decoration-none"
+                                                        style="display: flex; align-items: center; gap: 8px;">
+                                                        <img src="{{ Storage::url($album->icon ?? $album->image) }}"
+                                                            alt="{{ $album->name }}"
+                                                            style="width: 24px; height: 24px; object-fit: contain;">
                                                         <span>{{ $album->name }}</span>
                                                     </a>
                                                 </div>
@@ -445,10 +457,12 @@
                                         <div class="row">
                                             @forelse($headerFreeAlbums as $album)
                                                 <div class="col-12 p-3 pb-0">
-                                                    <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}" class="text-decoration-none" style="display: flex; align-items: center; gap: 8px;">
-                                                        <img src="{{ Storage::url($album->icon ?? $album->image) }}" 
-                                                             alt="{{ $album->name }}"
-                                                             style="width: 24px; height: 24px; object-fit: contain;">
+                                                    <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}"
+                                                        class="text-decoration-none"
+                                                        style="display: flex; align-items: center; gap: 8px;">
+                                                        <img src="{{ Storage::url($album->icon ?? $album->image) }}"
+                                                            alt="{{ $album->name }}"
+                                                            style="width: 24px; height: 24px; object-fit: contain;">
                                                         <span>{{ $album->name }}</span>
                                                     </a>
                                                 </div>
@@ -584,7 +598,7 @@
                 notificationBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     notificationDropdown.classList.toggle('active');
-                    
+
                     if (notificationDropdown.classList.contains('active')) {
                         loadNotifications();
                     }
@@ -592,15 +606,16 @@
             }
 
             document.addEventListener('click', function(e) {
-                if (notificationBtn && notificationDropdown && !notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                if (notificationBtn && notificationDropdown && !notificationBtn.contains(e.target) && !
+                    notificationDropdown.contains(e.target)) {
                     notificationDropdown.classList.remove('active');
                 }
             });
 
             function loadNotifications() {
                 if (!notificationList) return;
-                
-                fetch('{{ route("user.coin-history.unread") }}')
+
+                fetch('{{ route('user.coin-history.unread') }}')
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
@@ -610,15 +625,17 @@
                     })
                     .catch(error => {
                         console.error('Error loading notifications:', error);
-                        notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-exclamation-triangle"></i>Không thể tải thông báo</div>';
+                        notificationList.innerHTML =
+                            '<div class="notification-empty"><i class="fas fa-exclamation-triangle"></i>Không thể tải thông báo</div>';
                     });
             }
 
             function displayNotifications(histories) {
                 if (!notificationList) return;
-                
+
                 if (histories.length === 0) {
-                    notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                    notificationList.innerHTML =
+                        '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
                     return;
                 }
 
@@ -626,7 +643,7 @@
                 histories.forEach(history => {
                     const iconClass = getNotificationIcon(history.type);
                     const amountClass = history.amount > 0 ? 'positive' : 'negative';
-                    
+
                     html += `
                         <div class="notification-item unread" data-history-id="${history.id}">
                             <div class="notification-icon ${history.type}">
@@ -643,9 +660,9 @@
                         </div>
                     `;
                 });
-                
+
                 notificationList.innerHTML = html;
-                
+
                 document.querySelectorAll('.notification-item').forEach(item => {
                     item.addEventListener('click', function() {
                         const historyId = this.dataset.historyId;
@@ -655,65 +672,71 @@
             }
 
             function markAsRead(historyId) {
-                fetch('{{ route("user.coin-history.mark-read") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ id: historyId })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        const item = document.querySelector(`[data-history-id="${historyId}"]`);
-                        if (item) {
-                            item.remove();
-                        }
-                        
-                        const remainingItems = document.querySelectorAll('.notification-item');
-                        if (remainingItems.length === 0 && notificationList) {
-                            notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
-                        }
-                        
-                        updateNotificationCount();
-                    }
-                })
-                .catch(error => console.error('Error marking as read:', error));
-            }
-
-            if (markAllReadBtn) {
-                markAllReadBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    
-                    fetch('{{ route("user.coin-history.mark-read") }}', {
+                fetch('{{ route('user.coin-history.mark-read') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            id: historyId
+                        })
                     })
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
                     })
                     .then(data => {
-                        if (data.success && notificationList) {
-                            notificationList.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                        if (data.success) {
+                            const item = document.querySelector(`[data-history-id="${historyId}"]`);
+                            if (item) {
+                                item.remove();
+                            }
+
+                            const remainingItems = document.querySelectorAll('.notification-item');
+                            if (remainingItems.length === 0 && notificationList) {
+                                notificationList.innerHTML =
+                                    '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                            }
+
                             updateNotificationCount();
                         }
                     })
-                    .catch(error => console.error('Error marking all as read:', error));
+                    .catch(error => console.error('Error marking as read:', error));
+            }
+
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+
+                    fetch('{{ route('user.coin-history.mark-read') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success && notificationList) {
+                                notificationList.innerHTML =
+                                    '<div class="notification-empty"><i class="fas fa-bell-slash"></i>Không có thông báo chưa đọc</div>';
+                                updateNotificationCount();
+                            }
+                        })
+                        .catch(error => console.error('Error marking all as read:', error));
                 });
             }
 
             function updateNotificationCount() {
                 if (!notificationBadge) return;
-                
-                fetch('{{ route("user.coin-history.unread-count") }}')
+
+                fetch('{{ route('user.coin-history.unread-count') }}')
                     .then(response => {
                         if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
@@ -731,12 +754,17 @@
             }
 
             function getNotificationIcon(type) {
-                switch(type) {
-                    case 'payment': return 'fa-credit-card';
-                    case 'purchase': return 'fa-shopping-cart';
-                    case 'manual': return 'fa-user-cog';
-                    case 'monthly_bonus': return 'fa-gift';
-                    default: return 'fa-coins';
+                switch (type) {
+                    case 'payment':
+                        return 'fa-credit-card';
+                    case 'purchase':
+                        return 'fa-shopping-cart';
+                    case 'manual':
+                        return 'fa-user-cog';
+                    case 'monthly_bonus':
+                        return 'fa-gift';
+                    default:
+                        return 'fa-coins';
                 }
             }
 
@@ -747,12 +775,12 @@
                 const minutes = Math.floor(diff / 60000);
                 const hours = Math.floor(diff / 3600000);
                 const days = Math.floor(diff / 86400000);
-                
+
                 if (minutes < 1) return 'Vừa xong';
                 if (minutes < 60) return `${minutes} phút trước`;
                 if (hours < 24) return `${hours} giờ trước`;
                 if (days < 7) return `${days} ngày trước`;
-                
+
                 return date.toLocaleDateString('vi-VN');
             }
 
@@ -761,30 +789,30 @@
             }
 
             updateNotificationCount();
-            @endauth
+        @endauth
 
-            // Mobile Category Dropdown Toggle
-            if (mobileCategoryDropdownBtn && mobileCategoryDropdown) {
-                mobileCategoryDropdownBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    mobileCategoryDropdown.classList.toggle('active');
-                    if (mobileDropdownArrow) {
-                        mobileDropdownArrow.style.transform = mobileCategoryDropdown.classList.contains(
-                                'active') ?
-                            'rotate(180deg)' : 'rotate(0deg)';
-                    }
-                });
-            }
-
-            // Close mobile dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (mobileCategoryDropdownBtn && mobileCategoryDropdown && !mobileCategoryDropdownBtn
-                    .contains(e.target) && !mobileCategoryDropdown.contains(e.target)) {
-                    mobileCategoryDropdown.classList.remove('active');
-                    if (mobileDropdownArrow) {
-                        mobileDropdownArrow.style.transform = 'rotate(0deg)';
-                    }
+        // Mobile Category Dropdown Toggle
+        if (mobileCategoryDropdownBtn && mobileCategoryDropdown) {
+            mobileCategoryDropdownBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                mobileCategoryDropdown.classList.toggle('active');
+                if (mobileDropdownArrow) {
+                    mobileDropdownArrow.style.transform = mobileCategoryDropdown.classList.contains(
+                            'active') ?
+                        'rotate(180deg)' : 'rotate(0deg)';
                 }
             });
+        }
+
+        // Close mobile dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (mobileCategoryDropdownBtn && mobileCategoryDropdown && !mobileCategoryDropdownBtn
+                .contains(e.target) && !mobileCategoryDropdown.contains(e.target)) {
+                mobileCategoryDropdown.classList.remove('active');
+                if (mobileDropdownArrow) {
+                    mobileDropdownArrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
         });
     </script>
