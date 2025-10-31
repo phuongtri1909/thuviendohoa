@@ -67,8 +67,8 @@ class SetController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'drive_url' => 'required|url',
             'status' => 'nullable|boolean',
-            'keywords' => 'nullable',
-            'formats' => 'nullable',
+            'keywords' => 'nullable|string',
+            'formats' => 'nullable|string',
             'size' => 'required|numeric',
             'price' => 'nullable|integer',
             'is_featured' => 'nullable|boolean',
@@ -100,6 +100,34 @@ class SetController extends Controller
 
         $imagePath = Set::processAndSaveImage($request->file('image'));
 
+        $keywords = null;
+        if ($request->filled('keywords')) {
+            $keywordsInput = trim($request->input('keywords'));
+            if (!empty($keywordsInput)) {
+                $decoded = json_decode($keywordsInput, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $keywords = $decoded;
+                } else {
+                    $keywords = array_filter(array_map('trim', explode(',', $keywordsInput)));
+                    $keywords = !empty($keywords) ? array_values($keywords) : null;
+                }
+            }
+        }
+
+        $formats = null;
+        if ($request->filled('formats')) {
+            $formatsInput = trim($request->input('formats'));
+            if (!empty($formatsInput)) {
+                $decoded = json_decode($formatsInput, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $formats = $decoded;
+                } else {
+                    $parts = array_filter(array_map('trim', explode(',', $formatsInput)));
+                    $formats = !empty($parts) ? array_values($parts) : [$formatsInput];
+                }
+            }
+        }
+
         $set = Set::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
@@ -108,8 +136,8 @@ class SetController extends Controller
             'image' => $imagePath,
             'drive_url' => $request->drive_url,
             'status' => (bool) $request->status,
-            'keywords' => $request->filled('keywords') ? $request->input('keywords') : null,
-            'formats' => $request->filled('formats') ? $request->input('formats') : null,
+            'keywords' => $keywords,
+            'formats' => $formats,
             'size' => $request->size,
             'price' => $request->price,
             'is_featured' => (bool) $request->is_featured,
@@ -176,8 +204,8 @@ class SetController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'drive_url' => 'required|url',
             'status' => 'nullable|boolean',
-            'keywords' => 'nullable',
-            'formats' => 'nullable',
+            'keywords' => 'nullable|string',
+            'formats' => 'nullable|string',
             'size' => 'required|numeric',
             'price' => 'nullable|integer',
             'is_featured' => 'nullable|boolean',
@@ -200,6 +228,34 @@ class SetController extends Controller
                            $request->filled('delete_photos') || 
                            $request->drive_url !== $set->drive_url;
 
+        $keywords = null;
+        if ($request->filled('keywords')) {
+            $keywordsInput = trim($request->input('keywords'));
+            if (!empty($keywordsInput)) {
+                $decoded = json_decode($keywordsInput, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $keywords = $decoded;
+                } else {
+                    $keywords = array_filter(array_map('trim', explode(',', $keywordsInput)));
+                    $keywords = !empty($keywords) ? array_values($keywords) : null;
+                }
+            }
+        }
+
+        $formats = null;
+        if ($request->filled('formats')) {
+            $formatsInput = trim($request->input('formats'));
+            if (!empty($formatsInput)) {
+                $decoded = json_decode($formatsInput, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $formats = $decoded;
+                } else {
+                    $parts = array_filter(array_map('trim', explode(',', $formatsInput)));
+                    $formats = !empty($parts) ? array_values($parts) : [$formatsInput];
+                }
+            }
+        }
+
         $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
@@ -207,8 +263,8 @@ class SetController extends Controller
             'description' => $request->description,
             'drive_url' => $request->drive_url,
             'status' => (bool) $request->status,
-            'keywords' => $request->filled('keywords') ? $request->input('keywords') : null,
-            'formats' => $request->filled('formats') ? $request->input('formats') : null,
+            'keywords' => $keywords,
+            'formats' => $formats,
             'size' => $request->size,
             'price' => $request->price,
             'is_featured' => (bool) $request->is_featured,
@@ -221,7 +277,6 @@ class SetController extends Controller
 
         $set->update($data);
 
-        // Handle photo deletions
         if ($request->filled('delete_photos')) {
             $photosToDelete = Photo::whereIn('id', $request->delete_photos)->where('set_id', $set->id)->get();
             foreach ($photosToDelete as $photo) {
@@ -262,7 +317,6 @@ class SetController extends Controller
             });
         }
 
-        // save additional photos if any
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photoFile) {
                 $path = Photo::processAndSavePhoto($photoFile);
@@ -275,12 +329,10 @@ class SetController extends Controller
             }
         }
 
-        // ensure at least one photo exists overall
         if ($set->photos()->count() === 0) {
             return back()->withErrors(['photos' => 'Set phải có ít nhất 1 ảnh'])->withInput();
         }
 
-        // Clean temp files and ZIP if photos or drive_url changed
         if ($shouldCleanFiles) {
             $this->cleanupService->cleanupSetCompletely($set->id);
         }
@@ -300,8 +352,7 @@ class SetController extends Controller
         ColorSet::where('set_id', $set->id)->delete();
         SoftwareSet::where('set_id', $set->id)->delete();
         TagSet::where('set_id', $set->id)->delete();
-        
-        // Clean temp files and ZIP before deleting set
+            
         $this->cleanupService->cleanupSetCompletely($set->id);
         
         $set->delete();
