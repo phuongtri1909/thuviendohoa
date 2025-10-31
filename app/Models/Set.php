@@ -14,16 +14,77 @@ class Set extends Model
     protected $table = 'sets';
     protected $fillable = ['name', 'slug','type', 'description', 'image', 'drive_url', 'status', 'keywords','formats','size','price','is_featured'];
 
-    protected $casts = [
-        'keywords' => 'array',
-        'formats' => 'array',
-    ];
-
     const TYPE_FREE = 'free';
     const TYPE_PREMIUM = 'premium';
 
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
+
+    public function getKeywordsAttribute($value)
+    {
+        if (is_null($value)) {
+            return null;
+        }
+        
+        if (is_array($value)) {
+            return $value;
+        }
+        
+        $decoded = json_decode($value, true);
+        return $decoded !== null && json_last_error() === JSON_ERROR_NONE ? $decoded : null;
+    }
+
+    public function setKeywordsAttribute($value)
+    {
+        if (is_null($value)) {
+            $this->attributes['keywords'] = null;
+        } elseif (is_array($value)) {
+            $this->attributes['keywords'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+        } elseif (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if ($decoded !== null && json_last_error() === JSON_ERROR_NONE) {
+                $this->attributes['keywords'] = json_encode($decoded, JSON_UNESCAPED_UNICODE);
+            } else {
+                $array = array_filter(array_map('trim', explode(',', $value)));
+                $this->attributes['keywords'] = !empty($array) ? json_encode(array_values($array), JSON_UNESCAPED_UNICODE) : null;
+            }
+        } else {
+            $this->attributes['keywords'] = null;
+        }
+    }
+
+    public function getFormatsAttribute($value)
+    {
+        if (is_null($value)) {
+            return null;
+        }
+        
+        if (is_array($value)) {
+            return $value;
+        }
+        
+        $decoded = json_decode($value, true);
+        return $decoded !== null && json_last_error() === JSON_ERROR_NONE ? $decoded : null;
+    }
+
+    public function setFormatsAttribute($value)
+    {
+        if (is_null($value)) {
+            $this->attributes['formats'] = null;
+        } elseif (is_array($value)) {
+            $this->attributes['formats'] = json_encode($value, JSON_UNESCAPED_UNICODE);
+        } elseif (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if ($decoded !== null && json_last_error() === JSON_ERROR_NONE) {
+                $this->attributes['formats'] = json_encode($decoded, JSON_UNESCAPED_UNICODE);
+            } else {
+                $array = array_filter(array_map('trim', explode(',', $value)));
+                $this->attributes['formats'] = !empty($array) ? json_encode(array_values($array), JSON_UNESCAPED_UNICODE) : null;
+            }
+        } else {
+            $this->attributes['formats'] = null;
+        }
+    }
 
     public function photos()
     {

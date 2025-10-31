@@ -95,17 +95,32 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="keywords" class="form-label-custom">Từ khóa (JSON)</label>
+                                <label for="keywords" class="form-label-custom">Từ khóa</label>
                                 <textarea id="keywords" name="keywords" rows="2" class="custom-input {{ $errors->has('keywords') ? 'input-error' : '' }}">{{ old('keywords') }}</textarea>
-                                <div class="form-hint"><i class="fas fa-info-circle"></i><span>Ví dụ: ["logo","branding"]</span></div>
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>
+                                        <strong>Cách nhập:</strong> Nhập theo dấu phẩy hoặc JSON array.<br>
+                                        <strong>Ví dụ 1:</strong> logo, branding, thiết kế<br>
+                                        <strong>Ví dụ 2:</strong> ["logo","branding","thiết kế"]
+                                    </span>
+                                </div>
                                 <div class="error-message" id="error-keywords">@error('keywords') {{ $message }} @enderror</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="formats" class="form-label-custom">Định dạng (JSON)</label>
+                                <label for="formats" class="form-label-custom">Định dạng</label>
                                 <textarea id="formats" name="formats" rows="2" class="custom-input {{ $errors->has('formats') ? 'input-error' : '' }}">{{ old('formats') }}</textarea>
-                                <div class="form-hint"><i class="fas fa-info-circle"></i><span>Ví dụ: ["AI","PSD","PNG"]</span></div>
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>
+                                        <strong>Cách nhập:</strong> Nhập theo dấu phẩy hoặc JSON array.<br>
+                                        <strong>Ví dụ 1:</strong> PSD, AI, EPS, PNG<br>
+                                        <strong>Ví dụ 2:</strong> ["PSD","AI","EPS","PNG"]<br>
+                                        <strong>Ví dụ 3:</strong> PSD (nếu chỉ có 1 định dạng)
+                                    </span>
+                                </div>
                                 <div class="error-message" id="error-formats">@error('formats') {{ $message }} @enderror</div>
                             </div>
                         </div>
