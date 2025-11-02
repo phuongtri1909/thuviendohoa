@@ -1,4 +1,12 @@
-@props(['sets' => collect(), 'allColors' => collect(), 'allSoftware' => collect(), 'selectedColors' => [], 'selectedSoftware' => [], 'relatedTags' => collect(), 'selectedTags' => []])
+@props([
+    'sets' => collect(),
+    'allColors' => collect(),
+    'allSoftware' => collect(),
+    'selectedColors' => [],
+    'selectedSoftware' => [],
+    'relatedTags' => collect(),
+    'selectedTags' => [],
+])
 
 <div class="search-result">
     <div class="d-flex justify-content-between align-items-center">
@@ -7,21 +15,21 @@
                 <i class="fas fa-times"></i>
             </button>
             @foreach ($allColors as $color)
-                <button class="color-btn rounded-circle border {{ in_array($color->value, $selectedColors) ? 'active' : '' }}" 
-                    style="background-color: {{ $color->value }}"
-                    title="Chọn màu {{ $color->name }}"
+                <button
+                    class="color-btn rounded-circle border {{ in_array($color->value, $selectedColors) ? 'active' : '' }}"
+                    style="background-color: {{ $color->value }}" title="Chọn màu {{ $color->name }}"
                     data-color="{{ $color->value }}">
                 </button>
             @endforeach
         </div>
         <div class="software-selection">
-            <button class="software-btn {{ empty($selectedSoftware) ? 'active' : '' }}" title="Tất cả" data-software="all">
+            <button class="software-btn {{ empty($selectedSoftware) ? 'active' : '' }}" title="Tất cả"
+                data-software="all">
                 <img src="{{ asset('images/svg/search-results/menu.svg') }}" alt="Tất cả">
             </button>
             @foreach ($allSoftware as $soft)
-                <button class="software-btn {{ in_array($soft->id, $selectedSoftware) ? 'active' : '' }}" 
-                    title="{{ $soft->name }}" 
-                    data-software="{{ $soft->id }}"
+                <button class="software-btn {{ in_array($soft->id, $selectedSoftware) ? 'active' : '' }}"
+                    title="{{ $soft->name }}" data-software="{{ $soft->id }}"
                     data-logo="{{ Storage::url($soft->logo) }}"
                     data-logo-hover="{{ $soft->logo_hover ? Storage::url($soft->logo_hover) : null }}"
                     data-logo-active="{{ $soft->logo_active ? Storage::url($soft->logo_active) : null }}">
@@ -33,11 +41,11 @@
     <div class="bg-white rounded-4 p-2 p-md-4 mt-2">
         <div>
             <span class="fw-semibold">Tags phân loại: </span>
-            @if($relatedTags->count() > 0)
-                @foreach($relatedTags as $tag)
-                    <button class="tag-btn badge bg-primary-10 color-primary-11 p-2 p-md-3 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}" 
-                        data-tag="{{ $tag->slug }}" 
-                        title="Chọn tag {{ $tag->name }}">
+            @if ($relatedTags->count() > 0)
+                @foreach ($relatedTags as $tag)
+                    <button
+                        class="tag-btn badge bg-primary-10 color-primary-11 p-2 p-md-3 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
+                        data-tag="{{ $tag->slug }}" title="Chọn tag {{ $tag->name }}">
                         {{ $tag->name }}
                     </button>
                 @endforeach
@@ -47,27 +55,28 @@
         </div>
 
         <div id="search-results-container">
-            @if($sets->count() > 0)
+            @if ($sets->count() > 0)
                 <div class="result-wrapper" id="masonry-container">
-                    @foreach($sets as $set)
-                        @if($set->photos && $set->photos->count() > 0)
+                    @foreach ($sets as $set)
+                        @if ($set->photos && $set->photos->count() > 0)
                             <div class="masonry-item" data-height="tall">
-                                <div class="image-card" data-set-type="{{ $set->type }}" data-set-price="{{ $set->price }}" 
-                                    data-set-id="{{ $set->id }}" onclick="openSetModalFromCard(event, {{ $set->id }})">
-                                    <img src="{{ Storage::url($set->image) }}" alt="{{ $set->name }}" loading="lazy"
-                                        class="image-clickable" data-image-url="{{ Storage::url($set->image) }}"
-                                        data-image-title="{{ $set->name }}"
-                                        data-set-id="{{ $set->id }}">
-                                    
-                                    @if($set->software && $set->software->count() > 0)
+                                <div class="image-card" data-set-type="{{ $set->type }}"
+                                    data-set-price="{{ $set->price }}" data-set-id="{{ $set->id }}"
+                                    onclick="openSetModalFromCard(event, {{ $set->id }})">
+                                    <img src="{{ Storage::url($set->image) }}" alt="{{ $set->name }}"
+                                        loading="lazy" class="image-clickable"
+                                        data-image-url="{{ Storage::url($set->image) }}"
+                                        data-image-title="{{ $set->name }}" data-set-id="{{ $set->id }}">
+
+                                    @if ($set->software && $set->software->count() > 0)
                                         <div class="software-icons-overlay">
-                                            @foreach($set->software as $softwareSet)
+                                            @foreach ($set->software as $softwareSet)
                                                 @php
                                                     $soft = $softwareSet->software;
-                                                    $logoToShow = $soft->logo_active 
-                                                        ? Storage::url($soft->logo_active) 
-                                                        : ($soft->logo_hover 
-                                                            ? Storage::url($soft->logo_hover) 
+                                                    $logoToShow = $soft->logo_active
+                                                        ? Storage::url($soft->logo_active)
+                                                        : ($soft->logo_hover
+                                                            ? Storage::url($soft->logo_hover)
                                                             : Storage::url($soft->logo));
                                                 @endphp
                                                 <div class="software-icon-item" title="{{ $soft->name }}">
@@ -76,44 +85,55 @@
                                             @endforeach
                                         </div>
                                     @endif
-                                    
+
                                     <div class="image-card-hover-overlay">
-                                        @if($set->type === 'premium')
+                                        @if ($set->type === 'premium')
                                             <div class="overlay-price-badge">
                                                 <span>{{ $set->price }}</span>
-                                                <img src="{{ asset('/images/svg/coins.svg') }}" alt="Xu" class="mt-1">
+                                                <img src="{{ asset('/images/svg/coins.svg') }}" alt="Xu"
+                                                    class="mt-1">
                                             </div>
                                         @endif
-                                        
+
                                         <div class="overlay-actions-right">
-                                            @auth
                                             @php
-                                            $isFavorited = $set->bookmarks && $set->bookmarks->where('user_id', auth()->id())->count() > 0;
-                                        @endphp
-                                        <button class="overlay-action-btn favorite-btn-card {{ $isFavorited ? 'favorited' : '' }}" 
-                                            data-set-id="{{ $set->id }}" 
-                                            onclick="toggleFavoriteCard(event, this)"
-                                            title="Yêu thích">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none" class="mt-1 heart-svg">
-                                                <path d="M11.8828 0.505859C12.9949 0.463268 13.9409 0.814387 14.7637 1.56055L14.9268 1.71582C15.6008 2.40349 16.0009 3.2188 16.1133 4.20215V4.20508C16.2017 4.94809 16.0705 5.65581 15.792 6.36426C15.3403 7.44936 14.6964 8.40091 13.9385 9.32129L13.9326 9.32812L13.9277 9.33594C13.5473 9.83351 13.1373 10.2919 12.6953 10.7451L11.8789 11.5615C11.044 12.3835 10.155 13.1648 9.22852 13.8887C8.91804 14.1203 8.60681 14.3696 8.31641 14.6025C7.55442 14.0279 6.80397 13.4423 6.09961 12.8145L5.77441 12.5186C5.16959 11.9545 4.57928 11.4036 4.04004 10.8301L4.02734 10.8174L3.69238 10.4775C2.9221 9.67654 2.23244 8.81707 1.6377 7.86621C1.23044 7.21185 0.879675 6.54773 0.675781 5.83105L0.597656 5.52051C0.284434 3.93626 0.726723 2.60981 1.89844 1.5293C2.61741 0.889289 3.43781 0.551504 4.40234 0.505859L4.4043 0.504883C5.29292 0.459726 6.12157 0.706887 6.90039 1.19629L6.91016 1.20117C7.28286 1.42424 7.61919 1.71901 7.94238 2.09473L8.32617 2.54004L8.7041 2.09082C9.11036 1.60865 9.60524 1.21953 10.166 0.944336C10.7206 0.685791 11.2829 0.528453 11.8818 0.505859H11.8828Z"/>
-                                            </svg>
-                                        </button>
+                                                $isFavorited = false;
+                                                if (auth()->check()) {
+                                                    $isFavorited =
+                                                        $set->bookmarks &&
+                                                        $set->bookmarks->where('user_id', auth()->id())->count() > 0;
+                                                }
+                                            @endphp
+                                            @auth
+                                                <button
+                                                    class="overlay-action-btn favorite-btn-card {{ $isFavorited ? 'favorited' : '' }}"
+                                                    data-set-id="{{ $set->id }}"
+                                                    onclick="toggleFavoriteCard(event, this)" title="Yêu thích">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16"
+                                                        viewBox="0 0 17 16" fill="none" class="mt-1 heart-svg">
+                                                        <path
+                                                            d="M11.8828 0.505859C12.9949 0.463268 13.9409 0.814387 14.7637 1.56055L14.9268 1.71582C15.6008 2.40349 16.0009 3.2188 16.1133 4.20215V4.20508C16.2017 4.94809 16.0705 5.65581 15.792 6.36426C15.3403 7.44936 14.6964 8.40091 13.9385 9.32129L13.9326 9.32812L13.9277 9.33594C13.5473 9.83351 13.1373 10.2919 12.6953 10.7451L11.8789 11.5615C11.044 12.3835 10.155 13.1648 9.22852 13.8887C8.91804 14.1203 8.60681 14.3696 8.31641 14.6025C7.55442 14.0279 6.80397 13.4423 6.09961 12.8145L5.77441 12.5186C5.16959 11.9545 4.57928 11.4036 4.04004 10.8301L4.02734 10.8174L3.69238 10.4775C2.9221 9.67654 2.23244 8.81707 1.6377 7.86621C1.23044 7.21185 0.879675 6.54773 0.675781 5.83105L0.597656 5.52051C0.284434 3.93626 0.726723 2.60981 1.89844 1.5293C2.61741 0.889289 3.43781 0.551504 4.40234 0.505859L4.4043 0.504883C5.29292 0.459726 6.12157 0.706887 6.90039 1.19629L6.91016 1.20117C7.28286 1.42424 7.61919 1.71901 7.94238 2.09473L8.32617 2.54004L8.7041 2.09082C9.11036 1.60865 9.60524 1.21953 10.166 0.944336C10.7206 0.685791 11.2829 0.528453 11.8818 0.505859H11.8828Z" />
+                                                    </svg>
+                                                </button>
                                             @else
-                                                <button class="overlay-action-btn favorite-btn-card" 
+                                                <button class="overlay-action-btn favorite-btn-card"
                                                     onclick="event.stopPropagation(); window.location.href='{{ route('login') }}'"
                                                     title="Đăng nhập để yêu thích">
-                                                    <img src="{{ asset('/images/svg/whitelist.svg') }}" alt="Whitelist" class="mt-1">
+                                                    <img src="{{ asset('/images/svg/whitelist.svg') }}" alt="Whitelist"
+                                                        class="mt-1">
                                                 </button>
                                             @endauth
-                                            
-                                            <button class="overlay-action-btn download-btn-card" 
+
+                                            <button class="overlay-action-btn download-btn-card"
                                                 data-set-id="{{ $set->id }}"
                                                 onclick="handleDownloadClick(event, {{ $set->id }})"
                                                 title="Tải về">
-                                                <img src="{{ asset('/images/svg/search-results/download.svg') }}" alt="Whitelist" class="mt-1" style="{{ $isFavorited ? 'filter: contrast(0);' : '' }}">
+                                                <img src="{{ asset('/images/svg/search-results/download.svg') }}"
+                                                    alt="Whitelist" class="mt-1"
+                                                    style="{{ $isFavorited ? 'filter: contrast(0);' : '' }}">
                                             </button>
                                         </div>
-                                        
+
                                         <div class="overlay-website-logo">
                                             <img src="{{ $logoPath }}" alt="Logo">
                                         </div>
@@ -122,11 +142,12 @@
                             </div>
                         @endif
                     @endforeach
-                    
+
                     <div class="masonry-item" data-height="wide">
                         <div class="image-card">
                             <a href="{{ url('/y-tuong-thiet-ke') }}" class="text-decoration-none color-primary-12">
-                                <img src="{{ asset('images/d/bancoytuong.png') }}" alt="Bạn có ý tưởng thiết kế của riêng mình?" loading="lazy">
+                                <img src="{{ asset('images/d/bancoytuong.png') }}"
+                                    alt="Bạn có ý tưởng thiết kế của riêng mình?" loading="lazy">
                             </a>
                         </div>
                     </div>
@@ -140,8 +161,8 @@
                 </div>
             @endif
         </div>
-        
-        @if($sets->count() > 0)
+
+        @if ($sets->count() > 0)
             <div class="pagination-wrapper mt-4">
                 {{ $sets->appends(request()->query())->links('components.paginate') }}
             </div>
@@ -154,7 +175,7 @@
 @endpush
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const colorBtns = document.querySelectorAll('.color-btn');
@@ -169,7 +190,7 @@
                         colorBtns.forEach(b => b.classList.remove('active'));
                     } else {
                         const colorValue = this.getAttribute('data-color');
-                        
+
                         if (this.classList.contains('active')) {
                             selectedColors = selectedColors.filter(c => c !== colorValue);
                             this.classList.remove('active');
@@ -197,7 +218,7 @@
             tagBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const tagValue = this.getAttribute('data-tag');
-                    
+
                     if (this.classList.contains('active')) {
                         selectedTagsArray = selectedTagsArray.filter(t => t !== tagValue);
                         this.classList.remove('active');
@@ -207,7 +228,7 @@
                             this.classList.add('active');
                         }
                     }
-                    
+
                     debouncedUpdateFilters();
                 });
             });
@@ -262,7 +283,7 @@
                             if (!selectedSoftware.includes(softwareValue)) {
                                 selectedSoftware.push(softwareValue);
                                 this.classList.add('active');
-                                
+
                                 if (logoActive && logoActive !== 'null') {
                                     img.src = logoActive;
                                 }
@@ -284,7 +305,7 @@
                 if (debounceTimer) {
                     clearTimeout(debounceTimer);
                 }
-                
+
                 debounceTimer = setTimeout(() => {
                     updateFilters();
                 }, 300);
@@ -299,48 +320,51 @@
                 const album = urlParams.get('album') || '';
                 const query = urlParams.get('q') || '';
                 const formData = new FormData();
-                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute(
+                'content'));
                 formData.append('category', category);
                 formData.append('album', album);
                 formData.append('q', query);
-                
+
                 selectedColors.forEach(color => {
                     formData.append('colors[]', color);
                 });
-                
+
                 selectedSoftware.forEach(software => {
                     formData.append('software[]', software);
                 });
-                
+
                 selectedTagsArray.forEach(tag => {
                     formData.append('tags[]', tag);
                 });
                 isLoading = true;
                 const container = document.getElementById('search-results-container');
-                container.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+                container.innerHTML =
+                    '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
 
-                fetch('{{ route("search.filter") }}', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        container.innerHTML = data.html;
-                        setTimeout(() => {
-                            initMasonry();
-                            attachImageClickEvents();
-                            attachPaginationEvents();
-                        }, 100);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    container.innerHTML = '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
-                })
-                .finally(() => {
-                    isLoading = false;
-                });
+                fetch('{{ route('search.filter') }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            container.innerHTML = data.html;
+                            setTimeout(() => {
+                                initMasonry();
+                                attachImageClickEvents();
+                                attachPaginationEvents();
+                            }, 100);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        container.innerHTML =
+                        '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                    })
+                    .finally(() => {
+                        isLoading = false;
+                    });
             }
 
 
@@ -360,15 +384,15 @@
 
             function attachPaginationEvents() {
                 const paginationLinks = document.querySelectorAll('.pagination-wrapper .pagination-item');
-                
+
                 paginationLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         const url = this.getAttribute('href');
                         if (!url || url === '#') return;
-                        
+
                         const pageMatch = url.match(/[?&]page=(\d+)/);
                         if (pageMatch) {
                             loadFilteredPage(parseInt(pageMatch[1]));
@@ -379,64 +403,70 @@
 
             function loadFilteredPage(page) {
                 if (isLoading) return;
-                
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const category = urlParams.get('category') || '';
                 const album = urlParams.get('album') || '';
                 const query = urlParams.get('q') || '';
-                
+
                 const formData = new FormData();
-                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute(
+                'content'));
                 formData.append('category', category);
                 formData.append('album', album);
                 formData.append('q', query);
                 formData.append('page', page);
-                
+
                 selectedColors.forEach(color => {
                     formData.append('colors[]', color);
                 });
-                
+
                 selectedSoftware.forEach(software => {
                     formData.append('software[]', software);
                 });
-                
+
                 selectedTagsArray.forEach(tag => {
                     formData.append('tags[]', tag);
                 });
-                
+
                 isLoading = true;
                 const container = document.getElementById('search-results-container');
-                container.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+                container.innerHTML =
+                    '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
 
-                fetch('{{ route("search.filter") }}', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        container.innerHTML = data.html;
-                        
-                        // Scroll to top of results
-                        const searchResult = document.querySelector('.search-result');
-                        if (searchResult) {
-                            searchResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                fetch('{{ route('search.filter') }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            container.innerHTML = data.html;
+
+                            // Scroll to top of results
+                            const searchResult = document.querySelector('.search-result');
+                            if (searchResult) {
+                                searchResult.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                            }
+
+                            setTimeout(() => {
+                                initMasonry();
+                                attachImageClickEvents();
+                                attachPaginationEvents();
+                            }, 100);
                         }
-                        
-                        setTimeout(() => {
-                            initMasonry();
-                            attachImageClickEvents();
-                            attachPaginationEvents();
-                        }, 100);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    container.innerHTML = '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
-                })
-                .finally(() => {
-                    isLoading = false;
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        container.innerHTML =
+                        '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                    })
+                    .finally(() => {
+                        isLoading = false;
+                    });
             }
 
             function loadSetDetails(setId) {
@@ -444,57 +474,58 @@
                 if (modal) {
                     modal.scrollTop = 0;
                 }
-                
+
                 const modalContent = document.querySelector('#imageModal .modal-content');
                 if (modalContent) {
                     modalContent.style.opacity = '0.5';
                     modalContent.style.pointerEvents = 'none';
                 }
-                
+
                 let loadingSpinner = modal.querySelector('.loading-spinner-overlay');
                 if (!loadingSpinner) {
                     loadingSpinner = document.createElement('div');
                     loadingSpinner.className = 'loading-spinner-overlay';
-                    loadingSpinner.innerHTML = '<div class="spinner"><i class="fas fa-spinner fa-spin fa-3x"></i></div>';
+                    loadingSpinner.innerHTML =
+                        '<div class="spinner"><i class="fas fa-spinner fa-spin fa-3x"></i></div>';
                     modal.appendChild(loadingSpinner);
                 }
                 loadingSpinner.style.display = 'flex';
 
                 fetch(`/search/set/id/${setId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (loadingSpinner) {
-                        loadingSpinner.style.display = 'none';
-                    }
-                    if (modalContent) {
-                        modalContent.style.opacity = '1';
-                        modalContent.style.pointerEvents = 'auto';
-                    }
-                    
-                    if (data.success) {
-                        renderSetModal(data.data, data.relatedSets, data.featuredSets);
-                    } else {
-                        console.error('Error:', data.message);
-                        showSetNotFoundError(data.message, data.featuredSets || []);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (loadingSpinner) {
-                        loadingSpinner.style.display = 'none';
-                    }
-                    if (modalContent) {
-                        modalContent.style.opacity = '1';
-                        modalContent.style.pointerEvents = 'auto';
-                    }
-                    showSetNotFoundError('Có lỗi xảy ra khi tải thông tin file', []);
-                });
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (loadingSpinner) {
+                            loadingSpinner.style.display = 'none';
+                        }
+                        if (modalContent) {
+                            modalContent.style.opacity = '1';
+                            modalContent.style.pointerEvents = 'auto';
+                        }
+
+                        if (data.success) {
+                            renderSetModal(data.data, data.relatedSets, data.featuredSets);
+                        } else {
+                            console.error('Error:', data.message);
+                            showSetNotFoundError(data.message, data.featuredSets || []);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        if (loadingSpinner) {
+                            loadingSpinner.style.display = 'none';
+                        }
+                        if (modalContent) {
+                            modalContent.style.opacity = '1';
+                            modalContent.style.pointerEvents = 'auto';
+                        }
+                        showSetNotFoundError('Có lỗi xảy ra khi tải thông tin file', []);
+                    });
             }
 
             function loadSetDetailsBySlug(setSlug) {
@@ -502,18 +533,19 @@
                 if (modal) {
                     modal.scrollTop = 0;
                 }
-                
+
                 const modalContent = document.querySelector('#imageModal .modal-content');
                 if (modalContent) {
                     modalContent.style.opacity = '0.5';
                     modalContent.style.pointerEvents = 'none';
                 }
-                
+
                 let loadingSpinner = modal.querySelector('.loading-spinner-overlay');
                 if (!loadingSpinner) {
                     loadingSpinner = document.createElement('div');
                     loadingSpinner.className = 'loading-spinner-overlay';
-                    loadingSpinner.innerHTML = '<div class="spinner"><i class="fas fa-spinner fa-spin fa-3x"></i></div>';
+                    loadingSpinner.innerHTML =
+                        '<div class="spinner"><i class="fas fa-spinner fa-spin fa-3x"></i></div>';
                     modal.appendChild(loadingSpinner);
                 }
                 loadingSpinner.style.display = 'flex';
@@ -523,40 +555,40 @@
                 const apiUrl = isNumeric ? `/search/set/id/${setSlug}` : `/search/set/${setSlug}`;
 
                 fetch(apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (loadingSpinner) {
-                        loadingSpinner.style.display = 'none';
-                    }
-                    if (modalContent) {
-                        modalContent.style.opacity = '1';
-                        modalContent.style.pointerEvents = 'auto';
-                    }
-                    
-                    if (data.success) {
-                        renderSetModal(data.data, data.relatedSets, data.featuredSets);
-                    } else {
-                        console.error('Error:', data.message);
-                        showSetNotFoundError(data.message, data.featuredSets || []);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    if (loadingSpinner) {
-                        loadingSpinner.style.display = 'none';
-                    }
-                    if (modalContent) {
-                        modalContent.style.opacity = '1';
-                        modalContent.style.pointerEvents = 'auto';
-                    }
-                    showSetNotFoundError('Có lỗi xảy ra khi tải thông tin file', []);
-                });
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (loadingSpinner) {
+                            loadingSpinner.style.display = 'none';
+                        }
+                        if (modalContent) {
+                            modalContent.style.opacity = '1';
+                            modalContent.style.pointerEvents = 'auto';
+                        }
+
+                        if (data.success) {
+                            renderSetModal(data.data, data.relatedSets, data.featuredSets);
+                        } else {
+                            console.error('Error:', data.message);
+                            showSetNotFoundError(data.message, data.featuredSets || []);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        if (loadingSpinner) {
+                            loadingSpinner.style.display = 'none';
+                        }
+                        if (modalContent) {
+                            modalContent.style.opacity = '1';
+                            modalContent.style.pointerEvents = 'auto';
+                        }
+                        showSetNotFoundError('Có lỗi xảy ra khi tải thông tin file', []);
+                    });
             }
 
             function renderSetModal(set, relatedSets = [], featuredSets = []) {
@@ -594,7 +626,7 @@
                                 <div id="social-share-container-${set.id}"></div>
                             </div>
                         `;
-                        
+
                         setTimeout(() => {
                             initFancybox();
                         }, 100);
@@ -609,7 +641,7 @@
                                 </div>
                             `;
                         });
-                        
+
                         modalImageContainer.innerHTML = `
                             <div class="modal-photos-masonry" id="modal-photos-masonry">
                                 ${photosHtml}
@@ -618,7 +650,7 @@
                                 <div id="social-share-container-${set.id}"></div>
                             </div>
                         `;
-                        
+
                         setTimeout(() => {
                             initModalMasonry();
                             initFancybox();
@@ -630,7 +662,8 @@
                 if (titleElement) {
                     const words = set.name.split(' ');
                     if (words.length > 1) {
-                        titleElement.innerHTML = `<span class="underline-first">${words[0]}</span> ${words.slice(1).join(' ')}`;
+                        titleElement.innerHTML =
+                            `<span class="underline-first">${words[0]}</span> ${words.slice(1).join(' ')}`;
                     } else {
                         titleElement.innerHTML = `<span class="underline-first">${set.name}</span>`;
                     }
@@ -644,10 +677,11 @@
                 const formatElement = document.querySelector('#imageModal .modal-format span');
                 if (formatElement) {
                     let formatsText = 'Không xác định';
-                    
+
                     if (set.formats) {
                         try {
-                            const formatsArray = typeof set.formats === 'string' ? JSON.parse(set.formats) : set.formats;
+                            const formatsArray = typeof set.formats === 'string' ? JSON.parse(set.formats) : set
+                                .formats;
                             if (Array.isArray(formatsArray) && formatsArray.length > 0) {
                                 formatsText = formatsArray.join(', ');
                             }
@@ -655,7 +689,7 @@
                             console.error('Error parsing formats:', e);
                         }
                     }
-                    
+
                     formatElement.textContent = `Định dạng: ${formatsText}`;
                 }
 
@@ -674,7 +708,9 @@
                 const tagsContainer = document.querySelector('.tags-product-list');
                 if (tagsContainer) {
                     if (set.tags && set.tags.length > 0) {
-                        const tagsHtml = set.tags.map(tag => `<span class="tags-product-item p-1 p-md-2 text-xs-2">${tag.tag.name}</span>`).join('');
+                        const tagsHtml = set.tags.map(tag =>
+                            `<span class="tags-product-item p-1 p-md-2 text-xs-2">${tag.tag.name}</span>`).join(
+                            '');
                         tagsContainer.innerHTML = `
                             <span class="tags-product p-1 me-2 text-xs-2">
                                 <img src="/images/svg/search-results/tag.svg" alt="">
@@ -688,23 +724,26 @@
                 }
 
                 const keywordWrapper = document.querySelector('#imageModal .modal-keywords-wrapper');
-                
+
                 if (keywordWrapper) {
                     let keywordsContent = '';
-                    
+
                     if (set.keywords) {
                         try {
-                            const keywordsArray = typeof set.keywords === 'string' ? JSON.parse(set.keywords) : set.keywords;
+                            const keywordsArray = typeof set.keywords === 'string' ? JSON.parse(set.keywords) : set
+                                .keywords;
                             if (Array.isArray(keywordsArray) && keywordsArray.length > 0) {
-                                const firstKeywords = keywordsArray.slice(0, 2).map(keyword => `<a class="color-primary-9" href="#">${keyword}</a>`).join(' ; ');
+                                const firstKeywords = keywordsArray.slice(0, 2).map(keyword =>
+                                    `<a class="color-primary-9" href="#">${keyword}</a>`).join(' ; ');
                                 keywordsContent = firstKeywords;
                             }
                         } catch (e) {
                             console.error('Error parsing keywords:', e);
                         }
                     }
-                    
-                    keywordWrapper.innerHTML = `<span class="modal-keywords color-primary-12">Từ khóa:</span> ${keywordsContent} - <span class="color-primary-6">Mẫu #${set.id}</span>`;
+
+                    keywordWrapper.innerHTML =
+                        `<span class="modal-keywords color-primary-12">Từ khóa:</span> ${keywordsContent} - <span class="color-primary-6">Mẫu #${set.id}</span>`;
                 }
 
                 const badgeContainer = document.querySelector('#imageModal .d-flex.flex-column.mt-4');
@@ -713,7 +752,7 @@
                     const badgeLabel = set.type === 'free' ? 'Free' : 'Premium';
                     const badgeValue = set.price || '0';
                     const badgeColor = set.type === 'free' ? '#27ae60' : '#F0A610';
-                    
+
                     badgeContainer.innerHTML = `
                         <div class="custom-badge">
                             <div class="custom-badge-value" style="background-color: ${badgeColor}; color: #fff;">
@@ -732,13 +771,13 @@
                         </button>
                     `;
                 }
-                
+
                 const relatedSetsContainer = document.querySelector('#imageModal #sliderWrapper1');
                 if (relatedSetsContainer && relatedSets && relatedSets.length > 0) {
                     relatedSetsContainer.innerHTML = '';
                     relatedSets.forEach(relatedSet => {
                         const imageSrc = `/storage/${relatedSet.image}`;
-                        
+
                         const slideItem = document.createElement('div');
                         slideItem.className = 'slide-item';
                         slideItem.innerHTML = `
@@ -748,18 +787,18 @@
                         `;
                         relatedSetsContainer.appendChild(slideItem);
                     });
-                    
+
                     if (window.ImageSlider) {
                         new window.ImageSlider('sliderWrapper1', 'prevBtn1', 'nextBtn1');
                     }
                 }
-                
+
                 const featuredSetsContainer = document.querySelector('#imageModal #sliderAuto1');
                 if (featuredSetsContainer && featuredSets && featuredSets.length > 0) {
                     featuredSetsContainer.innerHTML = '';
                     featuredSets.forEach(featuredSet => {
                         const imageSrc = `/storage/${featuredSet.image}`;
-                        
+
                         const slideItem = document.createElement('div');
                         slideItem.className = 'slide-item';
                         slideItem.innerHTML = `
@@ -769,7 +808,7 @@
                         `;
                         featuredSetsContainer.appendChild(slideItem);
                     });
-                    
+
                     const autoSliderHost = document.querySelector('#imageModal .image-slider-auto');
                     if (autoSliderHost && window.AutoImageSlider) {
                         new window.AutoImageSlider(autoSliderHost, 'sliderAuto1');
@@ -810,14 +849,14 @@
                                 <h5 class="text-center mb-4">Thiết kế nổi bật</h5>
                                 <div class="row">
                                     ${featuredSets.map(set => `
-                                        <div class="col-6 col-md-3 mb-3">
-                                            <div class="featured-set-item" onclick="loadSetDetailsBySlug('${set.slug || set.id}')" style="cursor: pointer;">
-                                                <img src="${set.photos && set.photos[0] ? '/storage/' + set.photos[0].path : '/images/default-set.png'}" 
-                                                     alt="${set.name}" class="img-fluid rounded">
-                                                <h6 class="mt-2 text-center">${set.name}</h6>
+                                            <div class="col-6 col-md-3 mb-3">
+                                                <div class="featured-set-item" onclick="loadSetDetailsBySlug('${set.slug || set.id}')" style="cursor: pointer;">
+                                                    <img src="${set.photos && set.photos[0] ? '/storage/' + set.photos[0].path : '/images/default-set.png'}" 
+                                                         alt="${set.name}" class="img-fluid rounded">
+                                                    <h6 class="mt-2 text-center">${set.name}</h6>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `).join('')}
+                                        `).join('')}
                                 </div>
                             </div>
                         `;
@@ -932,12 +971,12 @@
             function initModalMasonry() {
                 const container = document.getElementById('modal-photos-masonry');
                 if (!container) return;
-                
+
                 const images = container.querySelectorAll('img');
                 let loadedImages = 0;
-                
+
                 if (images.length === 0) return;
-                
+
                 const checkAllImagesLoaded = () => {
                     loadedImages++;
                     if (loadedImages === images.length) {
@@ -951,7 +990,7 @@
                         }
                     }
                 };
-                
+
                 images.forEach(img => {
                     if (img.complete) {
                         checkAllImagesLoaded();
@@ -986,7 +1025,9 @@
                         Toolbar: {
                             display: {
                                 left: ['infobar'],
-                                middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW', 'flipX', 'flipY'],
+                                middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW',
+                                    'flipX', 'flipY'
+                                ],
                                 right: ['slideshow', 'fullscreen', 'thumbs', 'close']
                             }
                         }
@@ -1011,7 +1052,7 @@
             function closeImageModal() {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-                
+
                 // Xóa ?set= khỏi URL nếu có
                 const url = new URL(window.location);
                 if (url.searchParams.has('set')) {
@@ -1036,7 +1077,7 @@
 
             initMasonry();
             attachImageClickEvents();
-            
+
             // Listen for custom event from search.blade.php
             document.addEventListener('openSetModal', function(event) {
                 const setSlug = event.detail.setSlug;
@@ -1046,11 +1087,11 @@
                     document.body.style.overflow = 'hidden';
                 }
             });
-            
+
             document.addEventListener('click', function(e) {
                 const relatedLink = e.target.closest('.related-set-link');
                 const featuredLink = e.target.closest('.featured-set-link');
-                
+
                 if (relatedLink || featuredLink) {
                     e.preventDefault();
                     const link = relatedLink || featuredLink;
@@ -1101,55 +1142,55 @@
 
                 // Check download condition
                 fetch(`/user/purchase/check/${setId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    Swal.close();
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
 
-                    if (!data.success) {
-                        // Cannot download
-                        showSwal({
-                            icon: 'error',
-                            title: 'Không thể tải',
-                            text: data.message,
-                            confirmButtonColor: '#667eea'
-                        });
-                        return;
-                    }
+                        if (!data.success) {
+                            // Cannot download
+                            showSwal({
+                                icon: 'error',
+                                title: 'Không thể tải',
+                                text: data.message,
+                                confirmButtonColor: '#667eea'
+                            });
+                            return;
+                        }
 
-                    // Can download - show confirmation modal
-                    showDownloadConfirmModal(data, setId);
-                })
-                .catch(error => {
-                    Swal.close();
-                    console.error('Error:', error);
-                    
-                    if (error.status === 401) {
-                        showSwal({
-                            icon: 'warning',
-                            title: 'Chưa đăng nhập',
-                            text: 'Vui lòng đăng nhập để tải file',
-                            confirmButtonText: 'Đăng nhập',
-                            confirmButtonColor: '#667eea'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '/login';
-                            }
-                        });
-                    } else {
-                        showSwal({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: 'Có lỗi xảy ra khi kiểm tra điều kiện tải',
-                            confirmButtonColor: '#667eea'
-                        });
-                    }
-                });
+                        // Can download - show confirmation modal
+                        showDownloadConfirmModal(data, setId);
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        console.error('Error:', error);
+
+                        if (error.status === 401) {
+                            showSwal({
+                                icon: 'warning',
+                                title: 'Chưa đăng nhập',
+                                text: 'Vui lòng đăng nhập để tải file',
+                                confirmButtonText: 'Đăng nhập',
+                                confirmButtonColor: '#667eea'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/login';
+                                }
+                            });
+                        } else {
+                            showSwal({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Có lỗi xảy ra khi kiểm tra điều kiện tải',
+                                confirmButtonColor: '#667eea'
+                            });
+                        }
+                    });
             };
 
             function showDownloadConfirmModal(data, setId) {
@@ -1164,13 +1205,16 @@
                 `;
 
                 if (data.already_purchased) {
-                    htmlContent += `<p class="text-success"><i class="fas fa-check-circle me-2"></i>Bạn đã mua file này</p>`;
+                    htmlContent +=
+                        `<p class="text-success"><i class="fas fa-check-circle me-2"></i>Bạn đã mua file này</p>`;
                     confirmButtonText = 'Tải ngay';
                 } else if (data.is_free) {
                     if (data.unlimited) {
-                        htmlContent += `<p class="text-success"><i class="fas fa-infinity me-2"></i>File miễn phí - Tải không giới hạn (VIP)</p>`;
+                        htmlContent +=
+                            `<p class="text-success"><i class="fas fa-infinity me-2"></i>File miễn phí - Tải không giới hạn (VIP)</p>`;
                     } else if (data.free_downloads_left) {
-                        htmlContent += `<p class="text-info"><i class="fas fa-gift me-2"></i>File miễn phí - Còn ${data.free_downloads_left} lượt tải</p>`;
+                        htmlContent +=
+                            `<p class="text-info"><i class="fas fa-gift me-2"></i>File miễn phí - Còn ${data.free_downloads_left} lượt tải</p>`;
                     }
                     confirmButtonText = 'Tải ngay';
                 } else if (data.requires_purchase) {
@@ -1188,7 +1232,8 @@
                 htmlContent += `</div>`;
 
                 showSwal({
-                    title: data.already_purchased ? 'Tải file' : (data.is_free ? 'Tải file miễn phí' : 'Xác nhận mua file'),
+                    title: data.already_purchased ? 'Tải file' : (data.is_free ? 'Tải file miễn phí' :
+                        'Xác nhận mua file'),
                     html: htmlContent,
                     icon: data.already_purchased || data.is_free ? 'success' : 'question',
                     showCancelButton: true,
@@ -1218,79 +1263,81 @@
 
                 // Confirm purchase
                 fetch(`/user/purchase/confirm/${setId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({
-                        user_confirmed: true // Explicit user confirmation
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            user_confirmed: true // Explicit user confirmation
+                        })
                     })
-                })
-                .then(response => {
-                    Swal.close();
+                    .then(response => {
+                        Swal.close();
 
-                    // Check if response is a file download (streaming response)
-                    const contentType = response.headers.get('content-type');
-                    const contentDisposition = response.headers.get('content-disposition');
-                    
-                    if (contentType?.includes('application/zip') || contentDisposition?.includes('attachment')) {
-                        // Handle file download
-                        return response.blob().then(blob => {
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = contentDisposition?.split('filename=')[1] || 'download.zip';
-                            document.body.appendChild(a);
-                            a.click();
-                            window.URL.revokeObjectURL(url);
-                            document.body.removeChild(a);
-                            
-                            showSwal({
-                                icon: 'success',
-                                title: 'Tải xuống thành công!',
-                                text: 'File đã được tải về máy',
-                                confirmButtonColor: '#667eea'
-                            });
-                        });
-                    }
+                        // Check if response is a file download (streaming response)
+                        const contentType = response.headers.get('content-type');
+                        const contentDisposition = response.headers.get('content-disposition');
 
-                    // Handle JSON response (error cases)
-                    return response.json().then(data => {
-                        if (data.success) {
-                            showSwal({
-                                icon: 'success',
-                                title: 'Thành công!',
-                                text: data.message,
-                                confirmButtonColor: '#667eea'
-                            });
-                        } else {
-                            showSwal({
-                                icon: 'error',
-                                title: 'Lỗi',
-                                text: data.message,
-                                confirmButtonColor: '#667eea'
+                        if (contentType?.includes('application/zip') || contentDisposition?.includes(
+                                'attachment')) {
+                            // Handle file download
+                            return response.blob().then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = contentDisposition?.split('filename=')[1] ||
+                                'download.zip';
+                                document.body.appendChild(a);
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                                document.body.removeChild(a);
+
+                                showSwal({
+                                    icon: 'success',
+                                    title: 'Tải xuống thành công!',
+                                    text: 'File đã được tải về máy',
+                                    confirmButtonColor: '#667eea'
+                                });
                             });
                         }
+
+                        // Handle JSON response (error cases)
+                        return response.json().then(data => {
+                            if (data.success) {
+                                showSwal({
+                                    icon: 'success',
+                                    title: 'Thành công!',
+                                    text: data.message,
+                                    confirmButtonColor: '#667eea'
+                                });
+                            } else {
+                                showSwal({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: data.message,
+                                    confirmButtonColor: '#667eea'
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        console.error('Error:', error);
+                        showSwal({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra khi xử lý giao dịch',
+                            confirmButtonColor: '#667eea'
+                        });
                     });
-                })
-                .catch(error => {
-                    Swal.close();
-                    console.error('Error:', error);
-                    showSwal({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'Có lỗi xảy ra khi xử lý giao dịch',
-                        confirmButtonColor: '#667eea'
-                    });
-                });
             }
 
             window.toggleFavoriteCard = function(event, button) {
                 event.stopPropagation();
-                
+
                 const setId = button.getAttribute('data-set-id');
                 if (!setId) return;
 
@@ -1298,42 +1345,43 @@
                 const isCurrentlyFavorited = button.classList.contains('favorited');
 
                 fetch(`user/search/set/${setId}/favorite`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (data.isFavorited) {
-                            button.classList.add('favorited');
-                            icon.classList.remove('far');
-                            icon.classList.add('fas');
-                        } else {
-                            button.classList.remove('favorited');
-                            icon.classList.remove('fas');
-                            icon.classList.add('far');
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Accept': 'application/json'
                         }
-                    } else {
-                        console.error('Error:', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.isFavorited) {
+                                button.classList.add('favorited');
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
+                            } else {
+                                button.classList.remove('favorited');
+                                icon.classList.remove('fas');
+                                icon.classList.add('far');
+                            }
+                        } else {
+                            console.error('Error:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             };
 
             window.handleDownloadClick = function(event, setId) {
                 event.stopPropagation();
-                
+
                 if (!setId) {
                     console.error('Set ID is missing');
                     return;
                 }
-                
+
                 loadSetDetails(setId);
                 const modal = document.getElementById('imageModal');
                 if (modal) {
@@ -1348,12 +1396,12 @@
                 if (event.target.closest('.overlay-action-btn')) {
                     return;
                 }
-                
+
                 if (!setId) {
                     console.error('Set ID is missing');
                     return;
                 }
-                
+
                 loadSetDetails(setId);
                 const modal = document.getElementById('imageModal');
                 if (modal) {
