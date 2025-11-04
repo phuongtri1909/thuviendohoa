@@ -13,12 +13,18 @@ use Illuminate\Support\Facades\Auth;
 
 class PurchaseSetController extends Controller
 {
+    protected GoogleDriveService $driveService;
+
+    public function __construct(GoogleDriveService $driveService)
+    {
+        $this->driveService = $driveService;
+    }
+
     /**
      * Hàm check chung - tái sử dụng cho tất cả logic
      */
     private function validateDownloadConditions($user, $set)
     {
-        // Check set exists and active
         if (!$set || $set->status !== Set::STATUS_ACTIVE) {
             return [
                 'success' => false,
@@ -27,10 +33,9 @@ class PurchaseSetController extends Controller
             ];
         }
 
-        // Check if already purchased (only for premium sets)
+        // Check purchased
         if (!$set->isFree()) {
-            $hasPurchased = $user->hasPurchasedSet($set->id);
-            if ($hasPurchased) {
+            if ($user->hasPurchasedSet($set->id)) {
                 return [
                     'success' => true,
                     'can_download' => true,
@@ -46,10 +51,9 @@ class PurchaseSetController extends Controller
             }
         }
 
-        // Check conditions based on set type
+        // Free set
         if ($set->isFree()) {
             if ($user->hasUnlimitedDownloads()) {
-                // User có package active - tải free không giới hạn
                 return [
                     'success' => true,
                     'can_download' => true,
@@ -64,7 +68,6 @@ class PurchaseSetController extends Controller
                     ]
                 ];
             } elseif ($user->canDownloadFree()) {
-                // User thường hoặc VIP hết hạn nhưng còn free_downloads
                 return [
                     'success' => true,
                     'can_download' => true,
@@ -79,7 +82,6 @@ class PurchaseSetController extends Controller
                     ]
                 ];
             } else {
-                // Hết lượt tải free
                 return [
                     'success' => false,
                     'can_download' => false,
@@ -88,60 +90,60 @@ class PurchaseSetController extends Controller
                     'code' => 'NO_FREE_DOWNLOADS'
                 ];
             }
-        } else {
-            // Premium set
-            $price = $set->price ?? 0;
+        }
 
-            if ($user->package_id && !$user->hasValidPackage()) {
-                return [
-                    'success' => false,
-                    'can_download' => false,
-                    'message' => 'Gói '.$user->package->getPlanPluralName().' của bạn đã hết hạn. Vui lòng gia hạn.',
-                    'package_expired' => true,
-                    'code' => 'PACKAGE_EXPIRED'
-                ];
-            }
+        // Premium set
+        $price = $set->price ?? 0;
 
-            if ($user->coins < $price) {
-                return [
-                    'success' => false,
-                    'can_download' => false,
-                    'message' => "Bạn không đủ xu để mua file này. Cần {$price} xu, bạn có {$user->coins} xu.",
-                    'insufficient_coins' => true,
-                    'required_coins' => $price,
-                    'current_coins' => $user->coins,
-                    'code' => 'INSUFFICIENT_COINS'
-                ];
-            }
-
+        if ($user->package_id && !$user->hasValidPackage()) {
             return [
-                'success' => true,
-                'can_download' => true,
-                'is_premium' => true,
-                'requires_purchase' => true,
-                'message' => "Mua file này với {$price} xu?",
-                'set' => [
-                    'id' => $set->id,
-                    'name' => $set->name,
-                    'type' => $set->type,
-                    'price' => $price
-                ],
-                'user' => [
-                    'coins' => $user->coins,
-                    'remaining_coins' => $user->coins - $price
-                ]
+                'success' => false,
+                'can_download' => false,
+                'message' => 'Gói ' . $user->package->getPlanPluralName() . ' của bạn đã hết hạn. Vui lòng gia hạn.',
+                'package_expired' => true,
+                'code' => 'PACKAGE_EXPIRED'
             ];
         }
+
+        if ($user->coins < $price) {
+            return [
+                'success' => false,
+                'can_download' => false,
+                'message' => "Bạn không đủ xu để mua file này. Cần {$price} xu, bạn có {$user->coins} xu.",
+                'insufficient_coins' => true,
+                'required_coins' => $price,
+                'current_coins' => $user->coins,
+                'code' => 'INSUFFICIENT_COINS'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'can_download' => true,
+            'is_premium' => true,
+            'requires_purchase' => true,
+            'message' => "Mua file này với {$price} xu?",
+            'set' => [
+                'id' => $set->id,
+                'name' => $set->name,
+                'type' => $set->type,
+                'price' => $price
+            ],
+            'user' => [
+                'coins' => $user->coins,
+                'remaining_coins' => $user->coins - $price
+            ]
+        ];
     }
 
     /**
-     * Kiểm tra điều kiện và trả về thông tin set để hiển thị modal xác nhận
+     * Kiểm tra điều kiện để hiển thị modal xác nhận tải
      */
     public function checkDownloadCondition(Request $request, $setId)
     {
         try {
             $user = Auth::user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -154,11 +156,10 @@ class PurchaseSetController extends Controller
                 ->where('status', Set::STATUS_ACTIVE)
                 ->first();
 
-            // Sử dụng hàm check chung
             $result = $this->validateDownloadConditions($user, $set);
-            
+
             if (!$result['success']) {
-                $statusCode = match($result['code']) {
+                $statusCode = match ($result['code'] ?? null) {
                     'SET_NOT_FOUND' => 404,
                     'NO_FREE_DOWNLOADS', 'PACKAGE_EXPIRED', 'INSUFFICIENT_COINS' => 403,
                     default => 400
@@ -167,14 +168,12 @@ class PurchaseSetController extends Controller
             }
 
             return response()->json($result);
-
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Error checking download condition', [
                 'error' => $e->getMessage(),
                 'set_id' => $setId,
                 'user_id' => Auth::id()
             ]);
-
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra khi kiểm tra điều kiện tải'
@@ -183,14 +182,13 @@ class PurchaseSetController extends Controller
     }
 
     /**
-     * Xác nhận mua và tải xuống trực tiếp
-     * Tích hợp download vào confirmPurchase để tăng security
+     * Xác nhận mua và tải xuống
      */
     public function confirmPurchase(Request $request, $setId)
     {
         try {
             $user = Auth::user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -198,9 +196,7 @@ class PurchaseSetController extends Controller
                 ], 401);
             }
 
-            // Validate CSRF token (automatically checked by Laravel middleware)
-            // Require explicit user confirmation
-            if (!$request->has('user_confirmed') || !$request->input('user_confirmed')) {
+            if (!$request->boolean('user_confirmed')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Vui lòng xác nhận hành động này'
@@ -214,47 +210,39 @@ class PurchaseSetController extends Controller
                 ->lockForUpdate()
                 ->first();
 
-            // Sử dụng hàm check chung để validate lại
-            $validationResult = $this->validateDownloadConditions($user, $set);
-            
-            if (!$validationResult['success']) {
+            $validation = $this->validateDownloadConditions($user, $set);
+
+            if (!$validation['success']) {
                 DB::rollBack();
-                $statusCode = match($validationResult['code']) {
+                $statusCode = match ($validation['code'] ?? null) {
                     'SET_NOT_FOUND' => 404,
                     'NO_FREE_DOWNLOADS', 'PACKAGE_EXPIRED', 'INSUFFICIENT_COINS' => 403,
                     default => 400
                 };
-                return response()->json($validationResult, $statusCode);
+                return response()->json($validation, $statusCode);
             }
 
-            // Nếu đã mua rồi, chỉ cần download
-            if (isset($validationResult['already_purchased']) && $validationResult['already_purchased']) {
+            // Đã mua -> tải trực tiếp
+            if (!empty($validation['already_purchased'])) {
                 DB::commit();
                 return $this->processDownload($set);
             }
 
-            // Xử lý purchase logic
+            // Xử lý giao dịch
             if ($set->isFree()) {
-                if ($user->hasUnlimitedDownloads()) {
-                    // User có package - không trừ free_downloads, không tạo PurchaseSet
-                    // Chỉ download trực tiếp
-                } elseif ($user->canDownloadFree()) {
-                    // User thường - trừ free_downloads, không tạo PurchaseSet
-                    $user->free_downloads -= 1;
-                    $user->save();
+                if (!$user->hasUnlimitedDownloads() && $user->canDownloadFree()) {
+                    $user->decrement('free_downloads');
                 }
             } else {
-                // Premium set - trừ coins và tạo PurchaseSet
                 $price = $set->price ?? 0;
-                $user->coins -= $price;
-                $user->save();
+                $user->decrement('coins', $price);
 
                 $purchase = PurchaseSet::create([
                     'user_id' => $user->id,
                     'set_id' => $set->id,
                     'coins' => $price
                 ]);
-                
+
                 \App\Models\CoinHistory::create([
                     'user_id' => $user->id,
                     'amount' => -$price,
@@ -273,18 +261,14 @@ class PurchaseSetController extends Controller
 
             DB::commit();
 
-            // Tích hợp download trực tiếp
             return $this->processDownload($set);
-
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            
             Log::error('Error confirming purchase', [
                 'error' => $e->getMessage(),
                 'set_id' => $setId,
                 'user_id' => Auth::id()
             ]);
-
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra khi xử lý giao dịch'
@@ -293,13 +277,17 @@ class PurchaseSetController extends Controller
     }
 
     /**
-     * Xử lý download file từ Google Drive
-     * Private method để tái sử dụng
+     * Tải file từ Google Drive (đã stream tối ưu)
      */
     private function processDownload($set)
     {
         try {
-            // Check if set has drive_url
+            set_time_limit(0);
+            ignore_user_abort(true);
+            
+            // Tăng memory limit cho file lớn
+            ini_set('memory_limit', '1024M');
+
             if (!$set->drive_url) {
                 return response()->json([
                     'success' => false,
@@ -307,28 +295,41 @@ class PurchaseSetController extends Controller
                 ], 400);
             }
 
-            $driveService = new GoogleDriveService();
-            
-            // Download folder as ZIP
-            $zipPath = $driveService->downloadFolderAsZip(
-                $set->drive_url, 
-                $set->id, 
+            Log::info('Download start', [
+                'set_id' => $set->id,
+                'user_id' => Auth::id()
+            ]);
+
+            $zipPath = $this->driveService->downloadFolderAsZip(
+                $set->drive_url,
+                $set->id,
                 $set->name
             );
 
-            // Mark as downloaded
-            $purchase = PurchaseSet::where('user_id', Auth::id())
+            if ($purchase = PurchaseSet::where('user_id', Auth::id())
                 ->where('set_id', $set->id)
-                ->first();
-            
-            if ($purchase) {
+                ->first()) {
                 $purchase->markAsDownloaded();
             }
 
-            // Stream ZIP file to client
-            return $driveService->streamZipDownload($zipPath, $set->name . '.zip');
+            Log::info('Download ready', [
+                'set_id' => $set->id,
+                'zip' => $zipPath
+            ]);
 
-        } catch (\Exception $e) {
+            try {
+                return $this->driveService->streamZipDownload($zipPath, $set->name);
+            } catch (\Throwable $e) {
+                Log::warning('Client aborted download', [
+                    'set_id' => $set->id,
+                    'error' => $e->getMessage()
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tải xuống bị gián đoạn.'
+                ], 499);
+            }
+        } catch (\Throwable $e) {
             Log::error('Error processing download', [
                 'error' => $e->getMessage(),
                 'set_id' => $set->id,
@@ -342,5 +343,4 @@ class PurchaseSetController extends Controller
             ], 500);
         }
     }
-
 }

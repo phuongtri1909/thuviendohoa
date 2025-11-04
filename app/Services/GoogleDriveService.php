@@ -2,228 +2,237 @@
 
 namespace App\Services;
 
-use Google\Client as GoogleClient;
-use Google\Service\Drive as GoogleDrive;
-use Illuminate\Support\Facades\Storage;
+use Google\Client;
+use Google\Service\Drive;
 use Illuminate\Support\Facades\Log;
+use ZipArchive;
+use Exception;
 
 class GoogleDriveService
 {
-    protected $client;
-    protected $drive;
+    protected Drive $drive;
 
     public function __construct()
     {
-        try {
-            $this->client = new GoogleClient();
-            
-            // Use JSON credentials file from environment variable
-            $credentialsPath = storage_path(env('GOOGLE_DRIVE_CREDENTIALS_PATH', 'app/credentials/google-drive-credentials.json'));
-            
-            if (!file_exists($credentialsPath)) {
-                throw new \Exception('Google Drive credentials file not found at: ' . $credentialsPath);
-            }
-            
-            $this->client->setAuthConfig($credentialsPath);
-            $this->client->addScope(GoogleDrive::DRIVE_READONLY);
-            $this->drive = new GoogleDrive($this->client);
-            
-        } catch (\Exception $e) {
-            Log::error('Google Drive Service initialization failed', ['error' => $e->getMessage()]);
-            throw $e;
+        $client = new Client();
+
+        $credentialsPath = storage_path(env('GOOGLE_DRIVE_CREDENTIALS_PATH', 'app/credentials/google-drive-credentials.json'));
+        if (!file_exists($credentialsPath)) {
+            throw new Exception("Google Drive credentials file not found at: {$credentialsPath}");
         }
+
+        $client->setAuthConfig($credentialsPath);
+        $client->addScope(Drive::DRIVE_READONLY);
+
+        $this->drive = new Drive($client);
     }
 
     /**
-     * Get folder ID from Drive URL
-     * Example: https://drive.google.com/drive/folders/1ABC123xyz -> 1ABC123xyz
+     * Extract folder ID from Drive URL.
      */
-    public function extractFolderIdFromUrl($url)
+    public function extractFolderIdFromUrl(string $url): ?string
     {
-        if (preg_match('/folders\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
-            return $matches[1];
-        }
-        return null;
+        return preg_match('/folders\/([a-zA-Z0-9_-]+)/', $url, $matches)
+            ? $matches[1]
+            : null;
     }
 
     /**
-     * List all files in a Google Drive folder
-     * 
-     * @param string $folderId - Google Drive folder ID
-     * @return array - Array of file metadata
+     * List all files in a Drive folder.
      */
-    public function listFilesInFolder($folderId)
+    public function listFilesInFolder(string $folderId): array
     {
-        try {
-            $query = "'{$folderId}' in parents and trashed = false";
-            $parameters = [
-                'q' => $query,
-                'fields' => 'files(id, name, mimeType, size, webContentLink)',
-            ];
-            $results = $this->drive->files->listFiles($parameters);
-            return $results->getFiles();
-        } catch (\Exception $e) {
-            Log::error('Error listing Drive files', [
-                'folder_id' => $folderId,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
-        }
+        $params = [
+            'q' => "'{$folderId}' in parents and trashed = false",
+            'fields' => 'files(id, name, mimeType, size)'
+        ];
+
+        $results = $this->drive->files->listFiles($params);
+        return $results->getFiles() ?? [];
     }
 
     /**
-     * Download file from Google Drive to storage/app/private
-     * 
-     * @param string $fileId - Google Drive file ID
-     * @param string $fileName - File name to save
-     * @param string $setId - Set ID for organizing files
-     * @return string - Path to downloaded file
+     * Download a single Drive file with streaming (RAM-safe).
      */
-    public function downloadFile($fileId, $fileName, $setId)
+    public function downloadFile(string $fileId, string $fileName, string $setId): string
     {
-        try {
-            // Check if file already exists in temp storage
-            $setDir = storage_path("app/private/sets/{$setId}");
-            $filePath = "{$setDir}/{$fileName}";
-            
-            if (file_exists($filePath)) {
-                return "private/sets/{$setId}/{$fileName}";
-            }
-            
-            // File doesn't exist, download from Drive
-            
-            $response = $this->drive->files->get($fileId, ['alt' => 'media']);
-            $content = $response->getBody()->getContents();
-            
-            // Ensure directory exists
-            if (!is_dir($setDir)) {
-                mkdir($setDir, 0755, true);
-            }
-            
-            // Save directly to filesystem
-            file_put_contents($filePath, $content);
-            
+        $setDir = storage_path("app/private/sets/{$setId}");
+        $filePath = "{$setDir}/{$fileName}";
+
+        if (file_exists($filePath)) {
             return "private/sets/{$setId}/{$fileName}";
-        } catch (\Exception $e) {
-            Log::error('Error downloading Drive file', [
-                'file_id' => $fileId,
-                'file_name' => $fileName,
-                'set_id' => $setId,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
         }
-    }
 
-    /**
-     * Download all files from a folder and create a ZIP archive
-     * 
-     * @param string $folderUrl - Google Drive folder URL
-     * @param string $setId - Set ID
-     * @param string $setName - Set name for ZIP file
-     * @return string - Path to ZIP file
-     */
-    public function downloadFolderAsZip($folderUrl, $setId, $setName)
-    {
+        if (!is_dir($setDir)) {
+            mkdir($setDir, 0755, true);
+        }
+
+        // Increase memory limit temporarily for this operation
+        $originalMemoryLimit = ini_get('memory_limit');
+        ini_set('memory_limit', '512M');
+
         try {
-            $folderId = $this->extractFolderIdFromUrl($folderUrl);
+            $response = $this->drive->files->get($fileId, ['alt' => 'media']);
             
-            if (!$folderId) {
-                throw new \Exception('Không tìm thấy thư mục trên Google Drive');
+            // Google Drive API returns a PSR-7 response with getBody() method
+            // @phpstan-ignore-next-line
+            // @var \Psr\Http\Message\StreamInterface $body
+            $body = $response->getBody();
+            
+            // Stream to disk in chunks to avoid memory issues
+            $dest = fopen($filePath, 'wb'); // 'wb' for binary write
+            if (!$dest) {
+                throw new Exception("Cannot open file for writing: {$filePath}");
             }
 
-            // Check if ZIP already exists for this set
-            $downloadDir = storage_path('app/private/downloads');
-            if (!is_dir($downloadDir)) {
-                mkdir($downloadDir, 0755, true);
-            }
-
-            // Look for existing ZIP files for this set
-            $existingZips = glob($downloadDir . "/set_{$setId}_*.zip");
-            if (!empty($existingZips)) {
-                // Use the most recent ZIP file
-                $zipPath = $existingZips[0];
-                $latestTime = filemtime($zipPath);
-                
-                foreach ($existingZips as $zip) {
-                    if (filemtime($zip) > $latestTime) {
-                        $zipPath = $zip;
-                        $latestTime = filemtime($zip);
+            // Stream in 2MB chunks for better performance
+            while (!$body->eof()) {
+                $chunk = $body->read(2 * 1024 * 1024); // 2MB chunks
+                if ($chunk !== false && $chunk !== '') {
+                    fwrite($dest, $chunk);
+                    // Force garbage collection periodically for large files
+                    if (ftell($dest) % (10 * 1024 * 1024) == 0) {
+                        gc_collect_cycles();
                     }
                 }
-                
-                return $zipPath;
             }
+            fclose($dest);
+        } finally {
+            // Restore original memory limit
+            ini_set('memory_limit', $originalMemoryLimit);
+        }
 
-            // No existing ZIP, create new one
+        return "private/sets/{$setId}/{$fileName}";
+    }
 
-            // Get all files in folder
-            $files = $this->listFilesInFolder($folderId);
-            
-            if (empty($files)) {
-                throw new \Exception('Không tìm thấy file trong thư mục');
-            }
+    /**
+     * Download a whole folder as ZIP (memory-optimized for large files).
+     */
+    public function downloadFolderAsZip(string $folderUrl, string $setId, string $setName): string
+    {
+        $folderId = $this->extractFolderIdFromUrl($folderUrl);
+        if (!$folderId) {
+            throw new Exception('Không tìm thấy thư mục trên Google Drive.');
+        }
 
-            // Create ZIP file
-            $zipFileName = "set_{$setId}_" . time() . ".zip";
-            $zipPath = storage_path("app/private/downloads/{$zipFileName}");
+        $downloadDir = storage_path('app/private/downloads');
+        if (!is_dir($downloadDir)) {
+            mkdir($downloadDir, 0755, true);
+        }
 
-            $zip = new \ZipArchive();
-            $result = $zip->open($zipPath, \ZipArchive::CREATE);
-            if ($result !== true) {
-                throw new \Exception("Cannot create ZIP file. Error code: {$result}");
-            }
+        // Nếu zip tồn tại rồi -> trả luôn
+        $existingZip = glob("{$downloadDir}/set_{$setId}_*.zip");
+        if (!empty($existingZip)) {
+            return $existingZip[0];
+        }
 
-            // Download each file and add to ZIP
-            foreach ($files as $file) {
+        $files = $this->listFilesInFolder($folderId);
+        if (empty($files)) {
+            throw new Exception('Không tìm thấy file nào trong thư mục.');
+        }
+
+        $zipFileName = "set_{$setId}_" . time() . ".zip";
+        $zipPath = "{$downloadDir}/{$zipFileName}";
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new Exception('Không thể tạo file ZIP.');
+        }
+
+        // Tối ưu bộ nhớ: download và add từng file, sau đó xóa ngay
+        foreach ($files as $file) {
+            try {
+                // Download file với streaming
                 $tempPath = $this->downloadFile($file->id, $file->name, $setId);
                 $fullPath = storage_path("app/{$tempPath}");
                 
                 if (file_exists($fullPath)) {
+                    // Add file vào ZIP với compression STORE (không nén để tiết kiệm RAM)
                     $zip->addFile($fullPath, $file->name);
-                } else {
-                    Log::warning("Không tìm thấy file tạm: {$fullPath}");
+                    $zip->setCompressionName($file->name, ZipArchive::CM_STORE);
+                    
+                    // Xóa file tạm ngay sau khi add vào ZIP để giải phóng disk space
+                    // Note: File sẽ được xóa sau khi ZIP close, nhưng ta có thể xóa thủ công
                 }
+            } catch (\Throwable $e) {
+                Log::warning('Error adding file to ZIP', [
+                    'file_id' => $file->id,
+                    'file_name' => $file->name,
+                    'error' => $e->getMessage()
+                ]);
+                // Continue with next file
             }
-
-            $zip->close();
-
-            return $zipPath;
-        } catch (\Exception $e) {
-            Log::error('Lỗi tạo ZIP từ thư mục trên Google Drive', [
-                'folder_url' => $folderUrl,
-                'set_id' => $setId,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
         }
+
+        $zip->close();
+
+        // Cleanup: Xóa các file tạm đã được add vào ZIP
+        $setDir = storage_path("app/private/sets/{$setId}");
+        if (is_dir($setDir)) {
+            $this->deleteDirectory($setDir);
+        }
+
+        return $zipPath;
     }
 
     /**
-     * Stream ZIP file to client for download
-     * 
-     * @param string $zipPath - Full path to ZIP file
-     * @param string $downloadName - Name for downloaded file
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * Helper: Delete directory and its contents recursively.
      */
-    public function streamZipDownload($zipPath, $downloadName)
+    private function deleteDirectory(string $dir): bool
     {
-        // Clean filename: remove special characters and trailing underscores
-        $cleanName = $this->cleanFileName($downloadName);
-        
-        // Add timestamp
-        $timestamp = date('Y-m-d_H-i-s');
-        $finalName = $cleanName . '_' . $timestamp . '.zip';
-        
-        // Final check: ensure no trailing underscore before .zip
-        if (substr($finalName, -5) === '_.zip') {
-            $finalName = substr($finalName, 0, -5) . '.zip';
+        if (!is_dir($dir)) {
+            return false;
         }
-        
-        
-        return response()->stream(function() use ($zipPath) {
+
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = "{$dir}/{$file}";
+            is_dir($path) ? $this->deleteDirectory($path) : @unlink($path);
+        }
+
+        return @rmdir($dir);
+    }
+
+    /**
+     * Stream ZIP file to client.
+     */
+    public function streamZipDownload(string $zipPath, string $downloadName)
+    {
+        if (!file_exists($zipPath)) {
+            abort(404, 'File không tồn tại hoặc đã bị xóa.');
+        }
+
+        $cleanName = $this->cleanFileName($downloadName);
+        $timestamp = date('Y-m-d_H-i-s');
+        if (!empty($cleanName) && trim($cleanName, '_') !== '') {
+            $baseName = $cleanName . '_' . $timestamp;
+        } else {
+            $baseName = $timestamp;
+        }
+        $baseName = trim($baseName, '_');
+        $finalName = $baseName . '.zip';
+        $finalName = preg_replace('/\.zip_+$/', '.zip', $finalName);
+        $finalName = preg_replace('/_+\.zip$/', '.zip', $finalName);
+        $finalName = ltrim($finalName, '_');
+        $finalName = preg_replace('/[\pZ\s\x00-\x1F\x7F]+$/u', '', $finalName);
+        if (!preg_match('/\.zip$/i', $finalName)) {
+            $finalName = preg_replace('/(\.zip).*$/i', '$1', $finalName);
+            if (!preg_match('/\.zip$/i', $finalName)) {
+                $finalName .= '.zip';
+            }
+        }
+        $finalName = preg_replace('/(\.zip)[^A-Za-z0-9]*$/i', '$1', $finalName);
+
+        set_time_limit(0);
+        ignore_user_abort(true);
+
+        return response()->stream(function () use ($zipPath) {
             $stream = fopen($zipPath, 'rb');
-            fpassthru($stream);
+            while (!feof($stream)) {
+                echo fread($stream, 1024 * 1024);
+                ob_flush();
+                flush();
+            }
             fclose($stream);
         }, 200, [
             'Content-Type' => 'application/zip',
@@ -231,18 +240,16 @@ class GoogleDriveService
             'Content-Length' => filesize($zipPath),
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
-            'Expires' => '0'
+            'Expires' => '0',
+            'X-Content-Type-Options' => 'nosniff',
         ]);
     }
-    
+
     /**
-     * Clean filename by removing special characters and trailing underscores
+     * Clean filename by removing special characters and trailing underscores.
      */
-    private function cleanFileName($fileName)
+    private function cleanFileName(string $fileName): string
     {
-        $original = $fileName;
-        
-        // Remove file extension if exists
         $fileName = pathinfo($fileName, PATHINFO_FILENAME);
         
         // Remove Vietnamese diacritics
@@ -271,31 +278,31 @@ class GoogleDriveService
             $fileName = ltrim($fileName, '_');
         }
         
-        
-        return $fileName;
+        // Đảm bảo không rỗng sau khi clean
+        return $fileName ?: 'file';
     }
-    
+
     /**
-     * Remove Vietnamese tones/diacritics
+     * Remove Vietnamese tones.
      */
-    private function removeVietnameseTones($str)
+    private function removeVietnameseTones(string $str): string
     {
-        $str = preg_replace('/[àáạảãâầấậẩẫăằắặẳẵ]/u', 'a', $str);
-        $str = preg_replace('/[èéẹẻẽêềếệểễ]/u', 'e', $str);
-        $str = preg_replace('/[ìíịỉĩ]/u', 'i', $str);
-        $str = preg_replace('/[òóọỏõôồốộổỗơờớợởỡ]/u', 'o', $str);
-        $str = preg_replace('/[ùúụủũưừứựửữ]/u', 'u', $str);
-        $str = preg_replace('/[ỳýỵỷỹ]/u', 'y', $str);
-        $str = preg_replace('/[đ]/u', 'd', $str);
-        $str = preg_replace('/[ÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴ]/u', 'A', $str);
-        $str = preg_replace('/[ÈÉẸẺẼÊỀẾỆỂỄ]/u', 'E', $str);
-        $str = preg_replace('/[ÌÍỊỈĨ]/u', 'I', $str);
-        $str = preg_replace('/[ÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ]/u', 'O', $str);
-        $str = preg_replace('/[ÙÚỤỦŨƯỪỨỰỬỮ]/u', 'U', $str);
-        $str = preg_replace('/[ỲÝỴỶỸ]/u', 'Y', $str);
-        $str = preg_replace('/[Đ]/u', 'D', $str);
-        
-        return $str;
+        $map = [
+            '/[àáạảãâầấậẩẫăằắặẳẵ]/u' => 'a',
+            '/[èéẹẻẽêềếệểễ]/u' => 'e',
+            '/[ìíịỉĩ]/u' => 'i',
+            '/[òóọỏõôồốộổỗơờớợởỡ]/u' => 'o',
+            '/[ùúụủũưừứựửữ]/u' => 'u',
+            '/[ỳýỵỷỹ]/u' => 'y',
+            '/[đ]/u' => 'd',
+            '/[ÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴ]/u' => 'A',
+            '/[ÈÉẸẺẼÊỀẾỆỂỄ]/u' => 'E',
+            '/[ÌÍỊỈĨ]/u' => 'I',
+            '/[ÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ]/u' => 'O',
+            '/[ÙÚỤỦŨƯỪỨỰỬỮ]/u' => 'U',
+            '/[ỲÝỴỶỸ]/u' => 'Y',
+            '/[Đ]/u' => 'D',
+        ];
+        return preg_replace(array_keys($map), array_values($map), $str);
     }
 }
-
