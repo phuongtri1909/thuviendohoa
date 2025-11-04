@@ -578,6 +578,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    width: 100%;
 }
 
 .modal-photo-item {
@@ -590,10 +591,38 @@
     height: auto;
     border-radius: 8px;
     transition: transform 0.3s ease;
+    display: block;
 }
 
 .modal-photo-item img:hover {
     transform: scale(1.05);
+}
+
+/* Single image or multiple images - always full width container */
+.modal-image-container {
+    width: 100%;
+}
+
+.modal-image-container img.img-fluid {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+}
+
+.modal-image-container > a {
+    display: block;
+    width: 100%;
+}
+
+.modal-image-container > a img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.modal-image-container .modal-photos-masonry {
+    width: 100%;
 }
 
 @media (min-width: 768px) {

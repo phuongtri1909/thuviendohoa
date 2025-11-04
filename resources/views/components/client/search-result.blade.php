@@ -619,9 +619,11 @@
                 if (modalImageContainer && set.photos && set.photos.length > 0) {
                     if (set.photos.length === 1) {
                         modalImageContainer.innerHTML = `
-                            <a href="/storage/${set.photos[0].path}" data-fancybox="modal-gallery" data-caption="${set.name}">
-                                <img src="/storage/${set.photos[0].path}" alt="${set.name}" class="img-fluid rounded-4">
-                            </a>
+                            <div class="modal-image-container">
+                                <a href="/storage/${set.photos[0].path}" data-fancybox="modal-gallery" data-caption="${set.name}">
+                                    <img src="/storage/${set.photos[0].path}" alt="${set.name}" class="img-fluid rounded-4">
+                                </a>
+                            </div>
                             <div class="mt-4">
                                 <div id="social-share-container-${set.id}"></div>
                             </div>
@@ -643,8 +645,10 @@
                         });
 
                         modalImageContainer.innerHTML = `
-                            <div class="modal-photos-masonry" id="modal-photos-masonry">
-                                ${photosHtml}
+                            <div class="modal-image-container">
+                                <div class="modal-photos-masonry" id="modal-photos-masonry">
+                                    ${photosHtml}
+                                </div>
                             </div>
                             <div class="mt-4">
                                 <div id="social-share-container-${set.id}"></div>
