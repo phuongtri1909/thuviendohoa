@@ -86,17 +86,17 @@
                                                 <div class="vip-header">
                                                     <h5 class="mb-0 fs-6">Tài nguyên VIP</h5>
                                                 </div>
-                                                <div class="vip-content px-3 pb-3 bg-white">
-                                                    <div class="row">
+                                                <div class="vip-content bg-white">
+                                                    <div class="row g-0">
                                                         @forelse($headerVipAlbums as $album)
-                                                            <div class="col-6 p-3 pb-0">
+                                                            <div class="col-6 col-album py-2">
                                                                 <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}"
                                                                     class="text-decoration-none"
-                                                                    style="display: flex; align-items: center; gap: 8px;">
+                                                                    style="display: flex; align-items: center; gap: 8px; padding-left: 25px;">
                                                                     <img src="{{ Storage::url($album->icon ?? $album->image) }}"
                                                                         alt="{{ $album->name }}"
                                                                         style="width: 24px; height: 24px; object-fit: contain;">
-                                                                    <span>{{ $album->name }}</span>
+                                                                    <span class="text-dark">{{ $album->name }}</span>
                                                                 </a>
                                                             </div>
                                                         @empty
@@ -115,17 +115,17 @@
                                                 <div class="free-header">
                                                     <h5 class="mb-0 fs-6">Tài nguyên MIỄN PHÍ</h5>
                                                 </div>
-                                                <div class="free-content px-3 pb-3 bg-white">
-                                                    <div class="row">
+                                                <div class="free-content bg-white">
+                                                    <div class="row g-0">
                                                         @forelse($headerFreeAlbums as $album)
-                                                            <div class="col-6 p-3 pb-0">
+                                                            <div class="col-6 col-album py-2">
                                                                 <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}"
                                                                     class="text-decoration-none"
-                                                                    style="display: flex; align-items: center; gap: 8px;">
+                                                                    style="display: flex; align-items: center; gap: 8px; padding-left: 25px;">
                                                                     <img src="{{ Storage::url($album->icon ?? $album->image) }}"
                                                                         alt="{{ $album->name }}"
                                                                         style="width: 24px; height: 24px; object-fit: contain;">
-                                                                    <span>{{ $album->name }}</span>
+                                                                    <span class="text-dark">{{ $album->name }}</span>
                                                                 </a>
                                                             </div>
                                                         @empty
@@ -424,10 +424,10 @@
                                     <div class="vip-header">
                                         <h5 class="mb-0 fs-6">Tài nguyên VIP</h5>
                                     </div>
-                                    <div class="vip-content px-3 pb-3">
-                                        <div class="row">
+                                    <div class="vip-content">
+                                        <div class="row g-0">
                                             @forelse($headerVipAlbums as $album)
-                                                <div class="col-12 p-3 pb-0">
+                                                <div class="col-12">
                                                     <a href="{{ route('search', ['album' => $album->slug, 'type' => 'premium']) }}"
                                                         class="text-decoration-none"
                                                         style="display: flex; align-items: center; gap: 8px;">
@@ -453,10 +453,10 @@
                                     <div class="free-header">
                                         <h5 class="mb-0 fs-6">Tài nguyên MIỄN PHÍ</h5>
                                     </div>
-                                    <div class="free-content px-3 pb-3">
-                                        <div class="row">
+                                    <div class="free-content">
+                                        <div class="row g-0">
                                             @forelse($headerFreeAlbums as $album)
-                                                <div class="col-12 p-3 pb-0">
+                                                <div class="col-12">
                                                     <a href="{{ route('search', ['album' => $album->slug, 'type' => 'free']) }}"
                                                         class="text-decoration-none"
                                                         style="display: flex; align-items: center; gap: 8px;">
