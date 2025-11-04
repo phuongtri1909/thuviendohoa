@@ -930,6 +930,10 @@
                                 <i class="fab fa-linkedin-in"></i>
                                 <span>LinkedIn</span>
                             </a>
+                            <button type="button" class="social-btn copy-link text-xs-1" title="Sao chép liên kết" onclick="copySetLink('${shareUrl}')" style="background:#ffffff;color:#111827">
+                                <i class="fas fa-link" style="color:#111827;"></i>
+                                <span style="color:#111827;">Sao chép link</span>
+                            </button>
                         </div>
 
                         <button type="button" class="favorite-btn text-xs-1 ${set.isFavorited ? 'favorited' : ''}" data-set-id="${set.id}" onclick="toggleFavoriteModal(this)">
@@ -938,6 +942,31 @@
                         </button>
                     </div>
                 `;
+            }
+
+            window.copySetLink = async function(url) {
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(url);
+                    } else {
+                        const ta = document.createElement('textarea');
+                        ta.value = url;
+                        ta.style.position = 'fixed';
+                        ta.style.opacity = '0';
+                        document.body.appendChild(ta);
+                        ta.focus();
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                    }
+                    if (typeof showToast === 'function') {
+                        showToast('Đã sao chép liên kết sản phẩm', 'success');
+                    }
+                } catch (e) {
+                    if (typeof showToast === 'function') {
+                        showToast('Không thể sao chép liên kết', 'error');
+                    }
+                }
             }
 
 

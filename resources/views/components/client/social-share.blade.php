@@ -151,7 +151,7 @@
             gap: 5px;
         }
 
-        @media (min-width: 1350px) {
+        @media (min-width: 1440px) {
             .social-share-wrapper {
                 flex-direction: row;
                 justify-content: space-between;
