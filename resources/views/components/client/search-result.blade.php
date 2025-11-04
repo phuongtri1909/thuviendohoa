@@ -1301,89 +1301,24 @@
             }
 
             function confirmPurchaseAndDownload(setId) {
-                // Show loading
-                showSwal({
-                    title: 'Đang xử lý...',
-                    text: 'Vui lòng đợi',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                // Confirm purchase
-                fetch(`/user/purchase/confirm/${setId}`, {
+                // Thêm vào popup và stream tiến trình tải trực tiếp
+                const setNameEl = document.querySelector('#imageModal .modal-title');
+                const setName = setNameEl ? setNameEl.textContent.trim() : 'File';
+                if (window.startDownloadWithPopup) {
+                    window.startDownloadWithPopup({ endpoint: `/user/purchase/confirm/${setId}`, setId, setName });
+                } else {
+                    // Fallback: vẫn gọi như cũ nếu popup script chưa load
+                    fetch(`/user/purchase/confirm/${setId}`, {
                         method: 'POST',
                         headers: {
+                            'Accept': 'application/zip,application/json',
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        body: JSON.stringify({
-                            user_confirmed: true // Explicit user confirmation
-                        })
-                    })
-                    .then(response => {
-                        Swal.close();
-
-                        // Check if response is a file download (streaming response)
-                        const contentType = response.headers.get('content-type');
-                        const contentDisposition = response.headers.get('content-disposition');
-
-                        if (contentType?.includes('application/zip') || contentDisposition?.includes(
-                                'attachment')) {
-                            // Handle file download
-                            return response.blob().then(blob => {
-                                const url = window.URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                a.href = url;
-                                a.download = contentDisposition?.split('filename=')[1] ||
-                                'download.zip';
-                                document.body.appendChild(a);
-                                a.click();
-                                window.URL.revokeObjectURL(url);
-                                document.body.removeChild(a);
-
-                                showSwal({
-                                    icon: 'success',
-                                    title: 'Tải xuống thành công!',
-                                    text: 'File đã được tải về máy',
-                                    confirmButtonColor: '#667eea'
-                                });
-                            });
-                        }
-
-                        // Handle JSON response (error cases)
-                        return response.json().then(data => {
-                            if (data.success) {
-                                showSwal({
-                                    icon: 'success',
-                                    title: 'Thành công!',
-                                    text: data.message,
-                                    confirmButtonColor: '#667eea'
-                                });
-                            } else {
-                                showSwal({
-                                    icon: 'error',
-                                    title: 'Lỗi',
-                                    text: data.message,
-                                    confirmButtonColor: '#667eea'
-                                });
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        Swal.close();
-                        console.error('Error:', error);
-                        showSwal({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: 'Có lỗi xảy ra khi xử lý giao dịch',
-                            confirmButtonColor: '#667eea'
-                        });
+                        body: JSON.stringify({ user_confirmed: true })
                     });
+                }
             }
 
             window.toggleFavoriteCard = function(event, button) {

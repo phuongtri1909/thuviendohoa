@@ -9,3 +9,5 @@
 @include('components.top_button')
 
 @include('client.layouts.partials.footer')
+
+<script src="/js/downloads.js"></script>

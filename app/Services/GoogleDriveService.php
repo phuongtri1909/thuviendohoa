@@ -131,6 +131,15 @@ class GoogleDriveService
             throw new Exception('Không tìm thấy file nào trong thư mục.');
         }
 
+        $tempSetDir = storage_path("app/private/sets/{$setId}");
+        if (is_dir($tempSetDir)) {
+            $this->deleteDirectory($tempSetDir);
+        }
+
+        foreach (glob("{$downloadDir}/set_{$setId}_*.zip_*") as $partialZip) {
+            @unlink($partialZip);
+        }
+
         $zipFileName = "set_{$setId}_" . time() . ".zip";
         $zipPath = "{$downloadDir}/{$zipFileName}";
 
