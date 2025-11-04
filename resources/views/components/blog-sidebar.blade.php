@@ -1,7 +1,7 @@
 <div class="blog-sidebar">
     <div>
         <h4 class="fw-semibold title-tab">DANH MỤC BLOG</h4>
-        <div class="mt-3 category-blog">
+        <div class="mt-2 category-blog">
             @foreach($categories as $category)
                 <span class="color-primary-12 category-blog-item">
                     <img class="me-2" src="{{ asset('images/svg/blogs/arrow-right.svg') }}" alt="">
@@ -28,7 +28,7 @@
                          src="{{ $sidebarBlog->image ? asset('storage/' . $sidebarBlog->image) : asset('/images/d/dev/blogs/design1.jpg') }}" 
                          alt="{{ $sidebarBlog->title }}">
                     <div>
-                        <h6 class="fw-semibold color-primary-12">{{ Str::limit($sidebarBlog->title, 80) }}</h6>
+                        <h6 class="fw-semibold color-primary-12">{{ Str::limit($sidebarBlog->title, 200) }}</h6>
                         <span class="color-primary-12">
                             <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
                             <span>{{ $sidebarBlog->created_at->format('d/m/Y') }}</span>

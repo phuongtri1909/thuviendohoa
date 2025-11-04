@@ -112,7 +112,7 @@
                     date: '{{ $featuredBlog->created_at->format('d/m/Y') }}',
                     views: {{ $featuredBlog->views ?? 0 }},
                     image: {!! json_encode(
-                        $featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/vertical.png'),
+                        $featuredBlog->image_left ? asset('storage/' . $featuredBlog->image_left) : ($featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/vertical.png')),
                     ) !!},
                     contentImage: {!! json_encode(
                         $featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/blog-content.png'),
