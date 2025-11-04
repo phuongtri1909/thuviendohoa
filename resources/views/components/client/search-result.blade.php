@@ -40,11 +40,11 @@
     </div>
     <div class="bg-white rounded-4 p-2 p-md-4 mt-2">
         <div>
-            <span class="fw-semibold">Tags phân loại: </span>
+            <span class="fw-semibold fs-6 text-xs-1 me-2">Tags phân loại: </span>
             @if ($relatedTags->count() > 0)
                 @foreach ($relatedTags as $tag)
                     <button
-                        class="tag-btn badge bg-primary-10 color-primary-11 p-2 p-md-3 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
+                        class="me-2 tag-btn badge bg-primary-10 color-primary-11 p-2 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
                         data-tag="{{ $tag->slug }}" title="Chọn tag {{ $tag->name }}">
                         {{ $tag->name }}
                     </button>
