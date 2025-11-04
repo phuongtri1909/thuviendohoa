@@ -942,6 +942,44 @@
 
 
 
+            function positionBanner() {
+                const container = document.getElementById('masonry-container');
+                if (!container) return;
+
+                const banner = Array.from(container.children).find(item => {
+                    const link = item.querySelector('a[href*="/y-tuong-thiet-ke"]');
+                    return link !== null;
+                });
+
+                if (!banner) return;
+
+                const getColumnCount = () => {
+                    const width = window.innerWidth;
+                    if (width < 577) return 1;
+                    if (width < 769) return 2;
+                    if (width < 1200) return 3;
+                    return 4;
+                };
+                
+                const columnCount = getColumnCount();
+                
+                const allItems = Array.from(container.children);
+                const itemsWithoutBanner = allItems.filter(item => item !== banner);
+                
+                const targetIndex = columnCount;
+                
+                if (itemsWithoutBanner.length >= columnCount - 1) {
+                    const insertAfterItem = itemsWithoutBanner[columnCount - 1];
+                    if (insertAfterItem && insertAfterItem.nextSibling !== banner) {
+                        container.insertBefore(banner, insertAfterItem.nextSibling);
+                    } else if (insertAfterItem && !insertAfterItem.nextSibling) {
+                        container.appendChild(banner);
+                    }
+                } else {
+                    container.appendChild(banner);
+                }
+            }
+
             function initMasonry() {
                 const container = document.getElementById('masonry-container');
                 if (container && container.children.length > 0) {
@@ -949,6 +987,7 @@
                     let loadedImages = 0;
 
                     if (images.length === 0) {
+                        positionBanner();
                         refreshMasonry();
                         return;
                     }
@@ -960,6 +999,7 @@
                             img.addEventListener('load', () => {
                                 loadedImages++;
                                 if (loadedImages === images.length) {
+                                    positionBanner();
                                     refreshMasonry();
                                 }
                             });
@@ -967,6 +1007,7 @@
                     });
 
                     if (loadedImages === images.length) {
+                        positionBanner();
                         refreshMasonry();
                     }
                 }
@@ -1047,6 +1088,9 @@
                     container.style.display = 'none';
                     container.offsetHeight;
                     container.style.display = '';
+                    setTimeout(() => {
+                        positionBanner();
+                    }, 50);
                 }
             }
 
@@ -1109,7 +1153,10 @@
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(refreshMasonry, 250);
+                resizeTimeout = setTimeout(() => {
+                    positionBanner();
+                    refreshMasonry();
+                }, 250);
             });
 
             function showSwal(options) {
