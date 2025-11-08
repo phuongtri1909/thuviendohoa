@@ -171,6 +171,7 @@ class PurchaseSetController extends Controller
         } catch (\Throwable $e) {
             Log::error('Error checking download condition', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'set_id' => $setId,
                 'user_id' => Auth::id()
             ]);
@@ -205,88 +206,92 @@ class PurchaseSetController extends Controller
 
             DB::beginTransaction();
 
-            $set = Set::where('id', $setId)
-                ->where('status', Set::STATUS_ACTIVE)
-                ->lockForUpdate()
-                ->first();
+            try {
+                $set = Set::where('id', $setId)
+                    ->where('status', Set::STATUS_ACTIVE)
+                    ->lockForUpdate()
+                    ->first();
 
-            $validation = $this->validateDownloadConditions($user, $set);
+                $validation = $this->validateDownloadConditions($user, $set);
 
-            if (!$validation['success']) {
-                DB::rollBack();
-                $statusCode = match ($validation['code'] ?? null) {
-                    'SET_NOT_FOUND' => 404,
-                    'NO_FREE_DOWNLOADS', 'PACKAGE_EXPIRED', 'INSUFFICIENT_COINS' => 403,
-                    default => 400
-                };
-                return response()->json($validation, $statusCode);
-            }
-
-            // Đã mua -> tải trực tiếp
-            if (!empty($validation['already_purchased'])) {
-                DB::commit();
-                return $this->processDownload($set);
-            }
-
-            // Xử lý giao dịch
-            if ($set->isFree()) {
-                if (!$user->hasUnlimitedDownloads() && $user->canDownloadFree()) {
-                    $user->decrement('free_downloads');
+                if (!$validation['success']) {
+                    DB::rollBack();
+                    $statusCode = match ($validation['code'] ?? null) {
+                        'SET_NOT_FOUND' => 404,
+                        'NO_FREE_DOWNLOADS', 'PACKAGE_EXPIRED', 'INSUFFICIENT_COINS' => 403,
+                        default => 400
+                    };
+                    return response()->json($validation, $statusCode);
                 }
-            } else {
-                $price = $set->price ?? 0;
-                $user->decrement('coins', $price);
 
-                $purchase = PurchaseSet::create([
-                    'user_id' => $user->id,
-                    'set_id' => $set->id,
-                    'coins' => $price
-                ]);
+                if (!empty($validation['already_purchased'])) {
+                    DB::commit();
+                    return $this->processDownload($set, $user);
+                }
 
-                \App\Models\CoinHistory::create([
-                    'user_id' => $user->id,
-                    'amount' => -$price,
-                    'type' => \App\Models\CoinHistory::TYPE_PURCHASE,
-                    'source' => $purchase->id,
-                    'reason' => 'Mua file premium',
-                    'description' => "Mua file '{$set->name}' với {$price} xu",
-                    'metadata' => json_encode([
-                        'purchase_id' => $purchase->id,
+                // Xử lý giao dịch
+                if ($set->isFree()) {
+                    if (!$user->hasUnlimitedDownloads() && $user->canDownloadFree()) {
+                        $user->decrement('free_downloads');
+                    }
+                } else {
+                    $price = $set->price ?? 0;
+                    $user->decrement('coins', $price);
+
+                    $purchase = PurchaseSet::create([
+                        'user_id' => $user->id,
                         'set_id' => $set->id,
-                        'set_name' => $set->name,
-                        'set_type' => $set->type
-                    ])
-                ]);
+                        'coins' => $price
+                    ]);
+
+                    \App\Models\CoinHistory::create([
+                        'user_id' => $user->id,
+                        'amount' => -$price,
+                        'type' => \App\Models\CoinHistory::TYPE_PURCHASE,
+                        'source' => $purchase->id,
+                        'reason' => 'Mua file premium',
+                        'description' => "Mua file '{$set->name}' với {$price} xu",
+                        'metadata' => json_encode([
+                            'purchase_id' => $purchase->id,
+                            'set_id' => $set->id,
+                            'set_name' => $set->name,
+                            'set_type' => $set->type
+                        ])
+                    ]);
+                }
+
+                DB::commit();
+
+                return $this->processDownload($set, $user);
+
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                throw $e;
             }
 
-            DB::commit();
-
-            return $this->processDownload($set);
         } catch (\Throwable $e) {
-            DB::rollBack();
             Log::error('Error confirming purchase', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'set_id' => $setId,
                 'user_id' => Auth::id()
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra khi xử lý giao dịch'
+                'message' => 'Có lỗi xảy ra khi xử lý giao dịch: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Tải file từ Google Drive (đã stream tối ưu)
+     * Tải file từ Google Drive (optimized với streaming)
      */
-    private function processDownload($set)
+    private function processDownload($set, $user)
     {
         try {
             set_time_limit(0);
-            ignore_user_abort(true);
-            
-            // Tăng memory limit cho file lớn
-            ini_set('memory_limit', '1024M');
+            ignore_user_abort(false);
+            ini_set('memory_limit', '512M');
 
             if (!$set->drive_url) {
                 return response()->json([
@@ -297,7 +302,9 @@ class PurchaseSetController extends Controller
 
             Log::info('Download start', [
                 'set_id' => $set->id,
-                'user_id' => Auth::id()
+                'set_name' => $set->name,
+                'user_id' => $user->id,
+                'user_email' => $user->email
             ]);
 
             $zipPath = $this->driveService->downloadFolderAsZip(
@@ -306,7 +313,7 @@ class PurchaseSetController extends Controller
                 $set->name
             );
 
-            if ($purchase = PurchaseSet::where('user_id', Auth::id())
+            if ($purchase = PurchaseSet::where('user_id', $user->id)
                 ->where('set_id', $set->id)
                 ->first()) {
                 $purchase->markAsDownloaded();
@@ -314,32 +321,33 @@ class PurchaseSetController extends Controller
 
             Log::info('Download ready', [
                 'set_id' => $set->id,
-                'zip' => $zipPath
+                'zip_path' => $zipPath,
+                'zip_size' => file_exists($zipPath) ? filesize($zipPath) : 0,
+                'user_id' => $user->id
             ]);
 
-            try {
-                return $this->driveService->streamZipDownload($zipPath, $set->name);
-            } catch (\Throwable $e) {
-                Log::warning('Client aborted download', [
-                    'set_id' => $set->id,
-                    'error' => $e->getMessage()
-                ]);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tải xuống bị gián đoạn.'
-                ], 499);
-            }
+            return $this->driveService->streamZipDownload($zipPath, $set->name);
+
         } catch (\Throwable $e) {
             Log::error('Error processing download', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'set_id' => $set->id,
-                'user_id' => Auth::id(),
+                'user_id' => $user->id,
                 'drive_url' => $set->drive_url
             ]);
 
+            if (connection_aborted()) {
+                Log::info('Client aborted download', [
+                    'set_id' => $set->id,
+                    'user_id' => $user->id
+                ]);
+                return;
+            }
+
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra khi tải file từ Drive: ' . $e->getMessage()
+                'message' => 'Có lỗi xảy ra khi tải file: ' . $e->getMessage()
             ], 500);
         }
     }

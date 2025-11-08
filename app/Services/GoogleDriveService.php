@@ -38,13 +38,14 @@ class GoogleDriveService
     }
 
     /**
-     * List all files in a Drive folder.
+     * List all files in a Drive folder (non-recursive).
      */
     public function listFilesInFolder(string $folderId): array
     {
         $params = [
             'q' => "'{$folderId}' in parents and trashed = false",
-            'fields' => 'files(id, name, mimeType, size)'
+            'fields' => 'files(id, name, mimeType, size)',
+            'pageSize' => 1000
         ];
 
         $results = $this->drive->files->listFiles($params);
@@ -52,14 +53,14 @@ class GoogleDriveService
     }
 
     /**
-     * Download a single Drive file with streaming (RAM-safe).
+     * Download a single Drive file with streaming (memory-safe).
      */
     public function downloadFile(string $fileId, string $fileName, string $setId): string
     {
         $setDir = storage_path("app/private/sets/{$setId}");
         $filePath = "{$setDir}/{$fileName}";
 
-        if (file_exists($filePath)) {
+        if (file_exists($filePath) && filesize($filePath) > 0) {
             return "private/sets/{$setId}/{$fileName}";
         }
 
@@ -67,46 +68,49 @@ class GoogleDriveService
             mkdir($setDir, 0755, true);
         }
 
-        // Increase memory limit temporarily for this operation
-        $originalMemoryLimit = ini_get('memory_limit');
-        ini_set('memory_limit', '512M');
-
         try {
             $response = $this->drive->files->get($fileId, ['alt' => 'media']);
-            
-            // Google Drive API returns a PSR-7 response with getBody() method
-            // @phpstan-ignore-next-line
-            // @var \Psr\Http\Message\StreamInterface $body
             $body = $response->getBody();
             
-            // Stream to disk in chunks to avoid memory issues
-            $dest = fopen($filePath, 'wb'); // 'wb' for binary write
+            $dest = fopen($filePath, 'wb');
             if (!$dest) {
                 throw new Exception("Cannot open file for writing: {$filePath}");
             }
 
-            // Stream in 2MB chunks for better performance
+            $totalWritten = 0;
             while (!$body->eof()) {
-                $chunk = $body->read(2 * 1024 * 1024); // 2MB chunks
-                if ($chunk !== false && $chunk !== '') {
-                    fwrite($dest, $chunk);
-                    // Force garbage collection periodically for large files
-                    if (ftell($dest) % (10 * 1024 * 1024) == 0) {
-                        gc_collect_cycles();
-                    }
+                $chunk = $body->read(8192);
+                if ($chunk === '' || $chunk === false) {
+                    break;
+                }
+                
+                fwrite($dest, $chunk);
+                $totalWritten += strlen($chunk);
+                
+                if ($totalWritten % (10 * 1024 * 1024) === 0) {
+                    unset($chunk);
+                    gc_collect_cycles();
                 }
             }
+            
             fclose($dest);
-        } finally {
-            // Restore original memory limit
-            ini_set('memory_limit', $originalMemoryLimit);
+
+            if (!file_exists($filePath) || filesize($filePath) === 0) {
+                throw new Exception("Failed to download file: {$fileName}");
+            }
+
+        } catch (\Throwable $e) {
+            if (file_exists($filePath)) {
+                @unlink($filePath);
+            }
+            throw new Exception("Error downloading file '{$fileName}': " . $e->getMessage());
         }
 
         return "private/sets/{$setId}/{$fileName}";
     }
 
     /**
-     * Download a whole folder as ZIP (memory-optimized for large files).
+     * Download folder as ZIP with FILE LOCK to prevent duplicate creation.
      */
     public function downloadFolderAsZip(string $folderUrl, string $setId, string $setName): string
     {
@@ -120,72 +124,179 @@ class GoogleDriveService
             mkdir($downloadDir, 0755, true);
         }
 
-        // Nếu zip tồn tại rồi -> trả luôn
-        $existingZip = glob("{$downloadDir}/set_{$setId}_*.zip");
-        if (!empty($existingZip)) {
-            return $existingZip[0];
+        $lockFile = "{$downloadDir}/set_{$setId}.lock";
+        $lockHandle = fopen($lockFile, 'c');
+        
+        if (!$lockHandle) {
+            throw new Exception('Cannot create lock file');
         }
 
-        $files = $this->listFilesInFolder($folderId);
-        if (empty($files)) {
-            throw new Exception('Không tìm thấy file nào trong thư mục.');
-        }
-
-        $tempSetDir = storage_path("app/private/sets/{$setId}");
-        if (is_dir($tempSetDir)) {
-            $this->deleteDirectory($tempSetDir);
-        }
-
-        foreach (glob("{$downloadDir}/set_{$setId}_*.zip_*") as $partialZip) {
-            @unlink($partialZip);
-        }
-
-        $zipFileName = "set_{$setId}_" . time() . ".zip";
-        $zipPath = "{$downloadDir}/{$zipFileName}";
-
-        $zip = new ZipArchive();
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            throw new Exception('Không thể tạo file ZIP.');
-        }
-
-        // Tối ưu bộ nhớ: download và add từng file, sau đó xóa ngay
-        foreach ($files as $file) {
-            try {
-                // Download file với streaming
-                $tempPath = $this->downloadFile($file->id, $file->name, $setId);
-                $fullPath = storage_path("app/{$tempPath}");
-                
-                if (file_exists($fullPath)) {
-                    // Add file vào ZIP với compression STORE (không nén để tiết kiệm RAM)
-                    $zip->addFile($fullPath, $file->name);
-                    $zip->setCompressionName($file->name, ZipArchive::CM_STORE);
-                    
-                    // Xóa file tạm ngay sau khi add vào ZIP để giải phóng disk space
-                    // Note: File sẽ được xóa sau khi ZIP close, nhưng ta có thể xóa thủ công
-                }
-            } catch (\Throwable $e) {
-                Log::warning('Error adding file to ZIP', [
-                    'file_id' => $file->id,
-                    'file_name' => $file->name,
-                    'error' => $e->getMessage()
+        try {
+            if (!flock($lockHandle, LOCK_EX | LOCK_NB)) {
+                Log::info("Waiting for another process to finish creating ZIP", [
+                    'set_id' => $setId
                 ]);
-                // Continue with next file
+                
+                $waited = 0;
+                $maxWait = 600;
+                
+                while (!flock($lockHandle, LOCK_EX | LOCK_NB) && $waited < $maxWait) {
+                    sleep(2);
+                    $waited += 2;
+                    
+                    $existingZip = $this->findExistingZip($downloadDir, $setId);
+                    if ($existingZip) {
+                        Log::info("ZIP created by another process", [
+                            'set_id' => $setId,
+                            'zip_path' => $existingZip
+                        ]);
+                        return $existingZip;
+                    }
+                }
+                
+                if ($waited >= $maxWait) {
+                    throw new Exception('Timeout waiting for ZIP creation');
+                }
             }
+
+            $existingZip = $this->findExistingZip($downloadDir, $setId);
+            if ($existingZip) {
+                Log::info("ZIP already exists", [
+                    'set_id' => $setId,
+                    'zip_path' => $existingZip
+                ]);
+                return $existingZip;
+            }
+
+            $this->cleanupOldZips($downloadDir);
+
+            $files = $this->listFilesInFolder($folderId);
+            
+            if (empty($files)) {
+                throw new Exception('Không tìm thấy file nào trong thư mục Drive.');
+            }
+
+            Log::info("Creating new ZIP", [
+                'set_id' => $setId,
+                'set_name' => $setName,
+                'files_count' => count($files)
+            ]);
+
+            $tempSetDir = storage_path("app/private/sets/{$setId}");
+            if (is_dir($tempSetDir)) {
+                $this->deleteDirectory($tempSetDir);
+            }
+
+            $zipFileName = "set_{$setId}_" . time() . ".zip";
+            $zipPath = "{$downloadDir}/{$zipFileName}";
+
+            $zip = new ZipArchive();
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                throw new Exception('Không thể tạo file ZIP.');
+            }
+
+            $successCount = 0;
+            $failCount = 0;
+
+            foreach ($files as $file) {
+                try {
+                    $tempPath = $this->downloadFile($file->id, $file->name, $setId);
+                    $fullPath = storage_path("app/{$tempPath}");
+                    
+                    if (file_exists($fullPath)) {
+                        $zip->addFile($fullPath, $file->name);
+                        
+                        $extension = strtolower(pathinfo($file->name, PATHINFO_EXTENSION));
+                        $compressedTypes = ['psd', 'tiff', 'tif', 'bmp', 'svg', 'txt', 'xml'];
+                        
+                        if (!in_array($extension, $compressedTypes)) {
+                            $zip->setCompressionName($file->name, ZipArchive::CM_STORE);
+                        }
+                        
+                        $successCount++;
+                    }
+                } catch (\Throwable $e) {
+                    $failCount++;
+                    Log::warning('Error adding file to ZIP', [
+                        'file_id' => $file->id,
+                        'file_name' => $file->name,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
+            $zip->close();
+
+            if ($successCount === 0) {
+                @unlink($zipPath);
+                throw new Exception('Không thể thêm file nào vào ZIP.');
+            }
+
+            if (is_dir($tempSetDir)) {
+                $this->deleteDirectory($tempSetDir);
+            }
+
+            Log::info('ZIP created successfully', [
+                'set_id' => $setId,
+                'zip_path' => $zipPath,
+                'zip_size' => filesize($zipPath),
+                'success_count' => $successCount,
+                'fail_count' => $failCount
+            ]);
+
+            return $zipPath;
+
+        } finally {
+            if (is_resource($lockHandle)) {
+                flock($lockHandle, LOCK_UN);
+                fclose($lockHandle);
+            }
+            @unlink($lockFile);
         }
-
-        $zip->close();
-
-        // Cleanup: Xóa các file tạm đã được add vào ZIP
-        $setDir = storage_path("app/private/sets/{$setId}");
-        if (is_dir($setDir)) {
-            $this->deleteDirectory($setDir);
-        }
-
-        return $zipPath;
     }
 
     /**
-     * Helper: Delete directory and its contents recursively.
+     * Find existing ZIP for a set.
+     */
+    private function findExistingZip(string $downloadDir, string $setId): ?string
+    {
+        $existingZips = glob("{$downloadDir}/set_{$setId}_*.zip");
+        
+        foreach ($existingZips as $zipPath) {
+            if (file_exists($zipPath) && filesize($zipPath) > 0) {
+                return $zipPath;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Cleanup ZIPs older than 24 hours.
+     */
+    private function cleanupOldZips(string $downloadDir): void
+    {
+        $cutoff = time() - 86400;
+        $cleaned = 0;
+        
+        foreach (glob("{$downloadDir}/*.zip") as $zipPath) {
+            if (filemtime($zipPath) < $cutoff) {
+                if (@unlink($zipPath)) {
+                    $cleaned++;
+                    Log::info('Cleaned up old ZIP', [
+                        'file' => basename($zipPath)
+                    ]);
+                }
+            }
+        }
+        
+        if ($cleaned > 0) {
+            Log::info("Cleaned up {$cleaned} old ZIP files");
+        }
+    }
+
+    /**
+     * Delete directory and contents recursively.
      */
     private function deleteDirectory(string $dir): bool
     {
@@ -193,7 +304,7 @@ class GoogleDriveService
             return false;
         }
 
-        $files = array_diff(scandir($dir), ['.', '..']);
+        $files = array_diff(scandir($dir) ?: [], ['.', '..']);
         foreach ($files as $file) {
             $path = "{$dir}/{$file}";
             is_dir($path) ? $this->deleteDirectory($path) : @unlink($path);
@@ -203,91 +314,61 @@ class GoogleDriveService
     }
 
     /**
-     * Stream ZIP file to client.
+     * Stream ZIP file to client with optimized headers.
      */
     public function streamZipDownload(string $zipPath, string $downloadName)
     {
         if (!file_exists($zipPath)) {
-            abort(404, 'File không tồn tại hoặc đã bị xóa.');
+            abort(404, 'File không tồn tại.');
         }
 
         $cleanName = $this->cleanFileName($downloadName);
-        $timestamp = date('Y-m-d_H-i-s');
-        if (!empty($cleanName) && trim($cleanName, '_') !== '') {
-            $baseName = $cleanName . '_' . $timestamp;
-        } else {
-            $baseName = $timestamp;
-        }
-        $baseName = trim($baseName, '_');
-        $finalName = $baseName . '.zip';
-        $finalName = preg_replace('/\.zip_+$/', '.zip', $finalName);
-        $finalName = preg_replace('/_+\.zip$/', '.zip', $finalName);
-        $finalName = ltrim($finalName, '_');
-        $finalName = preg_replace('/[\pZ\s\x00-\x1F\x7F]+$/u', '', $finalName);
-        if (!preg_match('/\.zip$/i', $finalName)) {
-            $finalName = preg_replace('/(\.zip).*$/i', '$1', $finalName);
-            if (!preg_match('/\.zip$/i', $finalName)) {
-                $finalName .= '.zip';
-            }
-        }
-        $finalName = preg_replace('/(\.zip)[^A-Za-z0-9]*$/i', '$1', $finalName);
+        $timestamp = date('Ymd_His');
+        $finalName = ($cleanName ?: 'download') . '_' . $timestamp . '.zip';
 
         set_time_limit(0);
-        ignore_user_abort(true);
+        ignore_user_abort(false);
 
         return response()->stream(function () use ($zipPath) {
             $stream = fopen($zipPath, 'rb');
+            if (!$stream) {
+                return;
+            }
+
             while (!feof($stream)) {
+                if (connection_aborted()) {
+                    break;
+                }
+                
                 echo fread($stream, 1024 * 1024);
                 ob_flush();
                 flush();
             }
+            
             fclose($stream);
         }, 200, [
             'Content-Type' => 'application/zip',
-            'Content-Disposition' => 'attachment; filename=' . $finalName,
+            'Content-Disposition' => 'attachment; filename="' . $finalName . '"',
             'Content-Length' => filesize($zipPath),
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
             'X-Content-Type-Options' => 'nosniff',
+            'X-Accel-Buffering' => 'no',
         ]);
     }
 
     /**
-     * Clean filename by removing special characters and trailing underscores.
+     * Clean filename for safe download.
      */
     private function cleanFileName(string $fileName): string
     {
         $fileName = pathinfo($fileName, PATHINFO_FILENAME);
-        
-        // Remove Vietnamese diacritics
         $fileName = $this->removeVietnameseTones($fileName);
-        
-        // Replace spaces with underscores
-        $fileName = str_replace(' ', '_', $fileName);
-        
-        // Remove special characters except alphanumeric, underscore, dash
-        $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '', $fileName);
-        
-        // Remove multiple consecutive underscores
+        $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $fileName);
         $fileName = preg_replace('/_+/', '_', $fileName);
+        $fileName = trim($fileName, '_-');
         
-        // Remove trailing underscores and dashes
-        $fileName = rtrim($fileName, '_-');
-        
-        // Remove leading underscores and dashes
-        $fileName = ltrim($fileName, '_-');
-        
-        // Final check: ensure no leading or trailing underscore
-        while (substr($fileName, -1) === '_') {
-            $fileName = rtrim($fileName, '_');
-        }
-        while (substr($fileName, 0, 1) === '_') {
-            $fileName = ltrim($fileName, '_');
-        }
-        
-        // Đảm bảo không rỗng sau khi clean
         return $fileName ?: 'file';
     }
 
