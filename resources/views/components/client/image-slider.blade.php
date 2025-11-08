@@ -26,12 +26,12 @@
             width: 100%;
             overflow: hidden;
             background: white;
-            padding: 20px 60px;
+            padding: 0;
         }
 
         .slider-wrapper {
             display: flex;
-            gap: 15px;
+            gap: 0;
             transition: transform 0.5s ease;
             align-items: center;
         }
@@ -39,22 +39,15 @@
         .slide-item {
             flex: 0 0 auto;
             position: relative;
-            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            height: var(--slide-height, 260px);
-            width: var(--slide-height, 260px);
+            aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
             box-sizing: border-box;
-        }
-
-        .slide-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            max-height: 400px;
         }
 
         .slide-item img {
@@ -114,10 +107,6 @@
         }
 
         @media (max-width: 768px) {
-            .slider-container {
-                padding: 15px 50px;
-            }
-
             .slider-nav {
                 width: 35px;
                 height: 35px;
@@ -133,10 +122,6 @@
         }
 
         @media (max-width: 576px) {
-            .slider-container {
-                padding: 10px 40px;
-            }
-
             .slider-nav {
                 width: 30px;
                 height: 30px;
@@ -144,10 +129,6 @@
 
             .slider-nav i {
                 font-size: 14px;
-            }
-
-            .slider-wrapper {
-                gap: 10px;
             }
         }
     </style>
@@ -170,27 +151,59 @@
                 }
 
                 init() {
+                    this.setSlideSizes();
                     this.updateSlideWidth();
                     this.attachEvents();
                     this.updateButtons();
 
                     window.addEventListener('resize', () => {
+                        this.setSlideSizes();
                         this.updateSlideWidth();
                         this.updateButtons();
                     });
                 }
 
+                setSlideSizes() {
+                    const slides = this.wrapper.querySelectorAll('.slide-item');
+                    const containerHeight = this.wrapper.parentElement.offsetHeight || 300;
+                    const maxSize = Math.min(containerHeight, 400);
+                    
+                    slides.forEach(slide => {
+                        const img = slide.querySelector('img');
+                        if (img && img.complete) {
+                            // Set size based on image, maintaining 1:1 aspect ratio
+                            // Use max of width/height but cap at maxSize
+                            const imgSize = Math.max(img.naturalWidth, img.naturalHeight);
+                            const size = Math.min(imgSize, maxSize);
+                            slide.style.width = size + 'px';
+                            slide.style.height = size + 'px';
+                        } else if (img) {
+                            // Wait for image to load
+                            img.addEventListener('load', () => {
+                                const imgSize = Math.max(img.naturalWidth, img.naturalHeight);
+                                const size = Math.min(imgSize, maxSize);
+                                slide.style.width = size + 'px';
+                                slide.style.height = size + 'px';
+                                this.updateSlideWidth();
+                                this.updateButtons();
+                            }, { once: true });
+                        }
+                    });
+                }
+
                 updateSlideWidth() {
                     const slides = this.wrapper.querySelectorAll('.slide-item');
-                    const gap = 15;
+                    const gap = 0;
 
                     this.slideWidth = 0;
                     slides.forEach(slide => {
                         this.slideWidth += slide.offsetWidth + gap;
                     });
-                    this.slideWidth -= gap;
+                    if (slides.length > 0) {
+                        this.slideWidth -= gap;
+                    }
 
-                    this.containerWidth = this.wrapper.parentElement.offsetWidth - 120;
+                    this.containerWidth = this.wrapper.parentElement.offsetWidth;
                 }
 
                 attachEvents() {
@@ -199,13 +212,15 @@
                 }
 
                 prev() {
-                    const scrollAmount = 400;
+                    // Smooth scroll: scroll 1/3 container width
+                    const scrollAmount = this.containerWidth / 3;
                     this.currentPosition = Math.max(0, this.currentPosition - scrollAmount);
                     this.updatePosition();
                 }
 
                 next() {
-                    const scrollAmount = 400;
+                    // Smooth scroll: scroll 1/3 container width
+                    const scrollAmount = this.containerWidth / 3;
                     const maxPosition = this.slideWidth - this.containerWidth;
                     this.currentPosition = Math.min(maxPosition, this.currentPosition + scrollAmount);
                     this.updatePosition();

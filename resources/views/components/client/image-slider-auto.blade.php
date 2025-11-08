@@ -22,17 +22,16 @@
 @push('styles')
     <style>
         .image-slider-auto .slider-container {
-            --slide-height: {{ $height }}px;
             position: relative;
             width: 100%;
             overflow: hidden;
             background: #fff;
-            padding: 0; /* parent quyết định padding */
+            padding: 0;
         }
 
         .image-slider-auto .slider-wrapper {
             display: flex;
-            gap: 15px;
+            gap: 0;
             align-items: center;
             will-change: transform;
         }
@@ -40,16 +39,15 @@
         .image-slider-auto .slide-item {
             flex: 0 0 auto;
             position: relative;
-            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            height: var(--slide-height);
-            width: var(--slide-height);
+            aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
             box-sizing: border-box;
+            max-width: 400px;
+            max-height: 400px;
         }
 
         .image-slider-auto .slide-item img {
@@ -59,11 +57,6 @@
             display: block;
         }
 
-        .image-slider-auto .slide-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-            transition: transform .25s ease, box-shadow .25s ease;
-        }
 
         /* Cursor state when dragging */
         .image-slider-auto.is-dragging .slider-wrapper { cursor: grabbing; }
@@ -97,6 +90,8 @@
                 init() {
                     // Chờ ảnh load xong để đo kích thước chính xác (tránh giật, lệch)
                     this.waitForImages().then(() => {
+                        // Set slide sizes based on images (1:1 aspect ratio)
+                        this.setSlideSizes();
                         // Double raf để đảm bảo layout stabilized trước khi đo
                         requestAnimationFrame(() => {
                             requestAnimationFrame(() => {
@@ -109,11 +104,30 @@
                     });
 
                     window.addEventListener('resize', () => {
+                        this.setSlideSizes();
                         this.updateWidths();
                         // Giữ vị trí hiện tại trong 1 chu kỳ sau khi resize
                         const loopWidth = this.baseWidth || (this.trackWidth / 2);
                         if (loopWidth > 0) this.current = ((this.current % loopWidth) + loopWidth) % loopWidth;
                         this.wrapper.style.transform = `translate3d(-${this.current}px,0,0)`;
+                    });
+                }
+
+                setSlideSizes() {
+                    const slides = this.wrapper.querySelectorAll('.slide-item');
+                    const containerHeight = this.container ? this.container.offsetHeight : 300;
+                    const maxSize = Math.min(containerHeight, 400);
+                    
+                    slides.forEach(slide => {
+                        const img = slide.querySelector('img');
+                        if (img && img.complete) {
+                            // Set size based on image, maintaining 1:1 aspect ratio
+                            // Use max of width/height but cap at maxSize
+                            const imgSize = Math.max(img.naturalWidth, img.naturalHeight);
+                            const size = Math.min(imgSize, maxSize);
+                            slide.style.width = size + 'px';
+                            slide.style.height = size + 'px';
+                        }
                     });
                 }
 
@@ -142,7 +156,7 @@
 
                     // Ghi nhận số item ban đầu và baseWidth (tổng width 1 chu kỳ)
                     this.initialCount = items.length;
-                    const gap = 15;
+                    const gap = 0;
                     this.baseWidth = 0;
                     items.forEach((slide, idx) => {
                         this.baseWidth += slide.offsetWidth + (idx < items.length - 1 ? gap : 0);
@@ -161,12 +175,15 @@
                 }
 
                 updateWidths() {
-                    const gap = 15;
+                    const gap = 0;
                     this.trackWidth = 0;
-                    this.wrapper.querySelectorAll('.slide-item').forEach(slide => {
+                    const slides = this.wrapper.querySelectorAll('.slide-item');
+                    slides.forEach(slide => {
                         this.trackWidth += slide.offsetWidth + gap;
                     });
-                    this.trackWidth -= gap;
+                    if (slides.length > 0) {
+                        this.trackWidth -= gap;
+                    }
 
                     // Recompute baseWidth in case of responsive changes
                     const children = Array.from(this.wrapper.children).slice(0, this.initialCount);
