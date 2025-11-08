@@ -123,9 +123,15 @@ class SoftwareController extends Controller
 
     public function destroy(Software $software)
     {
+        if ($software->sets()->count() > 0) {
+            return redirect()->route('admin.software.index')
+                ->with('error', "Không thể xóa phần mềm '{$software->name}' vì đang được sử dụng bởi {$software->sets()->count()} set. Vui lòng xóa hoặc chuyển phần mềm của các set trước.");
+        }
+        
         Software::deleteImage($software->logo);
         Software::deleteImage($software->logo_hover);
         Software::deleteImage($software->logo_active);
+        
         $software->delete();
 
         return redirect()->route('admin.software.index')->with('success', 'Phần mềm đã được xóa thành công!');

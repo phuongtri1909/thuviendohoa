@@ -28,7 +28,7 @@
                     </li>
 
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.sets.*', 'admin.albums.*', 'admin.categories.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.sets.*', 'admin.albums.*', 'admin.categories.*','admin.tags.*','admin.software.*','admin.colors.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-cogs"></i>
                             <span>Quản lý sản phẩm</span>

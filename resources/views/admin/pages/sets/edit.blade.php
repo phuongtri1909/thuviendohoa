@@ -257,7 +257,11 @@
                                         <div class="chip-select" data-select-id="album_ids" style="position:relative;">
                                             <div class="chip-select-toggle custom-input" tabindex="0">Chọn albums...</div>
                                             <div class="chip-select-dropdown"
-                                                style="position:absolute;left:0;right:0;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:auto;">
+                                                style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                                <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
+                                                    <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                                </div>
+                                                <div class="dropdown-options" style="max-height:180px;overflow:auto;">
                                                 @foreach ($albums as $al)
                                                     <label
                                                         style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
@@ -267,6 +271,7 @@
                                                         <span>{{ $al->name }}</span>
                                                     </label>
                                                 @endforeach
+                                                </div>
                                             </div>
                                             <div id="album_ids_tags" class="selected-tags"
                                                 style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div>
@@ -289,7 +294,11 @@
                                         <div class="chip-select" data-select-id="category_ids" style="position:relative;">
                                             <div class="chip-select-toggle custom-input" tabindex="0">Chọn danh mục...</div>
                                             <div class="chip-select-dropdown"
-                                                style="position:absolute;left:0;right:0;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:auto;">
+                                                style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                                <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
+                                                    <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                                </div>
+                                                <div class="dropdown-options" style="max-height:180px;overflow:auto;">
                                                 @foreach ($categories as $ct)
                                                     <label
                                                         style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
@@ -299,6 +308,7 @@
                                                         <span>{{ $ct->name }}</span>
                                                     </label>
                                                 @endforeach
+                                                </div>
                                             </div>
                                             <div id="category_ids_tags" class="selected-tags"
                                                 style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div>
@@ -324,7 +334,11 @@
                                         <div class="chip-select" data-select-id="color_ids" style="position:relative;">
                                             <div class="chip-select-toggle custom-input" tabindex="0">Chọn màu sắc...</div>
                                             <div class="chip-select-dropdown"
-                                                style="position:absolute;left:0;right:0;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:auto;">
+                                                style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                                <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
+                                                    <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                                </div>
+                                                <div class="dropdown-options" style="max-height:180px;overflow:auto;">
                                                 @foreach ($colors as $cl)
                                                     <label
                                                         style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
@@ -338,6 +352,7 @@
                                                         </span>
                                                     </label>
                                                 @endforeach
+                                                </div>
                                             </div>
                                             <div id="color_ids_tags" class="selected-tags"
                                                 style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div>
@@ -360,7 +375,11 @@
                                         <div class="chip-select" data-select-id="software_ids" style="position:relative;">
                                             <div class="chip-select-toggle custom-input" tabindex="0">Chọn phần mềm...</div>
                                             <div class="chip-select-dropdown"
-                                                style="position:absolute;left:0;right:0;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:auto;">
+                                                style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                                <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
+                                                    <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                                </div>
+                                                <div class="dropdown-options" style="max-height:180px;overflow:auto;">
                                                 @foreach ($software as $sw)
                                                     <label
                                                         style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
@@ -370,6 +389,7 @@
                                                         <span>{{ $sw->name }}</span>
                                                     </label>
                                                 @endforeach
+                                                </div>
                                             </div>
                                             <div id="software_ids_tags" class="selected-tags"
                                                 style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div>
@@ -395,7 +415,11 @@
                                         <div class="chip-select" data-select-id="tag_ids" style="position:relative;">
                                             <div class="chip-select-toggle custom-input" tabindex="0">Chọn tags...</div>
                                             <div class="chip-select-dropdown"
-                                                style="position:absolute;left:0;right:0;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:auto;">
+                                                style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                                <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
+                                                    <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                                </div>
+                                                <div class="dropdown-options" style="max-height:180px;overflow:auto;">
                                                 @foreach ($tags as $tg)
                                                     <label
                                                         style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
@@ -405,6 +429,7 @@
                                                         <span>{{ $tg->name }}</span>
                                                     </label>
                                                 @endforeach
+                                                </div>
                                             </div>
                                             <div id="tag_ids_tags" class="selected-tags"
                                                 style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;"></div>
@@ -524,6 +549,29 @@
 
             // Handle checkbox changes
             dropdown.addEventListener('change', syncFromCheckboxes);
+
+            // Handle search filter
+            const searchInput = dropdown.querySelector('.dropdown-search');
+            const optionsContainer = dropdown.querySelector('.dropdown-options');
+            if (searchInput && optionsContainer) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    const labels = optionsContainer.querySelectorAll('label');
+                    labels.forEach(label => {
+                        const text = label.textContent.toLowerCase();
+                        label.style.display = text.includes(query) ? 'flex' : 'none';
+                    });
+                });
+                // Reset search when dropdown opens
+                toggle.addEventListener('click', () => {
+                    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                        searchInput.value = '';
+                        const labels = optionsContainer.querySelectorAll('label');
+                        labels.forEach(label => { label.style.display = 'flex'; });
+                        setTimeout(() => searchInput.focus(), 100);
+                    }
+                });
+            }
 
             // Initial render (preserve old input)
             // ensure checkboxes reflect old selected options

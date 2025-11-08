@@ -178,10 +178,14 @@ class AlbumController extends Controller
      */
     public function destroy(Album $album)
     {
+        $album->albumTypes()->delete();
+        $album->albumSets()->delete();
+        
         Album::deleteImage($album->image);
         Album::deleteImage($album->icon);
-        $album->albumTypes()->delete();
+        
         $album->delete();
+        
         return redirect()->route('admin.albums.index')->with('success', 'Album đã được xóa thành công!');
     }
 }

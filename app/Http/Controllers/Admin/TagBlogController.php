@@ -81,6 +81,8 @@ class TagBlogController extends Controller
 
     public function destroy(TagBlog $tagBlog)
     {
+        $tagBlog->blogTags()->delete();
+        
         $tagBlog->delete();
 
         return redirect()->route('admin.tag-blogs.index')->with('success', 'Tag blog đã được xóa thành công!');

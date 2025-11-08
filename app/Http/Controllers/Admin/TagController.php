@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Tag;
+use App\Models\TagSet;
 use Illuminate\Support\Str;
 
 class TagController extends Controller
@@ -83,7 +84,9 @@ class TagController extends Controller
 
     public function destroy(Tag $tag)
     {
+        TagSet::where('tag_id', $tag->id)->delete();
         $tag->delete();
+
         return redirect()->route('admin.tags.index')->with('success', 'Tag đã được xóa thành công!');
     }
 }

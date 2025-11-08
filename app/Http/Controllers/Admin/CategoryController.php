@@ -134,7 +134,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $category->categorySets()->delete();
+        
         Category::deleteImage($category->image);
+        
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được xóa thành công!');

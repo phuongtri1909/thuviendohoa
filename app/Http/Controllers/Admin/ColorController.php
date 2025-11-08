@@ -87,7 +87,9 @@ class ColorController extends Controller
 
     public function destroy(Color $color)
     {
+        $color->colorSets()->delete();
         $color->delete();
+        
         return redirect()->route('admin.colors.index')
             ->with('success', 'Màu đã được xóa thành công!');
     }
