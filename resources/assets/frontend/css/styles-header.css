@@ -52,6 +52,12 @@
     align-items: center;
 }
 
+.logo-link img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
 .logo-vietfile {
     display: flex;
     align-items: center;
@@ -143,7 +149,7 @@
 .search-container {
     display: flex;
     background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
     overflow: visible;
     border: 1px solid #e9ecef;
     height: 61px;
@@ -252,7 +258,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    border: none;
+    border: 1px solid transparent;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -260,11 +266,14 @@
     white-space: nowrap;
 }
 
+.action-btn:hover {
+    border-color: var(--primary-color);
+}
+
 .get-link-btn,
 .blog-btn {
     background: var(--primary-color-2);
     color: white;
-    border: 1px solid var(--primary-color);
 }
 
 .login-btn {
@@ -298,6 +307,31 @@
 
     .header-actions {
         display: none;
+    }
+    
+    .header-logo {
+        max-width: 150px;
+    }
+    
+    .logo-link {
+        margin-right: 0 !important;
+    }
+    
+    .logo-link img {
+        max-height: 40px;
+        width: auto;
+        margin-right: 10px !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .header-logo {
+        max-width: 120px;
+    }
+    
+    .logo-link img {
+        max-height: 35px;
+        margin-right: 5px !important;
     }
 }
 
@@ -674,7 +708,7 @@
     background: linear-gradient(180deg, #FF8686 0%, #E93030 100%);
     color: white;
     font-size: 14px;
-    transition: all 0.3s ease;
+    transition: min-height 0.15s ease-out, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
     min-height: 47px;
@@ -739,6 +773,7 @@
 .register-download-section .btn:hover {
     min-height: 50px;
     animation: continuous-glow 1s ease-in-out infinite;
+    transition: min-height 0.1s ease-out, box-shadow 0.3s ease;
 }
 
 .register-download-section .btn img {

@@ -12,7 +12,7 @@
     </div>
 
     <div class="container-custom">
-        <div class="mt-3 bg-featured-section px-4 pb-4">
+        <div class="mt-5 bg-featured-section px-4 pb-4">
             <x-client.featured-collections title="TOP lĩnh vực thịnh hành" :albums="$trendingAlbums" />
 
             <div class="d-flex justify-content-center">
