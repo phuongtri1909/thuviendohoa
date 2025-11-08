@@ -29,7 +29,6 @@ class AlbumHeaderServiceProvider extends ServiceProvider
                           ->where('status', Set::STATUS_ACTIVE);
                 })
                 ->orderBy('name', 'asc')
-                ->limit(4)
                 ->get();
 
             $freeAlbums = Album::select('id', 'name', 'slug', 'image', 'icon')
@@ -38,7 +37,6 @@ class AlbumHeaderServiceProvider extends ServiceProvider
                           ->where('status', Set::STATUS_ACTIVE);
                 })
                 ->orderBy('name', 'asc')
-                ->limit(4)
                 ->get();
 
             $view->with('headerVipAlbums', $vipAlbums);
