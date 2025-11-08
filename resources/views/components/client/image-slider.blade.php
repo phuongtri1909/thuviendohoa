@@ -1,5 +1,5 @@
 <div class="image-slider">
-    <h6 class="color-primary-12 fw-semibold fs-5 mb-0">{{ $title ?? 'Thiết kế cùng chủ đề' }}</h6>
+    <h6 class="color-primary-12 fw-semibold fs-5 mb-3">{{ $title ?? 'Thiết kế cùng chủ đề' }}</h6>
     <div class="slider-container" style="--slide-height: {{ $height ?? 260 }}px;">
         <div class="slider-wrapper" id="{{ $id ?? 'sliderWrapper' }}">
             @foreach ($slides as $slide)
