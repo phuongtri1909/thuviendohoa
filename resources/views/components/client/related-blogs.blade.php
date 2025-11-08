@@ -9,7 +9,7 @@
                 <a href="{{ route('blog.item', $relatedBlog->slug) }}" class="text-decoration-none">
                     <div class="row blog-related-item">
                         <div class="col-12 col-sm-5">
-                            <img class="blog-related-img rounded-3 img-fluid" 
+                            <img class="blog-related-img img-fluid" 
                                  src="{{ $relatedBlog->image ? asset('storage/' . $relatedBlog->image) : asset('images/d/dev/blogs/related1.png') }}"
                                  alt="{{ $relatedBlog->title }}">
                         </div>
@@ -59,13 +59,14 @@
         }
         
         .blog-related-item {
-            align-items: stretch;
+            align-items: flex-start;
         }
 
         .blog-related-img {
             width: 100%;
-            height: 100%;
+            height: 200px;
             object-fit: cover;
+            border-radius: 10px;
             transition: opacity 0.3s ease;
         }
         

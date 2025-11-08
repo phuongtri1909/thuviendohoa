@@ -54,11 +54,11 @@
                         </h4>
 
 
-                        <p class="modal-description color-primary-12">
+                        <p class="modal-description color-primary-12" style="word-break: break-word;">
                             Chính sách và thời gian bảo hành sản phẩm sẽ được ghi trong thông tin chi tiết của sản phẩm..
                         </p>
 
-                        <div class="color-primary-12">
+                        <div class="color-primary-12" style="display: flex; flex-direction: column; gap: 5px;">
                             <div class="modal-info-item modal-format">
                                 <img src="{{ asset('images/svg/search-results/format.svg') }}" alt="">
                                 <span>Định dạng: Illustrator, eps</span>
@@ -73,7 +73,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-column mt-4">
+                        <div class="d-flex flex-column mt-5">
                             <div class="custom-badge">
                                 <div class="custom-badge-value" style="background-color: #F0A610; color: #fff;">
                                     5 XU
@@ -84,14 +84,14 @@
                                 </div>
                             </div>
 
-                            <button class="btn-download btn fw-semibold py-3 px-5 d-flex mt-2">
+                            <button class="btn-download btn fw-semibold py-3 d-flex mt-2">
                                 <img src="{{ asset('images/svg/arrow-right.svg') }}" alt="" class="arrow-original">
                                 <img src="{{ asset('images/svg/arrow-right.svg') }}" alt="" class="arrow-new">
                                 Tải về máy
                             </button>
                         </div>
 
-                        <div class="color-primary-12 mt-5">
+                        <div class="color-primary-12 mt-5 pt-5" style="display: flex; flex-direction: column; gap: 5px;">
                             <div class="modal-info-item">
                                 <img src="{{ asset('images/svg/search-results/image-modal.svg') }}" alt="">
                                 <span class="color-primary-9"> Bạn cần chỉnh sửa hoặc thiết kế file mới, click <a
@@ -190,6 +190,8 @@
 
                         <x-client.image-slider title="Thiết kế cùng chủ đề" id="sliderWrapper1" prevId="prevBtn1"
                             nextId="nextBtn1" :slides="$slides" />
+                        
+                        <span class="my-3 d-flex"></span>
 
                         @php
                             $slidesAuto = [
@@ -203,6 +205,8 @@
                                 ['src' => asset('images/d/dev/slide4.png')],
                             ];
                         @endphp
+
+                        
 
                         <x-client.image-slider-auto title="Thiết kế nổi bật" id="sliderAuto1" :slides="$slidesAuto"
                             :height="260" :speed="5" :drag-enabled="true" />

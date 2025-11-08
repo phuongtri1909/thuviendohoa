@@ -20,15 +20,15 @@
 
         <div class="row">
             <div class="col-12 col-lg-9 mt-5">
-                <div class="bg-blog-item p-4 position-relative">
+                <div class="bg-blog-item ps-2 ps-sm-4 pe-2 pe-sm-5 position-relative">
                     <div class="blog-layout d-flex">
                         <div class="blog-button-wrap">
                             <x-client.button-blog-item />
                         </div>
 
-                        <div class="blog-main flex-grow-1 ps-md-4">
+                        <div class="blog-main flex-grow-1 ps-2 ps-sm-5">
                             <div class="text-center">
-                                <h2 class="color-primary-12 fs-4 fw-semibold title-blog-item">
+                                <h2 class="color-primary-12 fs-4 fw-semibold title-blog-item pt-4">
                                     {{ $blog->title }}
                                 </h2>
 
@@ -125,12 +125,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-3 mt-4">
+            <div class="col-12 col-lg-3 mt-5 pt-4">
                 <x-blog-sidebar :categories="$categories" :sidebarSetting="$sidebarSetting" :sidebarBlogs="$sidebarBlogs" />
 
                 @if ($sidebarSetting->banner_images && count($sidebarSetting->banner_images) > 0)
                     @foreach ($sidebarSetting->banner_images as $banner)
-                        <div class="mb-3">
+                        <div class="mt-3">
                             <img class="img-fluid w-100 img-banner-blog-item" src="{{ asset('storage/' . $banner) }}"
                                 alt="Banner">
                         </div>

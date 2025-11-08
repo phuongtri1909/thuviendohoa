@@ -38,7 +38,7 @@
             @endforeach
         </div>
     </div>
-    <div class="bg-white rounded-4 p-2 p-md-4 mt-2">
+    <div class="bg-white rounded-4 p-2 py-md-4 px-md-5 mt-2">
         <div>
             <span class="fw-semibold fs-6 text-xs-1 me-2">Tags phân loại: </span>
             @if ($relatedTags->count() > 0)
@@ -768,7 +768,7 @@
                             </div>
                         </div>
                         
-                        <button class="btn-download btn fw-semibold py-3 px-5 d-flex mt-2" onclick="initDownload(${set.id})" data-set-id="${set.id}">
+                        <button class="btn-download btn fw-semibold py-3 d-flex mt-2" onclick="initDownload(${set.id})" data-set-id="${set.id}">
                             <img src="/images/svg/arrow-right.svg" alt="" class="arrow-original">
                             <img src="/images/svg/arrow-right.svg" alt="" class="arrow-new">
                             Tải về máy

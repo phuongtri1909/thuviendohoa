@@ -6,7 +6,7 @@
 
 <div class="image-slider-auto" data-speed="{{ $speed }}" data-drag="{{ $dragEnabled ? '1' : '0' }}">
     @if(!empty($title))
-        <h6 class="color-primary-12 fw-semibold">{{ $title }}</h6>
+        <h6 class="color-primary-12 fw-semibold fs-5 mb-3">{{ $title }}</h6>
     @endif
     <div class="slider-container" style="--slide-height: {{ $height }}px;">
         <div class="slider-wrapper" id="{{ $id ?? 'sliderAutoWrapper' }}">

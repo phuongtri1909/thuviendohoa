@@ -39,7 +39,7 @@
 /* Component dưới banner */
 .search-section {
     position: absolute;
-    top: 40%;
+    top: 30%;
     left: 0;
     right: 0;
     z-index: 10;
@@ -109,11 +109,14 @@
     background: var(--bg-gradient);
     color: white;
     border: none;
-    width: fit-content;
+    width: max-content;
     align-items: center;
     gap: 8px;
     position: relative;
     transition: all 0.3s ease;
+    font-size: 18px;
+    padding-left: 4.5rem;
+    padding-right: 4.5rem;
 }
 
 .btn-download img {
@@ -129,7 +132,7 @@
 
 .arrow-new {
     position: absolute;
-    left: 20%;
+    left: 25%;
     top: 50%;
     transform: translateY(-50%);
     opacity: 0;

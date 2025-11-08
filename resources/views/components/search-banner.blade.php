@@ -15,7 +15,7 @@
                     </nav>
 
                     <div class="banner-search-title text-center">
-                        <h2 class="banner-title mt-5 fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q', '') }}"</h2>
+                        <h2 class="banner-title mt-2 fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q', '') }}"</h2>
                         <span class="text-white">Hiển thị 510 kết quả</span>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                 </nav>
 
                 <div class="banner-search-title text-center">
-                    <h2 class="banner-title mt-5 fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q', '') }}"</h2>
+                    <h2 class="banner-title fw-bold text-white">Kết quả tìm kiếm cho "{{ request()->get('q', '') }}"</h2>
                     <span class="text-white">Hiển thị 510 kết quả</span>
                 </div>
             </div>

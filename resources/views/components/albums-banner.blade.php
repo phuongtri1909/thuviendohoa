@@ -17,7 +17,7 @@
             </nav>
 
             <div class="banner-search-title text-center">
-                <h2 class="banner-title mt-5 fw-bold text-white">Tất cả bộ sưu tập</h2>
+                <h2 class="banner-title mt-2 fw-bold text-white">Tất cả bộ sưu tập</h2>
                 <div class="albums-search-form mt-4">
                     <form action="{{ route('albums') }}" method="GET" class="d-flex justify-content-center">
                         <div class="albums-search-input-wrapper">

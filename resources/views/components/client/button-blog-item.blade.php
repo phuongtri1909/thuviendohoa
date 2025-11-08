@@ -93,7 +93,6 @@
             border: 2px solid #caecfa;
             border-radius: 8px;
             padding: 15px 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             width: 70px;
             position: sticky;
             top: 85px;
