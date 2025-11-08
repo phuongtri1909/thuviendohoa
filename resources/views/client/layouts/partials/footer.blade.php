@@ -1,5 +1,5 @@
 <!-- Social Media Bar -->
-<div class="social-bar">
+<div class="social-bar mt-5">
     @foreach ($socials as $social)
     <a href="{{ $social->url }}"><i class="{{ $social->icon }}"></i></a>
     @endforeach

@@ -1,23 +1,69 @@
+.desktop-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .desktop-container {
     position: relative;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
     width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
 
 .desktop-base {
     width: 100%;
-    height: auto;
+    height: 800px;
     display: block;
     z-index: 1;
+    object-fit: cover;
+    object-position: center;
 }
 
 .desktop-screen-area {
     position: absolute;
-    top: -7%;
-    left: 26%;
-    width: 48%;
-    height: 76%;
+    top: -6%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 904px;
+    height: 607px;
     z-index: 2;
+}
+
+@media (max-width: 904px) {
+    .desktop-base {
+        height: calc(100vw * 800 / 904);
+    }
+    
+    .desktop-screen-area {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 904 / 607;
+        left: 0;
+        transform: none;
+    }
+    
+    /* Desktop-package-content flow theo desktop-frame */
+    .desktop-package-content {
+        padding: 2% 5%;
+    }
+    
+    .package-feature {
+        font-size: 11px;
+    }
+    
+    .package-title {
+        font-size: 14px;
+    }
+    
+    .package-price {
+        font-size: 28px;
+    }
+    
+    .package-register {
+        font-size: 28px;
+    }
 }
 
 .desktop-background {
@@ -30,15 +76,20 @@
     transition: all 0.5s ease-in-out;
 }
 
+/* Package view animations - đảm bảo desktop-package-content flow theo desktop-frame */
 .desktop-screen-area.package-view .desktop-frame {
     animation: slideOut 0.5s ease-in-out forwards;
 }
 
 .desktop-screen-area.package-view .desktop-package-overlay {
+    display: block !important;
     animation: slideIn 0.5s ease-in-out forwards;
 }
 
 .desktop-screen-area.package-view .desktop-package-content {
+    display: flex !important;
+    width: 100%;
+    height: 100%;
     animation: slideIn 0.5s ease-in-out forwards;
 }
 
@@ -55,7 +106,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 102%;
+    height: 100%;
     z-index: 10;
     opacity: 0;
     transform: scaleY(0);
@@ -73,6 +124,7 @@
     align-items: center;
     justify-content: center;
     padding: 0% 8%;
+    box-sizing: border-box;
     overflow: hidden;
     opacity: 0;
     transform: scaleY(0);
@@ -136,8 +188,7 @@
 .package-item:hover .package-hover-img {
     opacity: 1;
 }
-
-/* Package Content Styles */
+        
 .package-content {
     position: absolute;
     top: 0;
@@ -196,7 +247,7 @@
 }
 
 .package-feature {
-    font-size: clamp(6px, 0.8vw, 8px);
+    font-size: 13px;
     color: #666;
     margin-bottom: 2px;
     line-height: 1.2;
@@ -211,17 +262,15 @@
     left: 0;
     width: 100%;
     height: 1px;
-    background: repeating-linear-gradient(
-        to right,
-        #ccc 0px,
-        #ccc 2px,
-        transparent 2px,
-        transparent 4px
-    );
+    background: repeating-linear-gradient(to right,
+            #ccc 0px,
+            #ccc 2px,
+            transparent 2px,
+            transparent 4px);
 }
 
 .package-title {
-    font-size: clamp(17px, 1.2vw, 12px);
+    font-size: 17px;
     font-weight: bold;
     color: white;
     margin-bottom: 2px;
@@ -229,27 +278,20 @@
 }
 
 .package-price {
-    font-size: clamp(35px, 1.5vw, 14px);
+    font-size: 35px;
     font-weight: bold;
     color: white;
     line-height: 1.2;
 }
 
 .package-register {
-    font-size: clamp(35px, 2vw, 16px);
+    font-size: 35px;
     font-weight: bold;
     color: white;
     text-align: center;
     width: 100%;
     text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     margin-top: 10px;
-}
-
-.package-feature {
-    font-size: clamp(13px, 0.8vw, 8px);
-    color: #666;
-    margin-bottom: 2px;
-    line-height: 2;
 }
 
 .package-feature-colored-1 {
@@ -278,6 +320,7 @@
         opacity: 1;
         transform: scaleY(1);
     }
+
     100% {
         opacity: 0;
         transform: scaleY(0);
@@ -289,6 +332,7 @@
         opacity: 0;
         transform: scaleY(0);
     }
+
     100% {
         opacity: 1;
         transform: scaleY(1);
@@ -300,7 +344,16 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 90%;
+    height: 78%;
+    z-index: 4;
+}
+
+.desktop-frame-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 4;
 }
 
@@ -310,30 +363,39 @@
     left: 0;
     width: 100%;
     height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     z-index: 5;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0% 5% 5% 5%;
+    padding: 30px 50px;
+    box-sizing: border-box;
     overflow: hidden;
     transform-origin: center center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Desktop content responsive scaling */
 .desktop-content-logo {
     max-width: 100%;
     height: auto;
-    width: clamp(60px, 8vw, 120px);
+    width: 230px;
+}
+
+.desktop-content-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .desktop-content h5 {
-    font-size: clamp(12px, 2vw, 18px);
-    margin: 10px 0;
+    font-size: 20px;
 }
 
 .desktop-content p {
-    font-size: clamp(15px, 1.5vw, 16px);
-    margin: 8px 0;
+    font-size: 17px;
 }
 
 .desktop-content .row {
@@ -341,241 +403,49 @@
 }
 
 .desktop-feature-item {
-    padding: 5px;
     text-align: center;
 }
 
-.desktop-feature-item img {
-    width: 40px;
-    height: 40px;
+.desktop-feature-item-icon {
+    width: 65px;
+    height: 65px;
     margin-bottom: 5px;
     background: #E3E3E3;
     border-radius: 50%;
     padding: 8px;
     display: block;
+    display: flex;
     margin: 0 auto 5px auto;
+    align-items: center;
+    justify-content: center;
 }
 
-.desktop-feature-item p {
-    font-size: clamp(15px, 1.2vw, 16px);
-    margin: 2px 0;
+.desktop-feature-item img {
+    width: 40px;
+    height: 40px;
 }
 
-@media (max-width: 1550px) {
-    .desktop-button-container{
-        bottom: 3% !important;
-    }
-
-    .desktop-button {
-        height: 60px !important;
-    }
-
-    .desktop-feature-item p {
-        font-size: clamp(13px, 1.2vw, 15px);
-    }
-
-    .desktop-content p{
-        font-size: clamp(13px, 1.2vw, 15px);
-    }
-
-    .row.mt-xxl-5{
-        margin-top: 1.5rem !important;
-    }
+.package-feature {
+    font-size: 13px;
 }
 
-/* Responsive scaling for different screen sizes */
-@media (max-width: 1350px) {
-    .package-feature {
-        font-size: clamp(10px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(14px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(31px, 1.5vw, 14px);
-    }
-
-    .desktop-feature-item p {
-        font-size: clamp(11px, 1.2vw, 13px);
-    }
-
-    .desktop-content p{
-        font-size: clamp(11px, 1.2vw, 13px);
-    }
+.package-title {
+    font-size: 17px;
 }
 
-@media (max-width: 1250px) {
-    .desktop-content {
-        padding: 0% 4% 4% 4%;
-    }
-    
-    .desktop-content h5 {
-        font-size: clamp(11px, 1.8vw, 16px);
-    }
-    
-    .desktop-content p {
-        font-size: clamp(9px, 1.4vw, 13px);
-    }
-    
-    .desktop-feature-item p {
-        font-size: clamp(9px, 1.1vw, 13px);
-    }
-    
-    .desktop-feature-item img {
-        width: 35px;
-        height: 35px;
-    }
-
-    .desktop-button {
-        height: 35px !important;
-    }
-
-    .package-register {
-        font-size: clamp(31px, 2vw, 16px);
-    }
-
-    .desktop-button-container{
-        bottom: 4% !important;
-    }
-
-    .desktop-button {
-        height: 50px !important;
-    }
+.package-price {
+    font-size: 35px;
 }
 
-@media (max-width: 1120px) {
-    .desktop-content {
-        padding: 2% 5% 5% 5%;
-    }
-
-    .desktop-button {
-        height: 45px !important;
-    }
-
-    .desktop-feature-item p {
-        font-size: clamp(9px, 1.2vw, 11px);
-    }
-
-    .desktop-content p{
-        font-size: clamp(9px, 1.2vw, 11px);
-    }
-}
-
-@media (max-width: 1100px) {
-    .desktop-content {
-        padding: 2% 3% 5% 3%;
-    }
-}
-
-@media (max-width: 1050px) {
-    .desktop-content h5 {
-        margin-top: 0;
-        margin-bottom: 0;
-        font-size: clamp(10px, 1.6vw, 14px);
-    }
-
-    .desktop-feature-item p {
-        font-size: clamp(9px, 1.2vw, 11px);
-    }
-
-    .desktop-content p{
-        font-size: clamp(9px, 1.2vw, 11px);
-    }
-
-    .package-feature {
-        font-size: clamp(8px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(12px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(29px, 1.5vw, 14px);
-    }
-
-    .package-register {
-        font-size: clamp(27px, 2vw, 16px);
-    }
-}
-
-@media (max-width: 992px) {
-    .desktop-content h5 {
-        font-size: clamp(10px, 1.6vw, 14px);
-    }
-    
-    .desktop-content p {
-        font-size: clamp(7px, 1.2vw, 10px);
-    }
-    
-    .desktop-feature-item p {
-        font-size: clamp(7px, 1vw, 10px);
-    }
-    
-    .desktop-feature-item img {
-        width: 30px;
-        height: 30px;
-    }
-
-    .desktop-frame{
-        height: 92% !important;
-    }
-
-    .desktop-button {
-        height: 30px !important;
-    }
-
-    .package-feature {
-        font-size: clamp(7px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(10px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(25px, 1.5vw, 14px);
-    }
-
-    .package-register {
-        font-size: clamp(25px, 2vw, 16px);
-    }
-}
-
-@media (max-width: 800px) {
-
-    .package-feature {
-        font-size: clamp(6px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(8px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(21px, 1.5vw, 14px);
-    }
-
-    .package-register {
-        font-size: clamp(35px, 2vw, 16px);
-    }
-
-    .desktop-feature-item p {
-        font-size: clamp(8px, 1.2vw, 8px);
-    }
-
-    .desktop-content p{
-        font-size: clamp(8px, 1.2vw, 8px);
-    }
+.package-register {
+    font-size: 35px;
 }
 
 @media (max-width: 768px) {
     .desktop-base {
         display: none;
     }
-    
+
     .desktop-screen-area {
         position: relative;
         top: 0;
@@ -584,112 +454,117 @@
         height: auto;
         min-height: 500px;
     }
+
+    .desktop-frame {
+        position: relative;
+        width: 100%;
+        height: 80%;
+        overflow: hidden;
+    }
     
-    
-    .desktop-content {
-        padding: 0% 5% 5% 5%;
+    /* Desktop-package-content flow theo desktop-frame trên mobile */
+    .desktop-package-content {
+        width: 100%;
+        height: 100%;
     }
 
-    .desktop-content .desktop-content-logo{
-        width: clamp(120px, 8vw, 120px);
+    .desktop-content {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 100%;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+        overflow: hidden;
     }
-    
+
+    .desktop-content .desktop-content-logo {
+        width: 120px;
+    }
+
     .desktop-content h5 {
-        font-size: clamp(14px, 2vw, 18px);
+        font-size: 18px;
         margin: 10px 0;
     }
-    
+
     .desktop-content p {
-        font-size: clamp(15px, 1.5vw, 16px);
+        font-size: 16px;
         margin: 8px 0;
     }
-    
-    .desktop-feature-item p {
-        font-size: clamp(15px, 1.2vw, 16px);
-        margin: 2px 0;
+
+    .desktop-feature-item-icon{
+        width: 50px;
+        height: 50px;
     }
-    
+
     .desktop-feature-item img {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 5px;
+        width: 35px;
+        height: 35px;
         background: #E3E3E3;
         border-radius: 50%;
-        padding: 8px;
         display: block;
-        margin: 0 auto 5px auto;
-
     }
 
-    .desktop-button-container{
+    .desktop-button-container {
         bottom: 3% !important;
     }
 
     .desktop-button {
         height: 50px !important;
     }
-
-    .package-feature {
-        font-size: clamp(13px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(17px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(35px, 1.5vw, 14px);
-    }
-
-    .package-register {
-        font-size: clamp(30px, 2vw, 16px);
-    }
 }
 
-@media (max-width: 610px) {
-    .package-feature {
-        font-size: clamp(10px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(14px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(31px, 1.5vw, 14px);
-    }
-
-    .package-register {
-        font-size: clamp(28px, 2vw, 16px);
-    }
-
-    .desktop-content p {
-        font-size: clamp(13px, 1.5vw, 14px);
-        margin: 8px 0;
+@media (max-width: 768px) {
+    /* Desktop-package-content flow theo desktop-frame khi mobile */
+    .desktop-package-content {
+        padding: 3% 4%;
     }
     
-    .desktop-feature-item p {
-        font-size: clamp(13px, 1.2vw, 14px);
-        margin: 2px 0;
+    .package-feature {
+        font-size: 10px;
     }
-
+    
+    .package-title {
+        font-size: 12px;
+    }
+    
+    .package-price {
+        font-size: 24px;
+    }
+    
+    .package-register {
+        font-size: 24px;
+    }
+    
+    .package-left,
+    .package-right {
+        padding: 4px;
+    }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+    .desktop-package-content {
+        padding: 2% 3%;
+    }
+    
     .package-feature {
-        font-size: clamp(8px, 0.8vw, 8px);
+        font-size: 9px;
     }
-
+    
     .package-title {
-        font-size: clamp(12px, 1.2vw, 12px);
+        font-size: 11px;
     }
-
+    
     .package-price {
-        font-size: clamp(29px, 1.5vw, 14px);
+        font-size: 20px;
     }
-
+    
     .package-register {
-        font-size: clamp(23px, 2vw, 16px);
+        font-size: 20px;
     }
 }
 
@@ -697,35 +572,31 @@
     .desktop-screen-area.package-view {
         min-height: 300px;
     }
-}
 
-@media (max-width: 400px) {
-    .package-feature {
-        font-size: clamp(6px, 0.8vw, 8px);
-    }
-
-    .package-title {
-        font-size: clamp(10px, 1.2vw, 12px);
-    }
-
-    .package-price {
-        font-size: clamp(25px, 1.5vw, 14px);
-    }
-    .desktop-content p {
-        font-size: clamp(11px, 1.5vw, 12px);
-        margin: 8px 0;
+    .desktop-content p{
+        font-size: 13px !important;
     }
     
-    .desktop-feature-item p {
-        font-size: clamp(11px, 1.2vw, 12px);
-        margin: 2px 0;
+    .package-feature {
+        font-size: 8px;
     }
-
+    
+    .package-title {
+        font-size: 10px;
+    }
+    
+    .package-price {
+        font-size: 18px;
+    }
+    
+    .package-register {
+        font-size: 18px;
+    }
 }
 
 .desktop-button-container {
     position: absolute;
-    bottom: 5%;
+    bottom: 4%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 6;
@@ -733,7 +604,7 @@
 }
 
 .desktop-button {
-    height: 70px;
+    height: 95px;
     transition: all 0.3s ease;
     display: block;
     pointer-events: none;
@@ -755,4 +626,89 @@
 .desktop-button-container:hover .button-arrow path {
     fill: white;
     transition: all 0.3s ease;
+}
+
+@media (max-width: 850px) {
+    .desktop-content {
+        padding: 30px 40px;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 800px) {
+    .desktop-content {
+        padding: 30px 30px;
+        justify-content: space-between;
+    }
+
+    .desktop-content p {
+        font-size: 16px;
+    }
+
+    .desktop-button {
+        height: 80px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .desktop-content {
+        padding: 30px 20px;
+        justify-content: space-between;
+    }
+
+    .desktop-content p {
+        font-size: 15px;
+    }
+
+    .desktop-button {
+        height: 70px !important;
+    }
+}
+
+@media (max-width: 550px) {
+    .desktop-content {
+        padding: 20px 20px;
+        justify-content: space-between;
+    }
+
+    .desktop-content p {
+        font-size: 14px;
+    }
+
+    .desktop-feature-item-icon{
+        width: 40px;
+        height: 40px;
+    }
+
+    .desktop-feature-item img {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+@media (max-width: 425px) {
+    .desktop-content {
+        padding: 15px 15px;
+        justify-content: space-between;
+    }
+
+    .desktop-content p {
+        font-size: 14px;
+    }
+
+    .desktop-feature-item-icon{
+        width: 35px;
+        height: 35px;
+    }
+
+    .desktop-feature-item img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 375px) {
+    .desktop-content p {
+        font-size: 12px !important;
+    }
 }

@@ -12,14 +12,14 @@
 @push('scripts')
     <script>
         function redirectToPayment(packagePlan) {
-            window.location.href = '{{ route("user.payment") }}?package=' + packagePlan;
+            window.location.href = '{{ route('user.payment') }}?package=' + packagePlan;
         }
 
         function togglePackageView() {
             const desktopScreenArea = document.querySelector('.desktop-screen-area');
             const desktopPackageOverlay = document.querySelector('.desktop-package-overlay');
             const desktopPackageContent = document.querySelector('.desktop-package-content');
-            
+
             desktopPackageOverlay.style.display = 'block';
             desktopPackageContent.style.display = 'flex';
 
@@ -48,85 +48,105 @@
     </script>
 @endpush
 
-<div class="desktop-container">
-    <img src="{{ asset($desktopImage) }}" alt="{{ $alt }}" class="desktop-base">
-
+<div class="desktop-wrapper">
+    <div class="desktop-container">
+        <img src="{{ asset($desktopImage) }}" alt="{{ $alt }}" class="desktop-base">
+    </div>
+    
     <div class="desktop-screen-area">
         <img src="{{ asset($backgroundImage) }}" alt="Screen background" class="desktop-background">
         <img src="{{ asset('images/d/desktops/khung-package.png') }}" alt="Package overlay"
             class="desktop-package-overlay" style="display: none;">
-        
+
         <div class="desktop-package-content" style="display: none;">
             <div class="package-grid">
                 @foreach ($sharedPackages as $index => $package)
-                <!-- {{ strtoupper($package->name) }} -->
-                <div class="package-item" data-package-plan="{{ $package->plan }}" onclick="event.stopPropagation(); redirectToPayment('{{ $package->plan }}')" style="cursor: pointer;">
-                    <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="{{ $package->name }}" class="package-img">
-                    <div class="package-content package-bg-content">
-                        <div class="package-left">
-                            <div class="package-title">{{ strtoupper($package->name) }}</div>
-                            <div class="package-price">{{ number_format($package->coins) }} xu</div>
+                    <!-- {{ strtoupper($package->name) }} -->
+                    <div class="package-item" data-package-plan="{{ $package->plan }}"
+                        onclick="event.stopPropagation(); redirectToPayment('{{ $package->plan }}')"
+                        style="cursor: pointer;">
+                        <img src="{{ asset('images/d/packages/bg-package.png') }}" alt="{{ $package->name }}"
+                            class="package-img">
+                        <div class="package-content package-bg-content">
+                            <div class="package-left">
+                                <div class="package-title">{{ strtoupper($package->name) }}</div>
+                                <div class="package-price">{{ number_format($package->coins) }} xu</div>
+                            </div>
+                            <div class="package-divider"></div>
+                            <div class="package-right">
+                                <div class="package-feature">Sử dụng: {{ $package->expiry }} tháng</div>
+                                <div class="package-feature">Không giới hạn lượt tải</div>
+                                <div class="package-feature">Cập nhật file mới mỗi ngày</div>
+                            </div>
                         </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature">Sử dụng: {{ $package->expiry }} tháng</div>
-                            <div class="package-feature">Không giới hạn lượt tải</div>
-                            <div class="package-feature">Cập nhật file mới mỗi ngày</div>
+                        <img src="{{ asset('images/d/packages/package' . ($index + 1) . '.png') }}"
+                            alt="{{ $package->name }} Hover" class="package-hover-img">
+                        <div class="package-content package-hover-content">
+                            <div class="package-left">
+                                <div class="package-register">Đăng kí</div>
+                            </div>
+                            <div class="package-divider"></div>
+                            <div class="package-right">
+                                <div class="package-feature package-feature-colored-{{ $index + 1 }}">Sử dụng:
+                                    {{ $package->expiry }} tháng</div>
+                                <div class="package-feature package-feature-colored-{{ $index + 1 }}">Không giới hạn
+                                    lượt tải</div>
+                                <div class="package-feature package-feature-colored-{{ $index + 1 }}">Cập nhật file
+                                    mới mỗi ngày</div>
+                            </div>
                         </div>
                     </div>
-                    <img src="{{ asset('images/d/packages/package' . ($index + 1) . '.png') }}" alt="{{ $package->name }} Hover" class="package-hover-img">
-                    <div class="package-content package-hover-content">
-                        <div class="package-left">
-                            <div class="package-register">Đăng kí</div>
-                        </div>
-                        <div class="package-divider"></div>
-                        <div class="package-right">
-                            <div class="package-feature package-feature-colored-{{ $index + 1 }}">Sử dụng: {{ $package->expiry }} tháng</div>
-                            <div class="package-feature package-feature-colored-{{ $index + 1 }}">Không giới hạn lượt tải</div>
-                            <div class="package-feature package-feature-colored-{{ $index + 1 }}">Cập nhật file mới mỗi ngày</div>
-                        </div>
-                    </div>
-                </div>
                 @endforeach
             </div>
         </div>
 
         <div class="desktop-frame">
-            <img src="{{ asset($frameImage) }}" alt="Desktop frame" class="desktop-frame">
+            <img src="{{ asset($frameImage) }}" alt="Desktop frame" class="desktop-frame-image">
 
             <div class="desktop-content">
-                <div class="text-center">
-                    @if($desktopContent && $desktopContent->logo)
-                        @if(str_starts_with($desktopContent->logo, 'desktop-content/'))
-                            <img src="{{ Storage::url($desktopContent->logo) }}" alt="Desktop logo" class="desktop-content-logo">
+
+                <div class="desktop-content-header">
+                    @if ($desktopContent && $desktopContent->logo)
+                        @if (str_starts_with($desktopContent->logo, 'desktop-content/'))
+                            <img src="{{ Storage::url($desktopContent->logo) }}" alt="Desktop logo"
+                                class="desktop-content-logo">
                         @else
-                            <img src="{{ asset($desktopContent->logo) }}" alt="Desktop logo" class="desktop-content-logo">
+                            <img src="{{ asset($desktopContent->logo) }}" alt="Desktop logo"
+                                class="desktop-content-logo">
                         @endif
                     @else
-                        <img src="{{ asset('/images/d/desktops/logo.png') }}" alt="Desktop logo" class="desktop-content-logo">
+                        <img src="{{ asset('/images/d/desktops/logo.png') }}" alt="Desktop logo"
+                            class="desktop-content-logo">
                     @endif
-                    
-                    <h5 class="fw-bold mt-2 mt-xl-4">{{ $desktopContent->title ?? 'CHỌN GÓI TÀI KHOẢN VIP ĐỂ TẢI FILE' }}</h5>
-                    <P class="text-justify">{!! $desktopContent->description ?? 'Bạn thân mến! Việc <span class="fw-bold">đăng kí VIP</span>, bạn sẽ nhận được các gói XU tương ứng và kích hoạt quyền tải không giới hạn...' !!}</P>
 
-                    @if($desktopContent && !empty($desktopContent->features))
-                    <div class="row mt-xxl-5">
-                        @foreach($desktopContent->features as $feature)
-                        <div class="col-3 desktop-feature-item">
-                            @if(!empty($feature['icon']))
-                                @if(str_starts_with($feature['icon'], 'desktop-content/'))
-                                    <img src="{{ Storage::url($feature['icon']) }}" alt="{{ $feature['title'] ?? '' }}">
-                                @else
-                                    <img src="{{ asset($feature['icon']) }}" alt="{{ $feature['title'] ?? '' }}">
-                                @endif
-                            @endif
-                            <p class="fw-bold">{{ $feature['title'] ?? '' }}</p>
-                            <p>{{ $feature['description'] ?? '' }}</p>
-                        </div>
+                    <h5 class="fw-bold mt-2 mt-md-4">
+                        {{ $desktopContent->title ?? 'CHỌN GÓI TÀI KHOẢN VIP ĐỂ TẢI FILE' }}</h5>
+                    <P class="text-justify m-0">{!! $desktopContent->description ??
+                        'Bạn thân mến! Việc <span class="fw-bold">đăng kí VIP</span>, bạn sẽ nhận được các gói XU tương ứng và kích hoạt quyền tải không giới hạn...' !!}</P>
+                </div>
+
+                @if ($desktopContent && !empty($desktopContent->features))
+                    <div class="row row-desktop-features">
+                        @foreach ($desktopContent->features as $feature)
+                            <div class="col-3 desktop-feature-item">
+                                <div class="desktop-feature-item-icon">
+                                    @if (!empty($feature['icon']))
+                                        @if (str_starts_with($feature['icon'], 'desktop-content/'))
+                                            <img src="{{ Storage::url($feature['icon']) }}"
+                                                alt="{{ $feature['title'] ?? '' }}">
+                                        @else
+                                            <img src="{{ asset($feature['icon']) }}"
+                                                alt="{{ $feature['title'] ?? '' }}">
+                                        @endif
+                                    @endif
+                                </div>
+                                <p class="fw-bold mb-1">{{ $feature['title'] ?? '' }}</p>
+                                <p class="mb-0">{{ $feature['description'] ?? '' }}</p>
+                            </div>
                         @endforeach
                     </div>
-                    @else
-                    <div class="row mt-xxl-5">
+                @else
+                    <div class="row row-desktop-features">
                         <div class="col-3 desktop-feature-item">
                             <img src="{{ asset('/images/svg/desktops/big-data.svg') }}" alt="Big Data">
                             <p class="fw-bold">Kho dữ liệu lớn</p>
@@ -148,8 +168,8 @@
                             <p>Sở hữu những file chất lượng cao</p>
                         </div>
                     </div>
-                    @endif
-                </div>
+                @endif
+
             </div>
         </div>
 
