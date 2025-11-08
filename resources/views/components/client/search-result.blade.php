@@ -358,7 +358,6 @@
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
                         container.innerHTML =
                         '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
                     })
@@ -460,7 +459,6 @@
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
                         container.innerHTML =
                         '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
                     })
@@ -511,12 +509,10 @@
                         if (data.success) {
                             renderSetModal(data.data, data.relatedSets, data.featuredSets);
                         } else {
-                            console.error('Error:', data.message);
                             showSetNotFoundError(data.message, data.featuredSets || []);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
                         if (loadingSpinner) {
                             loadingSpinner.style.display = 'none';
                         }
@@ -574,12 +570,10 @@
                         if (data.success) {
                             renderSetModal(data.data, data.relatedSets, data.featuredSets);
                         } else {
-                            console.error('Error:', data.message);
                             showSetNotFoundError(data.message, data.featuredSets || []);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
                         if (loadingSpinner) {
                             loadingSpinner.style.display = 'none';
                         }
@@ -592,6 +586,11 @@
             }
 
             function renderSetModal(set, relatedSets = [], featuredSets = []) {
+                const modal = document.querySelector('#imageModal');
+                if (modal && set.id) {
+                    modal.setAttribute('data-current-set-id', set.id);
+                }
+                
                 const errorContent = document.querySelector('.error-content');
                 if (errorContent) {
                     errorContent.remove();
@@ -690,7 +689,6 @@
                                 formatsText = formatsArray.join(', ');
                             }
                         } catch (e) {
-                            console.error('Error parsing formats:', e);
                         }
                     }
 
@@ -742,7 +740,6 @@
                                 keywordsContent = firstKeywords;
                             }
                         } catch (e) {
-                            console.error('Error parsing keywords:', e);
                         }
                     }
 
@@ -750,12 +747,18 @@
                         `<span class="modal-keywords color-primary-12">Từ khóa:</span> ${keywordsContent} - <span class="color-primary-6">Mẫu #${set.id}</span>`;
                 }
 
-                const badgeContainer = document.querySelector('#imageModal .d-flex.flex-column.mt-4');
+                let badgeContainer = document.querySelector('#imageModal .custom-badge')?.parentElement;
+                if (!badgeContainer) {
+                    badgeContainer = document.querySelector('#imageModal .btn-download')?.parentElement;
+                }
+                
                 if (badgeContainer) {
                     const badgeType = set.type === 'free' ? 'free' : 'premium';
                     const badgeLabel = set.type === 'free' ? 'Free' : 'Premium';
                     const badgeValue = set.price || '0';
                     const badgeColor = set.type === 'free' ? '#27ae60' : '#F0A610';
+                    
+                    const setId = set.id || set.set_id || null;
 
                     badgeContainer.innerHTML = `
                         <div class="custom-badge">
@@ -768,7 +771,7 @@
                             </div>
                         </div>
                         
-                        <button class="btn-download btn fw-semibold py-3 d-flex mt-2" onclick="initDownload(${set.id})" data-set-id="${set.id}">
+                        <button class="btn-download btn fw-semibold py-3 d-flex mt-2" data-set-id="${setId}" type="button" ${setId ? '' : 'disabled'}>
                             <img src="/images/svg/arrow-right.svg" alt="" class="arrow-original">
                             <img src="/images/svg/arrow-right.svg" alt="" class="arrow-new">
                             Tải về máy
@@ -1155,7 +1158,71 @@
             initMasonry();
             attachImageClickEvents();
 
-            // Listen for custom event from search.blade.php
+            document.addEventListener('click', function(e) {
+                const downloadBtn = e.target.closest('.btn-download');
+                
+                if (downloadBtn && downloadBtn.classList.contains('btn-download')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    let setId = downloadBtn.getAttribute('data-set-id');
+                    
+                    if (!setId || setId === 'null' || setId === 'undefined') {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const urlSet = urlParams.get('set');
+                        if (urlSet) {
+                            if (/^\d+$/.test(urlSet)) {
+                                setId = urlSet;
+                            }
+                        }
+                        
+                        const modalSetId = document.querySelector('#imageModal')?.getAttribute('data-current-set-id');
+                        if (modalSetId) {
+                            setId = modalSetId;
+                        }
+                    }
+                    
+                    if (setId && setId !== 'null' && setId !== 'undefined') {
+                        if (typeof window.initDownload === 'function') {
+                            try {
+                                window.initDownload(parseInt(setId));
+                            } catch (error) {
+                                if (typeof Swal !== 'undefined') {
+                                    showSwal({
+                                        icon: 'error',
+                                        title: 'Lỗi',
+                                        text: 'Có lỗi xảy ra: ' + error.message,
+                                        confirmButtonColor: '#667eea'
+                                    });
+                                } else if (typeof showToast === 'function') {
+                                    showToast('Có lỗi xảy ra: ' + error.message, 'error');
+                                }
+                            }
+                        } else {
+                            if (typeof Swal !== 'undefined') {
+                                showSwal({
+                                    icon: 'warning',
+                                    title: 'Chưa sẵn sàng',
+                                    text: 'Chức năng tải về chưa sẵn sàng. Vui lòng thử lại sau.',
+                                    confirmButtonColor: '#667eea'
+                                });
+                            }
+                        }
+                    } else {
+                        if (typeof Swal !== 'undefined') {
+                            showSwal({
+                                icon: 'error',
+                                title: 'Không tìm thấy ID',
+                                text: 'Không tìm thấy ID file. Vui lòng đóng modal và mở lại.',
+                                confirmButtonColor: '#667eea'
+                            });
+                        }
+                    }
+                    return false;
+                }
+            }, true);
+
             document.addEventListener('openSetModal', function(event) {
                 const setSlug = event.detail.setSlug;
                 if (setSlug) {
@@ -1202,10 +1269,25 @@
                 return result;
             }
 
-            // Download & Purchase Functions
             window.initDownload = function(setId) {
                 if (!setId) {
-                    showToast('Không thể xác định file cần tải', 'error');
+                    if (typeof Swal !== 'undefined') {
+                        showSwal({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Không thể xác định file cần tải',
+                            confirmButtonColor: '#667eea'
+                        });
+                    } else if (typeof showToast === 'function') {
+                        showToast('Không thể xác định file cần tải', 'error');
+                    }
+                    return;
+                }
+
+                if (typeof Swal === 'undefined') {
+                    if (typeof showToast === 'function') {
+                        showToast('Hệ thống đang tải, vui lòng thử lại sau', 'warning');
+                    }
                     return;
                 }
 
@@ -1228,27 +1310,34 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 401) {
+                                throw { status: 401 };
+                            }
+                            return response.json().then(data => {
+                                throw { status: response.status, data };
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         Swal.close();
 
                         if (!data.success) {
-                            // Cannot download
                             showSwal({
                                 icon: 'error',
                                 title: 'Không thể tải',
-                                text: data.message,
+                                text: data.message || 'Không thể tải file này',
                                 confirmButtonColor: '#667eea'
                             });
                             return;
                         }
 
-                        // Can download - show confirmation modal
                         showDownloadConfirmModal(data, setId);
                     })
                     .catch(error => {
                         Swal.close();
-                        console.error('Error:', error);
 
                         if (error.status === 401) {
                             showSwal({
@@ -1266,7 +1355,7 @@
                             showSwal({
                                 icon: 'error',
                                 title: 'Lỗi',
-                                text: 'Có lỗi xảy ra khi kiểm tra điều kiện tải',
+                                text: error.data?.message || 'Có lỗi xảy ra khi kiểm tra điều kiện tải',
                                 confirmButtonColor: '#667eea'
                             });
                         }
@@ -1278,7 +1367,6 @@
                 let message = data.message;
                 let confirmButtonText = 'Xác nhận tải';
 
-                // Build message content
                 let htmlContent = `
                     <div class="text-start">
                         <h5 class="mb-3">${set.name}</h5>
@@ -1330,13 +1418,11 @@
             }
 
             function confirmPurchaseAndDownload(setId) {
-                // Thêm vào popup và stream tiến trình tải trực tiếp
                 const setNameEl = document.querySelector('#imageModal .modal-title');
                 const setName = setNameEl ? setNameEl.textContent.trim() : 'File';
                 if (window.startDownloadWithPopup) {
                     window.startDownloadWithPopup({ endpoint: `/user/purchase/confirm/${setId}`, setId, setName });
                 } else {
-                    // Fallback: vẫn gọi như cũ nếu popup script chưa load
                     fetch(`/user/purchase/confirm/${setId}`, {
                         method: 'POST',
                         headers: {
@@ -1380,12 +1466,9 @@
                                 icon.classList.remove('fas');
                                 icon.classList.add('far');
                             }
-                        } else {
-                            console.error('Error:', data.message);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
                     });
             };
 
@@ -1393,7 +1476,6 @@
                 event.stopPropagation();
 
                 if (!setId) {
-                    console.error('Set ID is missing');
                     return;
                 }
 
@@ -1405,15 +1487,12 @@
                 }
             };
 
-            // Open modal when clicking anywhere on card (except action buttons)
             window.openSetModalFromCard = function(event, setId) {
-                // If click is on an action button, don't open modal
                 if (event.target.closest('.overlay-action-btn')) {
                     return;
                 }
 
                 if (!setId) {
-                    console.error('Set ID is missing');
                     return;
                 }
 

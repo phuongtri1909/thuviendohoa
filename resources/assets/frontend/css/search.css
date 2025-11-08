@@ -117,6 +117,9 @@
     font-size: 18px;
     padding-left: 4.5rem;
     padding-right: 4.5rem;
+    cursor: pointer;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 .btn-download img {
