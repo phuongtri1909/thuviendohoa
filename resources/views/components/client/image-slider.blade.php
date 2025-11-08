@@ -27,6 +27,7 @@
             overflow: hidden;
             background: white;
             padding: 0;
+            min-height: 280px;
         }
 
         .slider-wrapper {
@@ -40,20 +41,23 @@
             flex: 0 0 auto;
             position: relative;
             overflow: hidden;
-            aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
             box-sizing: border-box;
-            max-width: 400px;
-            max-height: 400px;
+            height: 280px !important;
+            min-height: 280px !important;
+            max-height: 280px !important;
+            width: auto;
         }
 
         .slide-item img {
-            width: 100%;
             height: 100%;
-            object-fit: cover;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            object-position: center;
             display: block;
         }
 
@@ -152,9 +156,13 @@
 
                 init() {
                     this.setSlideSizes();
-                    this.updateSlideWidth();
-                    this.attachEvents();
-                    this.updateButtons();
+                    
+                    requestAnimationFrame(() => {
+                        this.setSlideSizes();
+                        this.updateSlideWidth();
+                        this.attachEvents();
+                        this.updateButtons();
+                    });
 
                     window.addEventListener('resize', () => {
                         this.setSlideSizes();
@@ -165,28 +173,34 @@
 
                 setSlideSizes() {
                     const slides = this.wrapper.querySelectorAll('.slide-item');
-                    const containerHeight = this.wrapper.parentElement.offsetHeight || 300;
-                    const maxSize = Math.min(containerHeight, 400);
+                    if (slides.length === 0) return;
+                    
+                    const targetHeight = 280;
                     
                     slides.forEach(slide => {
+                        slide.style.setProperty('height', targetHeight + 'px', 'important');
+                        slide.style.setProperty('min-height', targetHeight + 'px', 'important');
+                        slide.style.setProperty('max-height', targetHeight + 'px', 'important');
+
                         const img = slide.querySelector('img');
-                        if (img && img.complete) {
-                            // Set size based on image, maintaining 1:1 aspect ratio
-                            // Use max of width/height but cap at maxSize
-                            const imgSize = Math.max(img.naturalWidth, img.naturalHeight);
-                            const size = Math.min(imgSize, maxSize);
-                            slide.style.width = size + 'px';
-                            slide.style.height = size + 'px';
-                        } else if (img) {
-                            // Wait for image to load
-                            img.addEventListener('load', () => {
-                                const imgSize = Math.max(img.naturalWidth, img.naturalHeight);
-                                const size = Math.min(imgSize, maxSize);
-                                slide.style.width = size + 'px';
-                                slide.style.height = size + 'px';
-                                this.updateSlideWidth();
-                                this.updateButtons();
-                            }, { once: true });
+                        if (img) {
+                            if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+                                const aspectRatio = img.naturalWidth / img.naturalHeight;
+                                const calculatedWidth = targetHeight * aspectRatio;
+                                slide.style.setProperty('width', calculatedWidth + 'px', 'important');
+                                slide.style.setProperty('min-width', calculatedWidth + 'px', 'important');
+                                slide.style.setProperty('max-width', calculatedWidth + 'px', 'important');
+                            } else {
+                                img.addEventListener('load', () => {
+                                    const aspectRatio = img.naturalWidth / img.naturalHeight;
+                                    const calculatedWidth = targetHeight * aspectRatio;
+                                    slide.style.setProperty('width', calculatedWidth + 'px', 'important');
+                                    slide.style.setProperty('min-width', calculatedWidth + 'px', 'important');
+                                    slide.style.setProperty('max-width', calculatedWidth + 'px', 'important');
+                                    this.updateSlideWidth();
+                                    this.updateButtons();
+                                }, { once: true });
+                            }
                         }
                     });
                 }
