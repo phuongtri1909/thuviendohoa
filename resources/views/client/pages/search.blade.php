@@ -9,7 +9,7 @@
 
 
     <div class="search-section">
-        <div class="container-custom">
+        <div class="container-wide">
             <x-client.search-result :sets="$sets ?? collect()" :all-colors="$allColors ?? collect()" :all-software="$allSoftware ?? collect()" :selected-colors="$colors ?? []"
                 :selected-software="$software ?? []" :related-tags="$relatedTags ?? collect()" :selected-tags="$tags ?? []" />
         </div>

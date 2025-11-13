@@ -38,7 +38,7 @@
             @endforeach
         </div>
     </div>
-    <div class="bg-white rounded-4 p-2 py-md-4 px-md-5 mt-2">
+    <div class="bg-white rounded-6 p-2 p-md-4 mt-2">
         <div>
             <span class="fw-semibold fs-6 text-xs-1 me-2">Tags phân loại: </span>
             @if ($relatedTags->count() > 0)

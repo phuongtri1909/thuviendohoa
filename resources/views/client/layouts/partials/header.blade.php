@@ -167,11 +167,11 @@
                         <a href="{{ route('get.link') }}"
                             class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
-                            <span class="color-primary fw-semibold text-md pe-1">Get Link</span>
+                            <p class="color-primary fw-semibold text-md pe-3 mb-0">Get Link</p>
                         </a>
                         <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
-                            <span class="color-primary fw-semibold text-md pe-1">Vietfile Blog</span>
+                            <p class="color-primary fw-semibold text-md pe-3 mb-0">Vietfile Blog</p>
                         </a>
 
                     </div>
@@ -484,11 +484,11 @@
         <div class="mobile-actions">
             <a href="{{ route('get.link') }}" class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
-                <span class="color-primary fw-semibold text-md pe-1">Get Link</span>
+                <p class="color-primary fw-semibold text-md pe-3 mb-0">Get Link</p>
             </a>
             <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
-                <span class="color-primary fw-semibold text-md pe-1">Vietfile Blog</span>
+                <p class="color-primary fw-semibold text-md pe-3 mb-0">Vietfile Blog</p>
             </a>
             @guest
                 <a href="{{ route('login') }}" class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none">

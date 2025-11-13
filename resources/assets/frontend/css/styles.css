@@ -175,6 +175,74 @@ body {
     }
 }
 
+/* Container Wide - Rộng hơn container-custom cho search-result */
+.container-wide {
+    width: 100%;
+    max-width: 2000px;
+    padding-left: clamp(15px, 3vw, 60px);
+    padding-right: clamp(15px, 3vw, 60px);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+/* Smooth padding transition cho container-wide */
+@media (min-width: 2000px) {
+    .container-wide {
+        padding-left: 60px;
+        padding-right: 60px;
+    }
+}
+
+@media (min-width: 1800px) and (max-width: 1999px) {
+    .container-wide {
+        padding-left: calc(50px + (60 - 50) * ((100vw - 1800px) / (2000 - 1800)));
+        padding-right: calc(50px + (60 - 50) * ((100vw - 1800px) / (2000 - 1800)));
+    }
+}
+
+@media (min-width: 1600px) and (max-width: 1799px) {
+    .container-wide {
+        padding-left: calc(40px + (50 - 40) * ((100vw - 1600px) / (1800 - 1600)));
+        padding-right: calc(40px + (50 - 40) * ((100vw - 1600px) / (1800 - 1600)));
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1599px) {
+    .container-wide {
+        padding-left: calc(30px + (40 - 30) * ((100vw - 1200px) / (1600 - 1200)));
+        padding-right: calc(30px + (40 - 30) * ((100vw - 1200px) / (1600 - 1200)));
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .container-wide {
+        padding-left: calc(24px + (30 - 24) * ((100vw - 992px) / (1200 - 992)));
+        padding-right: calc(24px + (30 - 24) * ((100vw - 992px) / (1200 - 992)));
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .container-wide {
+        padding-left: calc(20px + (24 - 20) * ((100vw - 768px) / (992 - 768)));
+        padding-right: calc(20px + (24 - 20) * ((100vw - 768px) / (992 - 768)));
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    .container-wide {
+        padding-left: calc(20px + (24 - 20) * ((100vw - 576px) / (768 - 576)));
+        padding-right: calc(20px + (24 - 20) * ((100vw - 576px) / (768 - 576)));
+    }
+}
+
+@media (max-width: 575px) {
+    .container-wide {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
 @media (min-width: 1200px) {
     body {
         margin-top: 77px;
@@ -186,7 +254,7 @@ html {
 }
 
 .rounded-6 {
-    border-radius: 3rem !important;
+    border-radius: 40px !important;
 }
 
 .btn-pry {
