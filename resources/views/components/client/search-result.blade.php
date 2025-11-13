@@ -9,7 +9,7 @@
 ])
 
 <div class="search-result">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center px-5">
         <div class="color-selection">
             <button class="color-btn color-clear rounded-circle border bg-white" title="Xóa màu đã chọn">
                 <i class="fas fa-times"></i>
@@ -44,7 +44,7 @@
             @if ($relatedTags->count() > 0)
                 @foreach ($relatedTags as $tag)
                     <button
-                        class="me-2 tag-btn badge bg-primary-10 color-primary-11 p-2 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
+                        class="badge-tag-product me-2 tag-btn badge bg-primary-10 color-primary-11 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
                         data-tag="{{ $tag->slug }}" title="Chọn tag {{ $tag->name }}">
                         {{ $tag->name }}
                     </button>

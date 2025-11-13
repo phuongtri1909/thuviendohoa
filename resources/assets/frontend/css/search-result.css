@@ -773,3 +773,8 @@
         min-width: 100px;
     }
 }
+
+.badge-tag-product {
+    font-size: 14px;
+    padding: 10px;;
+}
