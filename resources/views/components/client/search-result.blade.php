@@ -162,11 +162,13 @@
             @endif
         </div>
 
-        @if ($sets->count() > 0)
-            <div class="pagination-wrapper mt-4">
-                {{ $sets->appends(request()->query())->links('components.paginate') }}
-            </div>
-        @endif
+        <div id="search-pagination-container">
+            @if ($sets->count() > 0)
+                <div class="pagination-wrapper mt-4">
+                    {{ $sets->appends(request()->query())->links('components.paginate') }}
+                </div>
+            @endif
+        </div>
     </div>
 </div>
 
@@ -339,8 +341,12 @@
                 });
                 isLoading = true;
                 const container = document.getElementById('search-results-container');
+                const paginationContainer = document.getElementById('search-pagination-container');
                 container.innerHTML =
                     '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
 
                 fetch('{{ route('search.filter') }}', {
                         method: 'POST',
@@ -349,7 +355,27 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            container.innerHTML = data.html;
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = data.html;
+                            
+                            const paginationWrapper = tempDiv.querySelector('.pagination-wrapper');
+                            if (paginationWrapper) {
+                                paginationWrapper.remove();
+                            }
+                            
+                            container.innerHTML = tempDiv.innerHTML;
+                            
+                            const originalTempDiv = document.createElement('div');
+                            originalTempDiv.innerHTML = data.html;
+                            const paginationHtml = originalTempDiv.querySelector('.pagination-wrapper');
+                            if (paginationContainer) {
+                                if (paginationHtml) {
+                                    paginationContainer.innerHTML = paginationHtml.outerHTML;
+                                } else {
+                                    paginationContainer.innerHTML = '';
+                                }
+                            }
+                            
                             setTimeout(() => {
                                 initMasonry();
                                 attachImageClickEvents();
@@ -360,6 +386,9 @@
                     .catch(error => {
                         container.innerHTML =
                         '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                        if (paginationContainer) {
+                            paginationContainer.innerHTML = '';
+                        }
                     })
                     .finally(() => {
                         isLoading = false;
@@ -382,7 +411,7 @@
             }
 
             function attachPaginationEvents() {
-                const paginationLinks = document.querySelectorAll('.pagination-wrapper .pagination-item');
+                const paginationLinks = document.querySelectorAll('#search-pagination-container .pagination-wrapper .pagination-item');
 
                 paginationLinks.forEach(link => {
                     link.addEventListener('click', function(e) {
@@ -430,8 +459,12 @@
 
                 isLoading = true;
                 const container = document.getElementById('search-results-container');
+                const paginationContainer = document.getElementById('search-pagination-container');
                 container.innerHTML =
                     '<div class="text-center py-5"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
 
                 fetch('{{ route('search.filter') }}', {
                         method: 'POST',
@@ -440,9 +473,27 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            container.innerHTML = data.html;
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = data.html;
+                            
+                            const paginationWrapper = tempDiv.querySelector('.pagination-wrapper');
+                            if (paginationWrapper) {
+                                paginationWrapper.remove();
+                            }
+                            
+                            container.innerHTML = tempDiv.innerHTML;
+                            
+                            const originalTempDiv = document.createElement('div');
+                            originalTempDiv.innerHTML = data.html;
+                            const paginationHtml = originalTempDiv.querySelector('.pagination-wrapper');
+                            if (paginationContainer) {
+                                if (paginationHtml) {
+                                    paginationContainer.innerHTML = paginationHtml.outerHTML;
+                                } else {
+                                    paginationContainer.innerHTML = '';
+                                }
+                            }
 
-                            // Scroll to top of results
                             const searchResult = document.querySelector('.search-result');
                             if (searchResult) {
                                 searchResult.scrollIntoView({
@@ -461,6 +512,9 @@
                     .catch(error => {
                         container.innerHTML =
                         '<div class="text-center py-5"><h4>Lỗi khi tải dữ liệu</h4></div>';
+                        if (paginationContainer) {
+                            paginationContainer.innerHTML = '';
+                        }
                     })
                     .finally(() => {
                         isLoading = false;
