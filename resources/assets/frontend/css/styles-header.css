@@ -266,14 +266,6 @@
     white-space: nowrap;
 }
 
-.action-btn p {
-    margin: 0 !important;
-    line-height: 1 !important;
-    display: flex;
-    align-items: center;
-    height: auto;
-}
-
 .action-btn:hover {
     border-color: var(--primary-color);
 }
