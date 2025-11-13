@@ -32,22 +32,37 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="value" class="form-label-custom">
-                            Mã màu <span class="required-mark">*</span>
-                        </label>
-                        <div class="input-group">
-                            <input type="color" id="value" name="value"
-                                   class="custom-input {{ $errors->has('value') ? 'input-error' : '' }}"
-                                   value="{{ old('value', '#000000') }}" required>
-                            <input type="text" id="value-text"
-                                   class="custom-input {{ $errors->has('value') ? 'input-error' : '' }}"
-                                   value="{{ old('value', '#000000') }}" readonly>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="value" class="form-label-custom">
+                                    Mã màu <span class="required-mark">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="color" id="value" name="value"
+                                           class="custom-input {{ $errors->has('value') ? 'input-error' : '' }}"
+                                           value="{{ old('value', '#000000') }}" required>
+                                    <input type="text" id="value-text"
+                                           class="custom-input {{ $errors->has('value') ? 'input-error' : '' }}"
+                                           value="{{ old('value', '#000000') }}" readonly>
+                                </div>
+                                <div class="error-message" id="error-value">
+                                    @error('value')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                        <div class="error-message" id="error-value">
-                            @error('value')
-                                {{ $message }}
-                            @enderror
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="order" class="form-label-custom">Thứ tự</label>
+                                <input type="number" id="order" name="order" class="custom-input {{ $errors->has('order') ? 'input-error' : '' }}" value="{{ old('order') }}" min="0" step="1">
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Thứ tự hiển thị (số nhỏ hơn sẽ hiển thị trước). Để trống sẽ tự động gán giá trị tiếp theo.</span>
+                                </div>
+                                <div class="error-message" id="error-order">@error('order') {{ $message }} @enderror</div>
+                            </div>
                         </div>
                     </div>
 

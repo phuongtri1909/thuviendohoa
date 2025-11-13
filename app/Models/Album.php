@@ -14,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 class Album extends Model
 {
     protected $table = 'albums';
-    protected $fillable = ['name', 'slug', 'image', 'icon'];
+    protected $fillable = ['name', 'slug', 'image', 'icon', 'order'];
 
     public function albumSets(): HasMany
     {

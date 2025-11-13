@@ -86,15 +86,30 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label-custom">Tùy chọn hiển thị</label>
-                        <div class="d-flex align-items-center" style="gap:16px;">
-                            <label class="d-flex align-items-center" style="gap:6px;">
-                                <input type="checkbox" name="featured" value="1" {{ old('featured', $album->featuredType ? 1 : 0) ? 'checked' : '' }}> Featured
-                            </label>
-                            <label class="d-flex align-items-center" style="gap:6px;">
-                                <input type="checkbox" name="trending" value="1" {{ old('trending', $album->trendingType ? 1 : 0) ? 'checked' : '' }}> Trending
-                            </label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="order" class="form-label-custom">Thứ tự</label>
+                                <input type="number" id="order" name="order" class="custom-input {{ $errors->has('order') ? 'input-error' : '' }}" value="{{ old('order', $album->order) }}" min="0" step="1">
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Thứ tự hiển thị (số nhỏ hơn sẽ hiển thị trước).</span>
+                                </div>
+                                <div class="error-message" id="error-order">@error('order') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label-custom">Tùy chọn hiển thị</label>
+                                <div class="d-flex align-items-center" style="gap:16px;">
+                                    <label class="d-flex align-items-center" style="gap:6px;">
+                                        <input type="checkbox" name="featured" value="1" {{ old('featured', $album->featuredType ? 1 : 0) ? 'checked' : '' }}> Featured
+                                    </label>
+                                    <label class="d-flex align-items-center" style="gap:6px;">
+                                        <input type="checkbox" name="trending" value="1" {{ old('trending', $album->trendingType ? 1 : 0) ? 'checked' : '' }}> Trending
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

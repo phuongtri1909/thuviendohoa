@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Color extends Model
 {
     protected $table = 'colors';
-    protected $fillable = ['value', 'name'];
+    protected $fillable = ['value', 'name', 'order'];
 
     public function colorSets(): HasMany
     {

@@ -149,11 +149,11 @@ class SearchController extends Controller
         
         $categories = Category::orderBy('order', 'asc')->get();
         
-        $albums = Album::orderBy('created_at', 'desc')->get();
+        $albums = Album::orderBy('order', 'asc')->orderBy('created_at', 'desc')->get();
         
-        $allColors = \App\Models\Color::orderBy('name', 'asc')->get();
+        $allColors = \App\Models\Color::orderBy('order', 'asc')->orderBy('name', 'asc')->get();
         
-        $allSoftware = \App\Models\Software::orderBy('name', 'asc')->get();
+        $allSoftware = \App\Models\Software::orderBy('order', 'asc')->orderBy('name', 'asc')->get();
         
         $relatedTags = \App\Models\Tag::whereHas('sets', function(Builder $q) use ($query, $categorySlug, $albumSlug, $tagSlug, $tags, $colors, $software) {
             $q->where('status', Set::STATUS_ACTIVE);
@@ -201,7 +201,7 @@ class SearchController extends Controller
                     $subQ->whereIn('id', $software);
                 });
             }
-        })->orderBy('name', 'asc')->get(['id', 'name', 'slug']);
+        })->orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id', 'name', 'slug']);
         
         return view('client.pages.search', array_merge($bannerData, compact(
             'query', 

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Tag extends Model
 {
     protected $table = 'tags';
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'order'];
 
     public function tagSets(): HasMany
     {

@@ -29,7 +29,7 @@ class AlbumController extends Controller
             $query->trending();
         }
 
-        $albums = $query->paginate(15)->withQueryString();
+        $albums = $query->orderBy('order', 'asc')->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         return view('admin.pages.albums.index', compact('albums'));
     }
@@ -53,6 +53,7 @@ class AlbumController extends Controller
             'icon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             'featured' => 'nullable|boolean',
             'trending' => 'nullable|boolean',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên album là bắt buộc',
             'name.string' => 'Tên album phải là chuỗi',
@@ -65,6 +66,8 @@ class AlbumController extends Controller
             'icon.file' => 'Icon album phải là file',
             'icon.mimes' => 'Icon album chỉ chấp nhận jpeg, png, jpg, gif, webp, svg',
             'icon.max' => 'Icon album không được vượt quá 2MB',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $imagePath = null;
@@ -77,11 +80,14 @@ class AlbumController extends Controller
             $iconPath = Album::processAndSaveImage($request->file('icon'));
         }
 
+        $maxOrder = Album::max('order') ?? 0;
+        
         $album = Album::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'image' => $imagePath,
             'icon' => $iconPath,
+            'order' => $request->order ?? ($maxOrder + 1),
         ]);
 
         if ($request->boolean('featured')) {
@@ -128,6 +134,7 @@ class AlbumController extends Controller
             'icon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             'featured' => 'nullable|boolean',
             'trending' => 'nullable|boolean',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên album là bắt buộc',
             'name.string' => 'Tên album phải là chuỗi',
@@ -139,11 +146,14 @@ class AlbumController extends Controller
             'icon.file' => 'Icon album phải là file',
             'icon.mimes' => 'Icon album chỉ chấp nhận jpeg, png, jpg, gif, webp, svg',
             'icon.max' => 'Icon album không được vượt quá 2MB',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'order' => $request->order ?? $album->order,
         ];
 
         if ($request->hasFile('image')) {

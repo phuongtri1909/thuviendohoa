@@ -65,12 +65,14 @@ class HomeController extends Controller
         
         $featuredAlbums = Album::with('featuredType')
             ->featured()
+            ->orderBy('order', 'asc')
             ->orderBy('created_at', 'desc')
             ->take(4)
             ->get();
             
         $trendingAlbums = Album::with('trendingType')
             ->trending()
+            ->orderBy('order', 'asc')
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();

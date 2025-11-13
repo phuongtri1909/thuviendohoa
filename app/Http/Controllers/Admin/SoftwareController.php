@@ -17,7 +17,7 @@ class SoftwareController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        $software = $query->orderByDesc('id')->paginate(15)->withQueryString();
+        $software = $query->orderBy('order', 'asc')->orderBy('name', 'asc')->paginate(15)->withQueryString();
 
         return view('admin.pages.software.index', compact('software'));
     }
@@ -34,6 +34,7 @@ class SoftwareController extends Controller
             'logo' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
             'logo_hover' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
             'logo_active' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên phần mềm là bắt buộc',
             'name.unique' => 'Tên phần mềm đã tồn tại',
@@ -47,10 +48,15 @@ class SoftwareController extends Controller
             'logo_active.image' => 'logo active phải là hình ảnh',
             'logo_active.mimes' => 'định dạng logo active không đúng',
             'logo_active.max' => 'logo active không được vượt quá 10MB',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
+        $maxOrder = Software::max('order') ?? 0;
+        
         $data = [
             'name' => $validated['name'],
+            'order' => $request->order ?? ($maxOrder + 1),
         ];
 
         if ($request->hasFile('logo')) {
@@ -85,6 +91,7 @@ class SoftwareController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
             'logo_hover' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
             'logo_active' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên phần mềm là bắt buộc',
             'name.unique' => 'Tên phần mềm đã tồn tại',
@@ -97,10 +104,13 @@ class SoftwareController extends Controller
             'logo_active.image' => 'logo active phải là hình ảnh',
             'logo_active.mimes' => 'định dạng logo active không đúng',
             'logo_active.max' => 'logo active không được vượt quá 10MB',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $data = [
             'name' => $validated['name'],
+            'order' => $request->order ?? $software->order,
         ];
 
         if ($request->hasFile('logo')) {

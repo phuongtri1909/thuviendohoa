@@ -60,6 +60,7 @@
                                     <th class="column-medium">Logo</th>
                                     <th class="column-medium">Logo hover</th>
                                     <th class="column-medium">Logo active</th>
+                                    <th class="column-small text-center">Thứ tự</th>
                                     <th class="column-medium">Ngày tạo</th>
                                     <th class="column-small text-center">Thao tác</th>
                                 </tr>
@@ -89,6 +90,9 @@
                                             @else
                                                 <span class="text-muted">Không có</span>
                                             @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="order-badge">{{ $item->order }}</span>
                                         </td>
                                         <td class="category-date">{{ $item->created_at->format('d/m/Y H:i') }}</td>
                                         <td>
@@ -130,6 +134,14 @@
 @push('styles')
     <style>
         .category-date { font-size: 14px; color: #6c757d; }
+        .order-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
     </style>
 @endpush
 

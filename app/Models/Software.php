@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 class Software extends Model
 {
     protected $table = 'software';
-    protected $fillable = ['logo', 'logo_hover', 'logo_active','name'];
+    protected $fillable = ['logo', 'logo_hover', 'logo_active','name', 'order'];
 
     public function sets()
     {

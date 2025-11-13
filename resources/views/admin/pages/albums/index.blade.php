@@ -98,6 +98,7 @@
                                     <th class="column-small">STT</th>
                                     <th class="column-large">Tên album</th>
                                     <th class="column-medium">Ảnh</th>
+                                    <th class="column-small text-center">Thứ tự</th>
                                     <th class="column-small text-center">Featured</th>
                                     <th class="column-small text-center">Trending</th>
                                     <th class="column-medium">Ngày tạo</th>
@@ -115,6 +116,9 @@
                                             @else
                                                 <span class="text-muted">Không có ảnh</span>
                                             @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="order-badge">{{ $album->order }}</span>
                                         </td>
                                         <td class="text-center">
                                             @if($album->featuredType)
@@ -166,4 +170,16 @@
     </div>
 @endsection
 
+@push('styles')
+    <style>
+        .order-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+@endpush
 

@@ -20,7 +20,7 @@ class ColorController extends Controller
             $query->where('value', 'like', '%' . $request->value . '%');
         }
 
-        $colors = $query->paginate(15)->withQueryString();
+        $colors = $query->orderBy('order', 'asc')->orderBy('name', 'asc')->paginate(15)->withQueryString();
 
         return view('admin.pages.colors.index', compact('colors'));
     }
@@ -35,6 +35,7 @@ class ColorController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:colors,name',
             'value' => 'required|string|max:7|regex:/^#[a-fA-F0-9]{6}$/',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên màu là bắt buộc',
             'name.string' => 'Tên màu phải là chuỗi',
@@ -44,9 +45,17 @@ class ColorController extends Controller
             'value.string' => 'Giá trị màu phải là chuỗi',
             'value.max' => 'Giá trị màu không được vượt quá 7 ký tự',
             'value.regex' => 'Giá trị màu phải là mã hex hợp lệ (ví dụ: #FF0000)',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
-        Color::create($request->all());
+        $maxOrder = Color::max('order') ?? 0;
+        
+        Color::create([
+            'name' => $request->name,
+            'value' => $request->value,
+            'order' => $request->order ?? ($maxOrder + 1),
+        ]);
 
         return redirect()->route('admin.colors.index')
             ->with('success', 'Màu đã được tạo thành công!');
@@ -68,6 +77,7 @@ class ColorController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:colors,name,' . $color->id,
             'value' => 'required|string|max:7|regex:/^#[a-fA-F0-9]{6}$/',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên màu là bắt buộc',
             'name.string' => 'Tên màu phải là chuỗi',
@@ -77,9 +87,15 @@ class ColorController extends Controller
             'value.string' => 'Giá trị màu phải là chuỗi',
             'value.max' => 'Giá trị màu không được vượt quá 7 ký tự',
             'value.regex' => 'Giá trị màu phải là mã hex hợp lệ (ví dụ: #FF0000)',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
-        $color->update($request->all());
+        $color->update([
+            'name' => $request->name,
+            'value' => $request->value,
+            'order' => $request->order ?? $color->order,
+        ]);
 
         return redirect()->route('admin.colors.index')
             ->with('success', 'Màu đã được cập nhật thành công!');

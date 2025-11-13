@@ -22,7 +22,7 @@ class TagController extends Controller
             $query->where('slug', 'like', '%' . $request->slug . '%');
         }
 
-        $tags = $query->paginate(15)->withQueryString();
+        $tags = $query->orderBy('order', 'asc')->orderBy('name', 'asc')->paginate(15)->withQueryString();
 
         return view('admin.pages.tags.index', compact('tags'));
     }
@@ -36,16 +36,22 @@ class TagController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:tags,name',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên tag là bắt buộc',
             'name.string' => 'Tên tag phải là chuỗi',
             'name.max' => 'Tên tag không được vượt quá 255 ký tự',
             'name.unique' => 'Tên tag đã tồn tại',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
+        $maxOrder = Tag::max('order') ?? 0;
+        
         Tag::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'order' => $request->order ?? ($maxOrder + 1),
         ]);
 
         return redirect()->route('admin.tags.index')->with('success', 'Tag đã được tạo thành công!');
@@ -67,16 +73,20 @@ class TagController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:tags,name,' . $tag->id,
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên tag là bắt buộc',
             'name.string' => 'Tên tag phải là chuỗi',
             'name.max' => 'Tên tag không được vượt quá 255 ký tự',
             'name.unique' => 'Tên tag đã tồn tại',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $tag->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'order' => $request->order ?? $tag->order,
         ]);
 
         return redirect()->route('admin.tags.index')->with('success', 'Tag đã được cập nhật thành công!');

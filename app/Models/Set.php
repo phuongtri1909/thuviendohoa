@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 class Set extends Model
 {
     protected $table = 'sets';
-    protected $fillable = ['name', 'slug','type', 'description', 'image', 'drive_url', 'status', 'keywords','formats','size','price','is_featured'];
+    protected $fillable = ['name', 'slug','type', 'description', 'image', 'drive_url', 'status', 'keywords','formats','size','price','is_featured','order'];
 
     const TYPE_FREE = 'free';
     const TYPE_PREMIUM = 'premium';

@@ -87,6 +87,7 @@
                                     <th class="column-small">STT</th>
                                     <th class="column-large">Tên tag</th>
                                     <th class="column-large">Slug</th>
+                                    <th class="column-small text-center">Thứ tự</th>
                                     <th class="column-small text-center">Số bộ</th>
                                     <th class="column-medium">Ngày tạo</th>
                                     <th class="column-small text-center">Thao tác</th>
@@ -103,6 +104,9 @@
                                         </td>
                                         <td>
                                             <span class="slug-text">{{ $tag->slug }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="order-badge">{{ $tag->order }}</span>
                                         </td>
                                         <td class="text-center">
                                             <span class="stories-count">{{ $tag->sets_count }}</span>
@@ -150,3 +154,38 @@
     </div>
 @endsection
 
+@push('styles')
+    <style>
+        .slug-text {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .stories-count {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .category-date {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .order-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+@endpush

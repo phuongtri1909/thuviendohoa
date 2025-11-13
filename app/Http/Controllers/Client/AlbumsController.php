@@ -49,7 +49,7 @@ class AlbumsController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
         
-        $albums = $query->orderBy('created_at', 'desc')->paginate(30);
+        $albums = $query->orderBy('order', 'asc')->orderBy('created_at', 'desc')->paginate(30);
         
         if ($request->ajax()) {
             return response()->json([

@@ -22,7 +22,7 @@ class CategoryController extends Controller
             $query->where('slug', 'like', '%' . $request->slug . '%');
         }
 
-        $categories = $query->paginate(15)->withQueryString();
+        $categories = $query->orderBy('order', 'asc')->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         return view('admin.pages.categories.index', compact('categories'));
     }

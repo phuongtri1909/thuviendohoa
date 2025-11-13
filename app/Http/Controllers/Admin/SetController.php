@@ -29,7 +29,7 @@ class SetController extends Controller
     }
     public function index(Request $request)
     {
-        $query = Set::query();
+        $query = Set::with(['categories.category', 'albums.album', 'colors.color', 'tags.tag', 'software.software']);
 
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -43,18 +43,66 @@ class SetController extends Controller
             $query->where('status', (bool) $request->status);
         }
 
-        $sets = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        if ($request->filled('category_id')) {
+            $query->whereHas('categories.category', function($q) use ($request) {
+                $q->where('id', $request->category_id);
+            });
+        }
 
-        return view('admin.pages.sets.index', compact('sets'));
+        if ($request->filled('album_id')) {
+            $query->whereHas('albums.album', function($q) use ($request) {
+                $q->where('id', $request->album_id);
+            });
+        }
+
+        if ($request->filled('color_id')) {
+            $query->whereHas('colors.color', function($q) use ($request) {
+                $q->where('id', $request->color_id);
+            });
+        }
+
+        if ($request->filled('tag_id')) {
+            $query->whereHas('tags.tag', function($q) use ($request) {
+                $q->where('id', $request->tag_id);
+            });
+        }
+
+        if ($request->filled('software_id')) {
+            $query->whereHas('software.software', function($q) use ($request) {
+                $q->where('id', $request->software_id);
+            });
+        }
+
+        $sets = $query->orderBy('order', 'asc')->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+
+        // Load data for filter dropdowns
+        $categories = Category::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id', 'name']);
+        $albums = Album::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id', 'name']);
+        $colors = Color::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id', 'name']);
+        $tags = Tag::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id', 'name']);
+        $software = Software::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id', 'name']);
+
+        // Prepare sets data for JavaScript
+        $setsData = $sets->keyBy('id')->map(function($set) {
+            return [
+                'categories' => $set->categories->pluck('category.name')->all(),
+                'albums' => $set->albums->pluck('album.name')->all(),
+                'colors' => $set->colors->pluck('color.name')->all(),
+                'tags' => $set->tags->pluck('tag.name')->all(),
+                'software' => $set->software->pluck('software.name')->all(),
+            ];
+        });
+
+        return view('admin.pages.sets.index', compact('sets', 'categories', 'albums', 'colors', 'tags', 'software', 'setsData'));
     }
 
     public function create()
     {
-        $albums = Album::orderBy('name')->get(['id','name']);
-        $categories = Category::orderBy('name')->get(['id','name']);
-        $colors = Color::orderBy('name')->get(['id','name','value']);
-        $software = Software::orderBy('name')->get(['id','name']);
-        $tags = Tag::orderBy('name')->get(['id','name']);
+        $albums = Album::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
+        $categories = Category::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
+        $colors = Color::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name','value']);
+        $software = Software::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
+        $tags = Tag::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
         return view('admin.pages.sets.create', compact('albums','categories','colors','software','tags'));
     }
 
@@ -84,6 +132,7 @@ class SetController extends Controller
             'software_ids.*' => 'integer|exists:software,id',
             'tag_ids' => 'nullable|array',
             'tag_ids.*' => 'integer|exists:tags,id',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên set là bắt buộc',
             'name.unique' => 'Tên set đã tồn tại',
@@ -96,6 +145,8 @@ class SetController extends Controller
             'size.required' => 'Kích thước là bắt buộc',
             'price.required' => 'Giá là bắt buộc',
             'photos.required' => 'Phải tải lên ít nhất 1 ảnh cho set',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $imagePath = Set::processAndSaveImage($request->file('image'));
@@ -141,6 +192,7 @@ class SetController extends Controller
             'size' => $request->size,
             'price' => $request->price,
             'is_featured' => (bool) $request->is_featured,
+            'order' => $request->order ?? (Set::max('order') ?? 0) + 1,
         ]);
 
         // create relations
@@ -186,11 +238,11 @@ class SetController extends Controller
 
     public function edit(Set $set)
     {
-        $albums = Album::orderBy('name')->get(['id','name']);
-        $categories = Category::orderBy('name')->get(['id','name']);
-        $colors = Color::orderBy('name')->get(['id','name','value']);
-        $software = Software::orderBy('name')->get(['id','name']);
-        $tags = Tag::orderBy('name')->get(['id','name']);
+        $albums = Album::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
+        $categories = Category::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
+        $colors = Color::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name','value']);
+        $software = Software::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
+        $tags = Tag::orderBy('order', 'asc')->orderBy('name', 'asc')->get(['id','name']);
         $set->load(['albums','categories','colors','software','tags','photos']);
         return view('admin.pages.sets.edit', compact('set','albums','categories','colors','software','tags'));
     }
@@ -221,6 +273,20 @@ class SetController extends Controller
             'software_ids.*' => 'integer|exists:software,id',
             'tag_ids' => 'nullable|array',
             'tag_ids.*' => 'integer|exists:tags,id',
+            'order' => 'nullable|integer|min:0',
+        ], [
+            'name.required' => 'Tên set là bắt buộc',
+            'name.unique' => 'Tên set đã tồn tại',
+            'type.required' => 'Loại set là bắt buộc',
+            'description.required' => 'Mô tả là bắt buộc',
+            'image.image' => 'Logo phải là hình ảnh',
+            'image.max' => 'Ảnh không được vượt quá 10MB',
+            'drive_url.required' => 'URL Drive là bắt buộc',
+            'drive_url.url' => 'URL Drive không hợp lệ',
+            'size.required' => 'Kích thước là bắt buộc',
+            'photos.array' => 'Danh sách ảnh không hợp lệ',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         // Check if photos or drive_url changed
@@ -268,6 +334,7 @@ class SetController extends Controller
             'size' => $request->size,
             'price' => $request->price,
             'is_featured' => (bool) $request->is_featured,
+            'order' => $request->order ?? $set->order,
         ];
 
         if ($request->hasFile('image')) {

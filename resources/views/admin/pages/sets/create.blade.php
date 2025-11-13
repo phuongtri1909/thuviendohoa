@@ -66,6 +66,17 @@
                                 <div class="error-message" id="error-is_featured">@error('is_featured') {{ $message }} @enderror</div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="order" class="form-label-custom">Thứ tự</label>
+                                <input type="number" id="order" name="order" class="custom-input {{ $errors->has('order') ? 'input-error' : '' }}" value="{{ old('order') }}" min="0" step="1">
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Thứ tự hiển thị (số nhỏ hơn sẽ hiển thị trước). Để trống sẽ tự động gán giá trị tiếp theo.</span>
+                                </div>
+                                <div class="error-message" id="error-order">@error('order') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
