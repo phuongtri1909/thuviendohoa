@@ -54,9 +54,8 @@
     </div>
     
     <div class="desktop-screen-area">
-        <img src="{{ asset($backgroundImage) }}" alt="Screen background" class="desktop-background">
-        <img src="{{ asset('images/d/desktops/khung-package.png') }}" alt="Package overlay"
-            class="desktop-package-overlay" style="display: none;">
+        <div class="desktop-background"></div>
+        <div class="desktop-package-overlay" style="display: none;"></div>
 
         <div class="desktop-package-content" style="display: none;">
             <div class="package-grid">
@@ -101,11 +100,9 @@
         </div>
 
         <div class="desktop-frame">
-            <img src="{{ asset($frameImage) }}" alt="Desktop frame" class="desktop-frame-image">
-
             <div class="desktop-content">
 
-                <div class="desktop-content-header">
+                <div class="desktop-content-header mt-3">
                     @if ($desktopContent && $desktopContent->logo)
                         @if (str_starts_with($desktopContent->logo, 'desktop-content/'))
                             <img src="{{ Storage::url($desktopContent->logo) }}" alt="Desktop logo"

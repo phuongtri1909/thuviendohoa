@@ -21,7 +21,7 @@ class CategoryBlogController extends Controller
             $query->where('slug', 'like', '%' . $request->slug . '%');
         }
 
-        $categories = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        $categories = $query->orderBy('order', 'asc')->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
 
         return view('admin.pages.category-blogs.index', compact('categories'));
     }
@@ -35,16 +35,22 @@ class CategoryBlogController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:category_blogs,name',
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên danh mục là bắt buộc',
             'name.string' => 'Tên danh mục phải là chuỗi',
             'name.max' => 'Tên danh mục không được vượt quá 255 ký tự',
             'name.unique' => 'Tên danh mục đã tồn tại',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
+        $maxOrder = CategoryBlog::max('order') ?? 0;
+        
         CategoryBlog::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'order' => $request->order ?? ($maxOrder + 1),
         ]);
 
         return redirect()->route('admin.category-blogs.index')->with('success', 'Danh mục blog đã được tạo thành công!');
@@ -66,16 +72,20 @@ class CategoryBlogController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:category_blogs,name,' . $categoryBlog->id,
+            'order' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'Tên danh mục là bắt buộc',
             'name.string' => 'Tên danh mục phải là chuỗi',
             'name.max' => 'Tên danh mục không được vượt quá 255 ký tự',
             'name.unique' => 'Tên danh mục đã tồn tại',
+            'order.integer' => 'Thứ tự phải là số nguyên',
+            'order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0',
         ]);
 
         $categoryBlog->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'order' => $request->order ?? $categoryBlog->order,
         ]);
 
         return redirect()->route('admin.category-blogs.index')->with('success', 'Danh mục blog đã được cập nhật thành công!');

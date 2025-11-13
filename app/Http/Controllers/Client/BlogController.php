@@ -67,7 +67,7 @@ class BlogController extends Controller
         }
         
         $blogs = Blog::orderBy('created_at', 'desc')->paginate(8);
-        $categories = CategoryBlog::orderBy('name')->get();
+        $categories = CategoryBlog::orderBy('order', 'asc')->get();
         
         $sidebarSetting = BlogSidebarSetting::getInstance();
         $sidebarBlogs = $sidebarSetting->getFeaturedBlogs(3);
@@ -120,7 +120,7 @@ class BlogController extends Controller
             ->take(4)
             ->get();
         
-        $categories = CategoryBlog::orderBy('name')->get();
+        $categories = CategoryBlog::orderBy('order', 'asc')->get();
         $sidebarSetting = BlogSidebarSetting::getInstance();
         $sidebarBlogs = $sidebarSetting->getFeaturedBlogs(3);
         

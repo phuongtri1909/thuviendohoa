@@ -161,11 +161,15 @@
                                 <label for="album_ids" class="form-label-custom">Albums (tùy chọn)</label>
                                 <div class="chip-select" data-select-id="album_ids" style="position:relative;">
                                     <div class="chip-select-toggle custom-input" tabindex="0">Chọn albums...</div>
-                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:480px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
                                         <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
-                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;margin-bottom:6px;">
+                                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:13px;">
+                                                <input type="checkbox" class="select-all-checkbox" style="cursor:pointer;">
+                                                <span>Chọn tất cả</span>
+                                            </label>
                                         </div>
-                                        <div class="dropdown-options" style="max-height:180px;overflow:auto;">
+                                        <div class="dropdown-options" style="max-height:400px;overflow:auto;">
                                         @foreach($albums as $al)
                                             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
                                                 <input type="checkbox" value="{{ $al->id }}" data-text="{{ $al->name }}" {{ collect(old('album_ids', []))->contains($al->id) ? 'checked' : '' }}>
@@ -190,11 +194,15 @@
                                 <label for="category_ids" class="form-label-custom">Danh mục (tùy chọn)</label>
                                 <div class="chip-select" data-select-id="category_ids" style="position:relative;">
                                     <div class="chip-select-toggle custom-input" tabindex="0">Chọn danh mục...</div>
-                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:480px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
                                         <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
-                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;margin-bottom:6px;">
+                                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:13px;">
+                                                <input type="checkbox" class="select-all-checkbox" style="cursor:pointer;">
+                                                <span>Chọn tất cả</span>
+                                            </label>
                                         </div>
-                                        <div class="dropdown-options" style="max-height:180px;overflow:auto;">
+                                        <div class="dropdown-options" style="max-height:400px;overflow:auto;">
                                         @foreach($categories as $ct)
                                             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
                                                 <input type="checkbox" value="{{ $ct->id }}" data-text="{{ $ct->name }}" {{ collect(old('category_ids', []))->contains($ct->id) ? 'checked' : '' }}>
@@ -222,11 +230,15 @@
                                 <label for="color_ids" class="form-label-custom">Màu sắc (tùy chọn)</label>
                                 <div class="chip-select" data-select-id="color_ids" style="position:relative;">
                                     <div class="chip-select-toggle custom-input" tabindex="0">Chọn màu sắc...</div>
-                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:480px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
                                         <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
-                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;margin-bottom:6px;">
+                                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:13px;">
+                                                <input type="checkbox" class="select-all-checkbox" style="cursor:pointer;">
+                                                <span>Chọn tất cả</span>
+                                            </label>
                                         </div>
-                                        <div class="dropdown-options" style="max-height:180px;overflow:auto;">
+                                        <div class="dropdown-options" style="max-height:400px;overflow:auto;">
                                         @foreach($colors as $cl)
                                        
                                             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
@@ -255,11 +267,15 @@
                                 <label for="software_ids" class="form-label-custom">Phần mềm (tùy chọn)</label>
                                 <div class="chip-select" data-select-id="software_ids" style="position:relative;">
                                     <div class="chip-select-toggle custom-input" tabindex="0">Chọn phần mềm...</div>
-                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:480px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
                                         <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
-                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;margin-bottom:6px;">
+                                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:13px;">
+                                                <input type="checkbox" class="select-all-checkbox" style="cursor:pointer;">
+                                                <span>Chọn tất cả</span>
+                                            </label>
                                         </div>
-                                        <div class="dropdown-options" style="max-height:180px;overflow:auto;">
+                                        <div class="dropdown-options" style="max-height:400px;overflow:auto;">
                                         @foreach($software as $sw)
                                             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
                                                 <input type="checkbox" value="{{ $sw->id }}" data-text="{{ $sw->name }}" {{ collect(old('software_ids', []))->contains($sw->id) ? 'checked' : '' }}>
@@ -287,11 +303,15 @@
                                 <label for="tag_ids" class="form-label-custom">Tags (tùy chọn)</label>
                                 <div class="chip-select" data-select-id="tag_ids" style="position:relative;">
                                     <div class="chip-select-toggle custom-input" tabindex="0">Chọn tags...</div>
-                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:220px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
+                                    <div class="chip-select-dropdown" style="position:absolute;left:0;right:0;bottom:100%;margin-bottom:4px;z-index:20;background:#fff;border:1px solid #e9ecef;border-radius:6px;display:none;max-height:480px;overflow:hidden;box-shadow:0 -4px 12px rgba(0,0,0,0.1);">
                                         <div style="padding:8px;border-bottom:1px solid #e9ecef;position:sticky;top:0;background:#fff;">
-                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;">
+                                            <input type="text" class="dropdown-search" placeholder="Tìm kiếm..." style="width:100%;padding:6px 10px;border:1px solid #e9ecef;border-radius:4px;font-size:13px;margin-bottom:6px;">
+                                            <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;font-size:13px;">
+                                                <input type="checkbox" class="select-all-checkbox" style="cursor:pointer;">
+                                                <span>Chọn tất cả</span>
+                                            </label>
                                         </div>
-                                        <div class="dropdown-options" style="max-height:180px;overflow:auto;">
+                                        <div class="dropdown-options" style="max-height:400px;overflow:auto;">
                                         @foreach($tags as $tg)
                                             <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;">
                                                 <input type="checkbox" value="{{ $tg->id }}" data-text="{{ $tg->name }}" {{ collect(old('tag_ids', []))->contains($tg->id) ? 'checked' : '' }}>
@@ -403,6 +423,65 @@ function initChipDropdown(wrapper) {
                 setTimeout(() => searchInput.focus(), 100);
             }
         });
+    }
+
+    // Handle select all checkbox
+    const selectAllCheckbox = dropdown.querySelector('.select-all-checkbox');
+    if (selectAllCheckbox && optionsContainer) {
+        const updateSelectAllState = () => {
+            const visibleLabels = Array.from(optionsContainer.querySelectorAll('label')).filter(label => 
+                label.style.display !== 'none'
+            );
+            if (visibleLabels.length === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+                return;
+            }
+            const checkedCount = visibleLabels.filter(label => {
+                const checkbox = label.querySelector('input[type="checkbox"]');
+                return checkbox && checkbox.checked;
+            }).length;
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === visibleLabels.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        };
+
+        selectAllCheckbox.addEventListener('change', (e) => {
+            e.stopPropagation();
+            const visibleLabels = Array.from(optionsContainer.querySelectorAll('label')).filter(label => 
+                label.style.display !== 'none'
+            );
+            visibleLabels.forEach(label => {
+                const checkbox = label.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.checked = selectAllCheckbox.checked;
+                }
+            });
+            syncFromCheckboxes();
+        });
+
+        // Update select all state when individual checkboxes change
+        dropdown.addEventListener('change', (e) => {
+            if (e.target.type === 'checkbox' && !e.target.classList.contains('select-all-checkbox')) {
+                updateSelectAllState();
+            }
+        });
+
+        // Update select all state when search filter changes
+        if (searchInput) {
+            searchInput.addEventListener('input', updateSelectAllState);
+        }
+
+        // Initial state
+        updateSelectAllState();
     }
 
     // Initial render (preserve old input)

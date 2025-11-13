@@ -32,6 +32,10 @@
                             <span class="detail-value slug-text">{{ $categoryBlog->slug }}</span>
                         </div>
                         <div class="detail-item">
+                            <label class="detail-label">Thứ tự:</label>
+                            <span class="detail-value order-badge">{{ $categoryBlog->order }}</span>
+                        </div>
+                        <div class="detail-item">
                             <label class="detail-label">Số bài viết:</label>
                             <span class="detail-value stories-count">{{ $categoryBlog->blogs_count }} bài viết</span>
                         </div>
@@ -98,6 +102,15 @@
     .stories-count {
         background: #e3f2fd;
         color: #1976d2;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .order-badge {
+        background: #fff3cd;
+        color: #856404;
         padding: 4px 12px;
         border-radius: 12px;
         font-size: 14px;

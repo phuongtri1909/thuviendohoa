@@ -1,6 +1,7 @@
 .desktop-wrapper {
     position: relative;
     width: 100%;
+    margin-top: 200px;
 }
 
 .desktop-container {
@@ -23,23 +24,23 @@
 
 .desktop-screen-area {
     position: absolute;
-    top: -6%;
+    top: -23%;
     left: 50%;
     transform: translateX(-50%);
-    width: 904px;
-    height: 607px;
+    width: 833px;
+    height: 733px;
     z-index: 2;
 }
 
 @media (max-width: 904px) {
     .desktop-base {
-        height: calc(100vw * 800 / 904);
+        height: calc(100vw * 733 / 833);
     }
     
     .desktop-screen-area {
         width: 100%;
         height: auto;
-        aspect-ratio: 904 / 607;
+        aspect-ratio: 833 / 733;
         left: 0;
         transform: none;
     }
@@ -74,6 +75,13 @@
     height: 100%;
     z-index: 3;
     transition: all 0.5s ease-in-out;
+    background: #ffffff;
+    border-radius: 55px;
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.05),
+        0 8px 30px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Package view animations - đảm bảo desktop-package-content flow theo desktop-frame */
@@ -111,6 +119,20 @@
     opacity: 0;
     transform: scaleY(0);
     transform-origin: center;
+    /* CSS giống desktop-background nhưng chỉ có border trái phải */
+    background: #ffffff;
+    border-radius: 55px;
+    border-left: 25px solid #8e8e8e;
+    border-right: 25px solid #8e8e8e;
+    border-top: none;
+    border-bottom: none;
+    box-sizing: border-box;
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.05),
+        0 8px 30px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
 }
 
 .desktop-package-content {
@@ -346,15 +368,15 @@
     width: 100%;
     height: 78%;
     z-index: 4;
+    border: 25px solid #4E4E4E;
+    border-radius: 55px;
+    box-sizing: border-box;
+    background: transparent;
+    overflow: hidden;
 }
 
 .desktop-frame-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 4;
+    display: none; /* Ẩn hình ảnh, dùng CSS thay thế */
 }
 
 .desktop-content {
@@ -367,7 +389,7 @@
     max-height: 100%;
     z-index: 5;
     display: flex;
-    padding: 30px 50px;
+    padding: 45px;
     box-sizing: border-box;
     overflow: hidden;
     transform-origin: center center;
@@ -380,7 +402,7 @@
 .desktop-content-logo {
     max-width: 100%;
     height: auto;
-    width: 230px;
+    width: 325px;
 }
 
 .desktop-content-header {
@@ -460,6 +482,18 @@
         width: 100%;
         height: 80%;
         overflow: hidden;
+        border-width: 15px;
+        border-radius: 55px;
+    }
+    
+    .desktop-background {
+        border-radius: 55px;
+    }
+    
+    .desktop-package-overlay {
+        border-left-width: 15px;
+        border-right-width: 15px;
+        border-radius: 55px;
     }
     
     /* Desktop-package-content flow theo desktop-frame trên mobile */
@@ -628,12 +662,6 @@
     transition: all 0.3s ease;
 }
 
-@media (max-width: 850px) {
-    .desktop-content {
-        padding: 30px 40px;
-        justify-content: space-between;
-    }
-}
 
 @media (max-width: 800px) {
     .desktop-content {
