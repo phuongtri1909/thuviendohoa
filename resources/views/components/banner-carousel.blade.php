@@ -42,7 +42,7 @@
             @foreach($categories as $category)
                 <a href="{{ route('search', ['category' => $category->slug]) }}" class="color-primary-12 icon-box text-decoration-none">
                     <img class="rounded-4" src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}">
-                    {{ $category->name }}
+                    <span class="category-name">{{ $category->name }}</span>
                 </a>
             @endforeach
         @else

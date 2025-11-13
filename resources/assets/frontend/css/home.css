@@ -28,15 +28,17 @@
 /* Icon buttons */
 .banner-icons {
     position: absolute;
-    top: 60%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1146px;
     z-index: 3;
     align-items: start;
+    padding: 0 15px;
 }
 
 .banner-icons .icon-box {
@@ -44,20 +46,38 @@
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     transition: all 0.3s;
     text-align: center;
-    font-size: 14px;
+    font-size: 15px;
     padding: 15px;
     cursor: pointer;
+    min-width: 0;
 }
 
-.icon-box img {
+.banner-icons .icon-box img {
     width: 79px;
     height: 79px;
     margin-bottom: 4px;
-    /* border: 2px solid #FFF; */
+    flex-shrink: 0;
+}
+
+.banner-icons .icon-box .category-name {
+    width: 110px;
+    min-width: 110px;
+    max-width: max-content;
+    line-height: 1.4;
+    word-break: break-word;
+    margin-top: 4px;
+    text-align: center;
+    display: block;
+    font-size: 15px;
+    white-space: normal;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    min-height: calc(1.4em * 2);
+    box-sizing: border-box;
 }
 
 /* Responsive Design */
@@ -67,41 +87,98 @@
     .banner-icons {
         top: 40%;
         grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+    
+    .banner-icons .icon-box .category-name {
+        width: 110px;
+        min-width: 110px;
+        max-width: max-content;
+        font-size: 15px;
+        min-height: calc(1.4em * 2);
     }
 }
 
 @media (max-width: 576px) {
     .banner-icons {
+        top: 35%;
         grid-template-columns: repeat(3, 1fr);
-        gap: 5px;
+        gap: 8px;
+        padding: 0 10px;
     }
 
-    .icon-box img {
+    .banner-icons .icon-box img {
         width: 50px;
         height: 50px;
     }
 
     .banner-icons .icon-box {
-        font-size: 12px;
+        padding: 10px;
+        font-size: 15px;
+    }
+    
+    .banner-icons .icon-box .category-name {
+        width: 110px;
+        min-width: 110px;
+        max-width: max-content;
+        font-size: 15px;
+        min-height: calc(1.4em * 2);
     }
 }
 
 @media (max-width: 400px) {
-
-
+    .banner-icons {
+        gap: 5px;
+    }
 
     .banner-icons .icon-box {
-        font-size: 9px;
-        padding: 10px;
+        padding: 8px;
+        font-size: 15px;
+    }
+    
+    .banner-icons .icon-box .category-name {
+        font-size: 15px;
+        min-height: calc(1.4em * 2);
     }
 }
 
-/* Component dưới banner */
+/* Component dưới banner - nằm trên nửa dưới của banner */
 .featured-section {
     border-radius: 20px;
-    margin: -250px auto 0;
+    margin-top: calc(-50vh + 150px);
     position: relative;
     z-index: 10;
+}
+
+/* Responsive cho featured-section */
+@media (max-width: 992px) {
+    .featured-section {
+        margin-top: calc(-50vh + 150px);
+    }
+}
+
+@media (max-width: 768px) {
+    .featured-section {
+        margin-top: calc(-50vh + 150px);
+    }
+}
+
+@media (max-width: 576px) {
+    .featured-section {
+        margin-top: calc(-50vh + 120px);
+    }
+}
+
+@media (max-height: 600px) {
+    .featured-section {
+        margin-top: calc(-50vh + 100px);
+    }
+}
+
+@media (max-height: 500px) {
+    .featured-section {
+        margin-top: calc(-50vh + 80px);
+    }
 }
 
 .bg-featured-section {
@@ -110,3 +187,4 @@
 }
 
 /* Home specific styles */
+
