@@ -8,10 +8,10 @@
 <!-- Contribution Section -->
 <div class="contribution-section ">
     <div class="container-custom">
-        <h3 class="text-md-4">Đóng góp của bạn sẽ giúp tôi hoàn thiện hơn</h3>
+        <h3 class="text-1lg-1">Đóng góp của bạn sẽ giúp tôi hoàn thiện hơn</h3>
         <form id="feedbackForm" class="feedback-form">
-            <div class="input-group">
-                <input type="text" id="feedbackMessage" class="form-control" placeholder="Góp ý của bạn về trang..." required>
+            <div class="input-group-feedback">
+                <input type="text" id="feedbackMessage" class="form-control-feedback" placeholder="Góp ý của bạn về trang..." required>
                 <button class="btn btn-submit" type="submit">
                     <img src="{{ asset('/images/svg/submit-form.svg') }}" alt="Submit">
                 </button>

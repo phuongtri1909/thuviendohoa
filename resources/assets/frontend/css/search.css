@@ -295,6 +295,10 @@
     border-radius: 10px;
 }
 
+.package-info:hover {
+    background: linear-gradient(90deg, #EF9016 0%, #F0B00C 100%);
+}
+
 .package-info .total-package-info {
     line-height: 30px;
 }

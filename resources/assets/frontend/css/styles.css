@@ -49,6 +49,7 @@
     --font-size-lg: 18px;
     --font-size-1lg: 20px;
     --font-size-xl: 24px;
+    --font-size-1xl: 28px;
     --font-size-2xl: 32px;
     --font-size-3xl: 36px;
     --font-size-4xl: 40px;
@@ -400,6 +401,7 @@ html {
     font-size: var(--font-size-xl) !important;
 }
 
+
 .text-xl-2 {
     font-size: var(--font-size-xl) !important;
 }
@@ -420,6 +422,10 @@ html {
     font-size: var(--font-size-2xl) !important;
 }
 
+.text-1xl {
+    font-size: var(--font-size-1xl) !important;
+}
+
 .text-5xl {
     font-size: var(--font-size-5xl) !important;
 }
@@ -433,6 +439,10 @@ html {
 }
 
 .text-1lg {
+    font-size: var(--font-size-1lg) !important;
+}
+
+.text-1lg-1 {
     font-size: var(--font-size-1lg) !important;
 }
 
@@ -747,6 +757,10 @@ html {
 
     .text-lg-2 {
         font-size: var(--font-size-xl) !important;
+    }
+
+    .text-1lg-1 {
+        font-size: var(--font-size-1xl) !important;
     }
 
     .text-1lg-2 {

@@ -32,7 +32,7 @@
 
         .slider-wrapper {
             display: flex;
-            gap: 0;
+            gap: 15px;
             transition: transform 0.5s ease;
             align-items: center;
         }
@@ -207,7 +207,7 @@
 
                 updateSlideWidth() {
                     const slides = this.wrapper.querySelectorAll('.slide-item');
-                    const gap = 0;
+                    const gap = 10;
 
                     this.slideWidth = 0;
                     slides.forEach(slide => {

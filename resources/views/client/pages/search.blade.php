@@ -31,7 +31,8 @@
                         <img id="modalImage" src="" alt="" class="img-fluid rounded-4">
 
                         <div class="mt-4">
-                            <x-client.social-share :url="url('/search?set=1')" :title="'Sample Set'" :favorite-count="125" :is-favorited="true" :set-id="1" />
+                            <x-client.social-share :url="url('/search?set=1')" :title="'Sample Set'" :favorite-count="125"
+                                :is-favorited="true" :set-id="1" />
                         </div>
                     </div>
                     <div class="col-12 col-md-5 modal-content-right">
@@ -111,30 +112,34 @@
                         </div>
                         <div class="mt-2">
                             <div class="package-info p-3">
-                                <div class="info-member">
-                                    <div class="d-flex flex-column text-center justify-content-center">
+                                <div class="row">
+                                    <div class="col-12 col-sm-4 col-md-12 col-xxl-4 d-flex flex-column align-items-start text-center justify-content-center">
                                         <span class="text-2xl-1 fw-semibold total-package-info">2.194 +</span>
                                         <span class="text-sm-2 fw-semibold">Thành viên VIP</span>
                                     </div>
-                                    <div>
+                                    <div class="col-12 col-sm-8 col-md-12 col-xxl-8 d-flex justify-content-between">
                                         <img src="{{ asset('images/d/coins/dong.png') }}" alt="">
                                         <img src="{{ asset('images/d/coins/bac.png') }}" alt="">
                                         <img src="{{ asset('images/d/coins/vang.png') }}" alt="">
                                         <img src="{{ asset('images/d/coins/bachkim.png') }}" alt="">
                                     </div>
                                 </div>
-                                <div class="info-intro mt-3 text-start">
-                                    <ul class="px-3 text-xs mb-0">
-                                        <li>
-                                            Cập nhật file mới mỗi ngày
-                                        </li>
-                                        <li>
-                                            Sản phẩm và chủ đề đa dạng
-                                        </li>
-                                    </ul>
-                                    <button class="btn rounded-5 bg-white text-xs mt-2">
-                                        Kích hoạt tải không giới hạn
-                                    </button>
+                                <div class="row mt-3 text-start">
+                                    <div class="col-12 col-xxl-6">
+                                        <ul class="px-3 text-md mb-0">
+                                            <li class="mb-1">
+                                                Cập nhật file mới mỗi ngày
+                                            </li>
+                                            <li>
+                                                Sản phẩm và chủ đề đa dạng
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12 col-xxl-6">
+                                        <button class="btn btn-lg rounded-5 bg-white text-md w-100 mt-2 mt-xxl-0">
+                                            Kích hoạt tải không giới hạn
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +195,7 @@
 
                         <x-client.image-slider title="Thiết kế cùng chủ đề" id="sliderWrapper1" prevId="prevBtn1"
                             nextId="nextBtn1" :slides="$slides" />
-                        
+
                         <span class="my-3 d-flex"></span>
 
                         @php
@@ -206,7 +211,7 @@
                             ];
                         @endphp
 
-                        
+
 
                         <x-client.image-slider-auto title="Thiết kế nổi bật" id="sliderAuto1" :slides="$slidesAuto"
                             :height="260" :speed="5" :drag-enabled="true" />
@@ -262,7 +267,11 @@
                 setTimeout(() => {
                     const imageModal = document.getElementById('imageModal');
                     if (imageModal) {
-                        const event = new CustomEvent('openSetModal', { detail: { setSlug: setSlug } });
+                        const event = new CustomEvent('openSetModal', {
+                            detail: {
+                                setSlug: setSlug
+                            }
+                        });
                         document.dispatchEvent(event);
                     }
                 }, 1000);

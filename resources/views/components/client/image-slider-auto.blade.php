@@ -32,7 +32,7 @@
 
         .image-slider-auto .slider-wrapper {
             display: flex;
-            gap: 0;
+            gap: 15px;
             align-items: center;
             will-change: transform;
         }
@@ -170,7 +170,7 @@
                     if (items.length === 0) return;
 
                     this.initialCount = items.length;
-                    const gap = 0;
+                    const gap = 10;
                     this.baseWidth = 0;
                     items.forEach((slide, idx) => {
                         this.baseWidth += slide.offsetWidth + (idx < items.length - 1 ? gap : 0);
@@ -187,7 +187,7 @@
                 }
 
                 updateWidths() {
-                    const gap = 0;
+                    const gap = 10;
                     this.trackWidth = 0;
                     const slides = this.wrapper.querySelectorAll('.slide-item');
                     slides.forEach(slide => {
