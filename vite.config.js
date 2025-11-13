@@ -29,6 +29,7 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    publicDir: 'public',
     server: {
         host: 'thuviendohoa.local',
         port: 5173,
@@ -39,6 +40,10 @@ export default defineConfig({
             protocol: 'http',
             port: 5173,
         },
+        middlewareMode: false,
+        fs: {
+            allow: ['..']
+        }
     },
     
     

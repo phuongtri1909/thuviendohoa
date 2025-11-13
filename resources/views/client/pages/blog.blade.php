@@ -34,13 +34,18 @@
                         <h4 class="fw-semibold mt-3" id="blogTitle">Khi các thương hiệu Việt Nam mừng 80 năm Quốc khánh-
                             Sáng tạo lan tỏa niềm tự hào dân tộc</h4>
                         <div class="my-2 text-sm blog-featured-info">
-                            <span id="blogCategory">Kiến thức thú vị</span> |
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
+                            <span class="fw-bold" id="blogCategory">Kiến thức thú vị</span>
+                            <svg width="1" height="15" viewBox="0 0 1 15" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <line x1="0.5" y1="2.18556e-08" x2="0.499999" y2="15" stroke="#2E2E2E" />
+                            </svg>
+
+                            <span class="d-flex align-items-center">
+                                <img class="me-1" src="{{ asset('images/svg/blogs/time.svg') }}" alt="">
                                 <span id="blogDate">02/10/2025</span>
                             </span>
-                            <span>
-                                <img src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
+                            <span class="d-flex align-items-center">
+                                <img class="me-1" src="{{ asset('images/svg/blogs/view.svg') }}" alt="">
                                 <span id="blogViews">232</span>
                             </span>
                         </div>
@@ -67,14 +72,14 @@
                     <h2 class="fw-semibold color-primary me-1">BLOG</h2>
                     <p class="color-primary-12 fw-semibold mb-0">KIẾN THỨC THÚ VỊ</p>
                 </div>
-
+    
                 <form action="#" method="GET" class="search-box position-relative" id="blogSearchForm">
                     <input type="text" name="q" id="blogSearchInput" class="form-control search-input"
                         placeholder="Tìm kiếm bài viết..">
                     <button type="submit" class="search-btn">
                         <i class="bi bi-search"></i>
                     </button>
-                </form>
+                </form>        
             </div>
         </div>
         <div class="mt-2 blogs-knowledge-items">
@@ -112,7 +117,11 @@
                     date: '{{ $featuredBlog->created_at->format('d/m/Y') }}',
                     views: {{ $featuredBlog->views ?? 0 }},
                     image: {!! json_encode(
-                        $featuredBlog->image_left ? asset('storage/' . $featuredBlog->image_left) : ($featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/vertical.png')),
+                        $featuredBlog->image_left
+                            ? asset('storage/' . $featuredBlog->image_left)
+                            : ($featuredBlog->image
+                                ? asset('storage/' . $featuredBlog->image)
+                                : asset('/images/d/dev/blogs/vertical.png')),
                     ) !!},
                     contentImage: {!! json_encode(
                         $featuredBlog->image ? asset('storage/' . $featuredBlog->image) : asset('/images/d/dev/blogs/blog-content.png'),

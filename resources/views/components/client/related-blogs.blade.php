@@ -29,7 +29,7 @@
                                     </span>
                                 </div>
                                 <p class="blog-related-desc text-md mb-0 color-primary-12">
-                                    {{ cleanDescription($relatedBlog->content, 150) }}
+                                    {{ cleanDescription($relatedBlog->content, 250) }}
                                 </p>
                             </div>
                         </div>

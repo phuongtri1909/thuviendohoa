@@ -220,14 +220,30 @@
     background-color: var(--primary-color);
 }
 
-@media(min-width:600px) {
+/* Match width với blog item responsive */
+@media (min-width: 768px) {
     .blogs-knowledge .title-blog-knowledge {
         flex-direction: unset;
         justify-content: space-between;
     }
 
     .blogs-knowledge .search-box {
-        width: 300px;
+        width: calc((100% - 1rem) / 2);
+        max-width: calc((100% - 1rem) / 2);
+    }
+}
+
+@media (min-width: 992px) {
+    .blogs-knowledge .search-box {
+        width: calc((100% - 2rem) / 3);
+        max-width: calc((100% - 2rem) / 3);
+    }
+}
+
+@media (min-width: 1200px) {
+    .blogs-knowledge .search-box {
+        width: calc((100% - 3rem) / 4);
+        max-width: calc((100% - 3rem) / 4);
     }
 }
 
