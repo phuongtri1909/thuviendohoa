@@ -167,11 +167,11 @@
                         <a href="{{ route('get.link') }}"
                             class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
-                            <p class="color-primary fw-semibold text-md pe-3 mb-0">Get Link</p>
+                            <p class="color-primary fw-semibold text-md pe-3 mb-1">Get Link</p>
                         </a>
                         <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                             <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
-                            <p class="color-primary fw-semibold text-md pe-3 mb-0">Vietfile Blog</p>
+                            <p class="color-primary fw-semibold text-md pe-3 mb-1">Vietfile Blog</p>
                         </a>
 
                     </div>
@@ -341,7 +341,7 @@
                         <a href="{{ route('login') }}"
                             class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none d-none d-sm-flex">
                             <img src="{{ asset('/images/svg/clock.svg') }}" alt="Login">
-                            <span class="color-primary fw-semibold text-md">Đăng nhập</span>
+                            <span class="color-primary fw-semibold text-md mb-1">Đăng nhập</span>
                         </a>
                     @endguest
                 </div>
@@ -484,16 +484,16 @@
         <div class="mobile-actions">
             <a href="{{ route('get.link') }}" class="action-btn get-link-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/g.svg') }}" alt="Link">
-                <p class="color-primary fw-semibold text-md pe-3 mb-0">Get Link</p>
+                <p class="color-primary fw-semibold text-md pe-3 mb-1">Get Link</p>
             </a>
             <a href="{{ route('blog') }}" class="action-btn blog-btn rounded-5 p-1 text-decoration-none">
                 <img src="{{ asset('/images/svg/logo.svg') }}" alt="Blog">
-                <p class="color-primary fw-semibold text-md pe-3 mb-0">Vietfile Blog</p>
+                <p class="color-primary fw-semibold text-md pe-3 mb-1">Vietfile Blog</p>
             </a>
             @guest
                 <a href="{{ route('login') }}" class="action-btn login-btn rounded-5 py-2 px-4 text-decoration-none">
                     <img src="{{ asset('/images/svg/clock.svg') }}" alt="Login">
-                    <span class="color-primary fw-semibold text-md">Đăng nhập</span>
+                    <span class="color-primary fw-semibold text-md mb-1">Đăng nhập</span>
                 </a>
             @endguest
         </div>
