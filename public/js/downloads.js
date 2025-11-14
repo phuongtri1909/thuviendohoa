@@ -108,7 +108,7 @@
     render();
   }
 
-  window.startDownloadWithPopup = async function ({ endpoint, setId, setName }) {
+  window.startDownloadWithPopup = async function ({ endpoint, setId, setName, paymentMethod = 'coins' }) {
     ensureUI();
     const id = `${Date.now()}_${Math.random().toString(36).slice(2)}`;
     const task = { id, name: setName || 'Tệp', progress: 0, status: 'waiting' };
@@ -116,6 +116,12 @@
     render();
 
     try {
+      // Đảm bảo paymentMethod luôn có giá trị (không phải undefined)
+      const finalPaymentMethod = paymentMethod || 'coins';
+      const requestBody = { 
+        user_confirmed: true,
+        payment_method: finalPaymentMethod
+      };
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -124,7 +130,7 @@
           'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]')||{}).content || ''
         },
-        body: JSON.stringify({ user_confirmed: true })
+        body: JSON.stringify(requestBody)
       });
 
       const cd = res.headers.get('content-disposition') || '';

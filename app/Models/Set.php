@@ -12,13 +12,17 @@ use Illuminate\Http\UploadedFile;
 class Set extends Model
 {
     protected $table = 'sets';
-    protected $fillable = ['name', 'slug','type', 'description', 'image', 'drive_url', 'status', 'keywords','formats','size','price','is_featured','order'];
+    protected $fillable = ['name', 'slug','type', 'description', 'image', 'drive_url', 'status', 'keywords','formats','size','price','is_featured','order','can_use_free_downloads','download_method'];
 
     const TYPE_FREE = 'free';
     const TYPE_PREMIUM = 'premium';
 
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
+
+    const DOWNLOAD_METHOD_BOTH = 'both';
+    const DOWNLOAD_METHOD_COINS_ONLY = 'coins_only';
+    const DOWNLOAD_METHOD_FREE_ONLY = 'free_only';
 
     public function getKeywordsAttribute($value)
     {
@@ -149,6 +153,42 @@ class Set extends Model
     public function isPremium()
     {
         return $this->type === self::TYPE_PREMIUM;
+    }
+
+    public function canUseFreeDownloads()
+    {
+        if (!$this->isPremium()) {
+            return false;
+        }
+        $method = $this->download_method ?? self::DOWNLOAD_METHOD_COINS_ONLY;
+        return $method === self::DOWNLOAD_METHOD_BOTH || $method === self::DOWNLOAD_METHOD_FREE_ONLY;
+    }
+
+    public function canUseCoins()
+    {
+        if (!$this->isPremium()) {
+            return false;
+        }
+        $method = $this->download_method ?? self::DOWNLOAD_METHOD_COINS_ONLY;
+        return $method === self::DOWNLOAD_METHOD_BOTH || $method === self::DOWNLOAD_METHOD_COINS_ONLY;
+    }
+
+    public function requiresCoinPurchase()
+    {
+        if (!$this->isPremium()) {
+            return false;
+        }
+        $method = $this->download_method ?? self::DOWNLOAD_METHOD_COINS_ONLY;
+        return $method === self::DOWNLOAD_METHOD_COINS_ONLY;
+    }
+
+    public function requiresFreeDownload()
+    {
+        if (!$this->isPremium()) {
+            return false;
+        }
+        $method = $this->download_method ?? self::DOWNLOAD_METHOD_COINS_ONLY;
+        return $method === self::DOWNLOAD_METHOD_FREE_ONLY;
     }
 
     public static function processAndSaveImage(UploadedFile $imageFile): string

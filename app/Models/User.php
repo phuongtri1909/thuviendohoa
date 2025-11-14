@@ -91,6 +91,23 @@ class User extends Authenticatable
         return $this->free_downloads > 0;
     }
 
+    /**
+     * Kiểm tra user có thể mua bằng xu không
+     * User chỉ có thể mua bằng xu nếu:
+     * - Có package_id (đã mua gói) VÀ package còn hạn
+     * User thường (không có package_id) không được mua bằng xu, chỉ được dùng lượt miễn phí
+     */
+    public function canPurchaseWithCoins()
+    {
+        // Phải có package_id (đã mua gói) mới được mua bằng xu
+        if (!$this->package_id) {
+            return false;
+        }
+
+        // Package phải còn hạn
+        return $this->hasValidPackage();
+    }
+
     public function hasUnlimitedDownloads()
     {
         return $this->package_id && $this->hasValidPackage();

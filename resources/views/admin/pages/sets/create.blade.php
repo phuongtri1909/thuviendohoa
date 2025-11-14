@@ -56,6 +56,28 @@
                         </div>
                     </div>
 
+                    <div class="row" id="download-method-option" style="display: none;">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="download_method" class="form-label-custom">Phương thức tải <span class="required-mark">*</span></label>
+                                <select id="download_method" name="download_method" class="custom-input {{ $errors->has('download_method') ? 'input-error' : '' }}" required>
+                                    <option value="{{ \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY }}" {{ old('download_method', \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY) === \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY ? 'selected' : '' }}>Chỉ mua bằng xu</option>
+                                    <option value="{{ \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY }}" {{ old('download_method') === \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY ? 'selected' : '' }}>Chỉ dùng lượt miễn phí</option>
+                                    <option value="{{ \App\Models\Set::DOWNLOAD_METHOD_BOTH }}" {{ old('download_method') === \App\Models\Set::DOWNLOAD_METHOD_BOTH ? 'selected' : '' }}>Cả 2 cách (xu hoặc lượt miễn phí)</option>
+                                </select>
+                                <div class="form-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>
+                                        <strong>Chỉ mua bằng xu:</strong> User bắt buộc phải mua bằng xu<br>
+                                        <strong>Chỉ dùng lượt miễn phí:</strong> User chỉ có thể dùng 1 trong 2 lượt miễn phí<br>
+                                        <strong>Cả 2 cách:</strong> User có thể chọn mua bằng xu hoặc dùng lượt miễn phí
+                                    </span>
+                                </div>
+                                <div class="error-message" id="error-download_method">@error('download_method') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -523,41 +545,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Toggle price field based on type
     document.getElementById('type').addEventListener('change', function(e) {
         const priceField = document.getElementById('price-field');
         const priceInput = document.getElementById('price');
+        const downloadMethodOption = document.getElementById('download-method-option');
+        const downloadMethodSelect = document.getElementById('download_method');
         
         if (e.target.value === 'premium') {
             priceField.style.display = 'block';
             priceInput.required = true;
+            downloadMethodOption.style.display = 'block';
+            downloadMethodSelect.required = true;
         } else {
             priceField.style.display = 'none';
             priceInput.required = false;
             priceInput.value = '';
+            downloadMethodOption.style.display = 'none';
+            downloadMethodSelect.required = false;
+            downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY }}';
         }
     });
     
-    // Initialize price field visibility
     document.addEventListener('DOMContentLoaded', function() {
         const typeSelect = document.getElementById('type');
         const priceField = document.getElementById('price-field');
         const priceInput = document.getElementById('price');
+        const downloadMethodOption = document.getElementById('download-method-option');
+        const downloadMethodSelect = document.getElementById('download_method');
         
         if (typeSelect.value === 'premium') {
             priceField.style.display = 'block';
             priceInput.required = true;
+            downloadMethodOption.style.display = 'block';
+            downloadMethodSelect.required = true;
         }
     });
     
-    // Photos preview with remove functionality
     let selectedPhotos = [];
     
     document.getElementById('photos').addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
         const preview = document.getElementById('photo-preview');
         
-        // Add new files to existing selection
         files.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -583,17 +612,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 removeBtn.innerHTML = '×';
                 removeBtn.style.cssText = 'position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; border-radius: 50%; background: #dc3545; color: white; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;';
                 removeBtn.addEventListener('click', function() {
-                    // Remove from selectedPhotos array
                     selectedPhotos = selectedPhotos.filter(p => p.id !== photoId);
                     
-                    // Remove from DOM with smooth animation
                     photoContainer.style.transition = 'all 0.3s ease';
                     photoContainer.style.opacity = '0';
                     photoContainer.style.transform = 'scale(0.8)';
                     
                     setTimeout(() => {
                         photoContainer.remove();
-                        // Update file input
                         updateFileInput();
                     }, 300);
                 });
@@ -605,19 +631,16 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(file);
         });
         
-        // Clear the file input so same files can be selected again
         e.target.value = '';
     });
     
     function updateFileInput() {
-        // Create a new FileList with remaining files
         const dt = new DataTransfer();
         selectedPhotos.forEach(photo => {
             dt.items.add(photo.file);
         });
         document.getElementById('photos').files = dt.files;
         
-        // Update required attribute based on selection
         const photosInput = document.getElementById('photos');
         if (selectedPhotos.length > 0) {
             photosInput.required = false;
@@ -626,14 +649,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Custom validation before form submit
     document.getElementById('set-form').addEventListener('submit', function(e) {
         const photosInput = document.getElementById('photos');
         
-        // Check if we have selected photos
         if (selectedPhotos.length === 0) {
             e.preventDefault();
-            // Show error message in the photos error div
             const errorDiv = document.getElementById('error-photos');
             if (errorDiv) {
                 errorDiv.innerHTML = '<span style="color: #dc3545;">Phải tải lên ít nhất 1 ảnh cho set</span>';
@@ -641,7 +661,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // Ensure photos are properly set in the input
         const dt = new DataTransfer();
         selectedPhotos.forEach(photo => {
             dt.items.add(photo.file);

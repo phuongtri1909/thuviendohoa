@@ -91,6 +91,32 @@
                             </div>
                         </div>
 
+                        <div class="row" id="download-method-option" style="display: {{ old('type', $set->type) === 'premium' ? 'block' : 'none' }};">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="download_method" class="form-label-custom">Phương thức tải <span class="required-mark">*</span></label>
+                                    <select id="download_method" name="download_method" class="custom-input {{ $errors->has('download_method') ? 'input-error' : '' }}" required>
+                                        <option value="{{ \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY }}" {{ old('download_method', $set->download_method ?? \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY) === \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY ? 'selected' : '' }}>Chỉ mua bằng xu</option>
+                                        <option value="{{ \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY }}" {{ old('download_method', $set->download_method ?? '') === \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY ? 'selected' : '' }}>Chỉ dùng lượt miễn phí</option>
+                                        <option value="{{ \App\Models\Set::DOWNLOAD_METHOD_BOTH }}" {{ old('download_method', $set->download_method ?? '') === \App\Models\Set::DOWNLOAD_METHOD_BOTH ? 'selected' : '' }}>Cả 2 cách (xu hoặc lượt miễn phí)</option>
+                                    </select>
+                                    <div class="form-hint">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>
+                                            <strong>Chỉ mua bằng xu:</strong> User bắt buộc phải mua bằng xu<br>
+                                            <strong>Chỉ dùng lượt miễn phí:</strong> User chỉ có thể dùng 1 trong 2 lượt miễn phí<br>
+                                            <strong>Cả 2 cách:</strong> User có thể chọn mua bằng xu hoặc dùng lượt miễn phí
+                                        </span>
+                                    </div>
+                                    <div class="error-message" id="error-download_method">
+                                        @error('download_method')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -527,7 +553,6 @@
 
             const syncFromCheckboxes = () => {
                 const checked = Array.from(dropdown.querySelectorAll('input[type="checkbox"]:checked'));
-                // update select options selected state
                 Array.from(selectEl.options).forEach(opt => {
                     opt.selected = false;
                 });
@@ -554,7 +579,6 @@
                         closeBtn.style.cssText =
                             'background:transparent;border:none;color:#1976d2;font-size:16px;line-height:1;cursor:pointer;';
                         closeBtn.addEventListener('click', () => {
-                            // uncheck in dropdown and deselect option
                             const cb = Array.from(dropdown.querySelectorAll('input[type="checkbox"]'))
                                 .find(c => c.value === opt.value);
                             if (cb) cb.checked = false;
@@ -567,7 +591,6 @@
                 });
             };
 
-            // Toggle dropdown
             toggle.addEventListener('click', () => {
                 dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ?
                     'block' : 'none';
@@ -578,10 +601,8 @@
                 }
             });
 
-            // Handle checkbox changes
             dropdown.addEventListener('change', syncFromCheckboxes);
 
-            // Handle search filter
             const searchInput = dropdown.querySelector('.dropdown-search');
             const optionsContainer = dropdown.querySelector('.dropdown-options');
             if (searchInput && optionsContainer) {
@@ -593,7 +614,6 @@
                         label.style.display = text.includes(query) ? 'flex' : 'none';
                     });
                 });
-                // Reset search when dropdown opens
                 toggle.addEventListener('click', () => {
                     if (dropdown.style.display === 'none' || dropdown.style.display === '') {
                         searchInput.value = '';
@@ -604,7 +624,6 @@
                 });
             }
 
-            // Handle select all checkbox
             const selectAllCheckbox = dropdown.querySelector('.select-all-checkbox');
             if (selectAllCheckbox && optionsContainer) {
                 const updateSelectAllState = () => {
@@ -647,24 +666,19 @@
                     syncFromCheckboxes();
                 });
 
-                // Update select all state when individual checkboxes change
                 dropdown.addEventListener('change', (e) => {
                     if (e.target.type === 'checkbox' && !e.target.classList.contains('select-all-checkbox')) {
                         updateSelectAllState();
                     }
                 });
 
-                // Update select all state when search filter changes
                 if (searchInput) {
                     searchInput.addEventListener('input', updateSelectAllState);
                 }
 
-                // Initial state
                 updateSelectAllState();
             }
 
-            // Initial render (preserve old input)
-            // ensure checkboxes reflect old selected options
             Array.from(dropdown.querySelectorAll('input[type="checkbox"]')).forEach(cb => {
                 const isSelected = Array.from(selectEl.options).some(o => o.value === cb.value && o.selected);
                 cb.checked = isSelected;
@@ -675,7 +689,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.chip-select').forEach(initChipDropdown);
 
-            // Logo preview
             document.getElementById('image').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 const preview = document.getElementById('logo-preview');
@@ -690,29 +703,33 @@
                 }
             });
 
-            // Toggle price field based on type
             document.getElementById('type').addEventListener('change', function(e) {
                 const priceField = document.getElementById('price-field');
                 const priceInput = document.getElementById('price');
+                const downloadMethodOption = document.getElementById('download-method-option');
+                const downloadMethodSelect = document.getElementById('download_method');
 
                 if (e.target.value === 'premium') {
                     priceField.style.display = 'block';
                     priceInput.required = true;
+                    downloadMethodOption.style.display = 'block';
+                    downloadMethodSelect.required = true;
                 } else {
                     priceField.style.display = 'none';
                     priceInput.required = false;
                     priceInput.value = '';
+                    downloadMethodOption.style.display = 'none';
+                    downloadMethodSelect.required = false;
+                    downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY }}';
                 }
             });
 
-            // Photos preview with remove functionality
             let selectedPhotos = [];
 
             document.getElementById('photos').addEventListener('change', function(e) {
                 const files = Array.from(e.target.files);
                 const preview = document.getElementById('photo-preview');
 
-                // Add new files to existing selection
                 files.forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -741,12 +758,9 @@
                         removeBtn.style.cssText =
                             'position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; border-radius: 50%; background: #dc3545; color: white; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;';
                         removeBtn.addEventListener('click', function() {
-                            // Remove from selectedPhotos array
                             selectedPhotos = selectedPhotos.filter(p => p.id !==
                                 photoId);
-                            // Remove from DOM
                             photoContainer.remove();
-                            // Update file input
                             updateFileInput();
                         });
 
@@ -757,12 +771,10 @@
                     reader.readAsDataURL(file);
                 });
 
-                // Clear the file input so same files can be selected again
                 e.target.value = '';
             });
 
             function updateFileInput() {
-                // Create a new FileList with remaining files
                 const dt = new DataTransfer();
                 selectedPhotos.forEach(photo => {
                     dt.items.add(photo.file);
@@ -770,11 +782,9 @@
                 document.getElementById('photos').files = dt.files;
             }
 
-            // Custom validation before form submit for edit
             document.getElementById('set-form').addEventListener('submit', function(e) {
                 const photosInput = document.getElementById('photos');
 
-                // Ensure photos are properly set in the input
                 if (selectedPhotos.length > 0) {
                     const dt = new DataTransfer();
                     selectedPhotos.forEach(photo => {
@@ -784,13 +794,11 @@
                 }
             });
 
-            // Handle removal of existing photos
             document.addEventListener('click', function(e) {
                 if (e.target.classList.contains('remove-existing-photo')) {
                     const photoId = e.target.getAttribute('data-photo-id');
                     const photoContainer = e.target.closest('.existing-photo');
 
-                    // Add to hidden input for deletion
                     let deleteInput = document.getElementById('delete_photos');
                     if (!deleteInput) {
                         deleteInput = document.createElement('input');
@@ -800,14 +808,12 @@
                         document.getElementById('set-form').appendChild(deleteInput);
                     }
 
-                    // Create a new hidden input for this photo ID
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = 'delete_photos[]';
                     hiddenInput.value = photoId;
                     document.getElementById('set-form').appendChild(hiddenInput);
 
-                    // Remove from DOM with smooth animation
                     photoContainer.style.transition = 'all 0.3s ease';
                     photoContainer.style.opacity = '0';
                     photoContainer.style.transform = 'scale(0.8)';
@@ -819,7 +825,6 @@
             });
         });
 
-        // CSS for clean button
         const style = document.createElement('style');
         style.textContent = `
 .clean-button {

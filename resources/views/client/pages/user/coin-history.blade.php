@@ -92,6 +92,10 @@
             background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
         }
 
+        .coin-history-icon.free_download {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
         .coin-history-content {
             flex: 1;
             display: flex;
@@ -263,6 +267,9 @@
                                     @break
                                 @case('monthly_bonus')
                                     <i class="fas fa-gift"></i>
+                                    @break
+                                @case('free_download')
+                                    <i class="fas fa-download"></i>
                                     @break
                                 @default
                                     <i class="fas fa-coins"></i>

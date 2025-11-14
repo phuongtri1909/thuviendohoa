@@ -319,7 +319,7 @@ class SearchController extends Controller
                     $query->select('id', 'set_id', 'user_id');
                 }
             ])
-                ->select('id', 'name', 'slug', 'description', 'formats', 'size', 'image', 'keywords', 'type', 'price')
+                ->select('id', 'name', 'slug', 'description', 'formats', 'size', 'image', 'keywords', 'type', 'price', 'download_method')
             ->where('slug', $setSlug)
             ->where('status', Set::STATUS_ACTIVE)
             ->first();
@@ -402,7 +402,7 @@ class SearchController extends Controller
                     $query->select('id', 'set_id', 'user_id');
                 }
             ])
-                ->select('id', 'name', 'slug', 'description', 'formats', 'size', 'image', 'keywords', 'type', 'price')
+                ->select('id', 'name', 'slug', 'description', 'formats', 'size', 'image', 'keywords', 'type', 'price', 'download_method')
             ->where('id', $setId)
             ->where('status', Set::STATUS_ACTIVE)
             ->first();

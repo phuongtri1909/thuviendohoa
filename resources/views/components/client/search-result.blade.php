@@ -600,7 +600,6 @@
                 }
                 loadingSpinner.style.display = 'flex';
 
-                // Kiểm tra nếu setSlug là số (ID) thì dùng route ID
                 const isNumeric = /^\d+$/.test(setSlug);
                 const apiUrl = isNumeric ? `/search/set/id/${setSlug}` : `/search/set/${setSlug}`;
 
@@ -807,17 +806,35 @@
                 }
                 
                 if (badgeContainer) {
-                    const badgeType = set.type === 'free' ? 'free' : 'premium';
-                    const badgeLabel = set.type === 'free' ? 'Free' : 'Premium';
-                    const badgeValue = set.price || '0';
-                    const badgeColor = set.type === 'free' ? '#27ae60' : '#F0A610';
+                    const downloadMethod = set.download_method || 'coins_only';
+                    let badgeType, badgeLabel, badgeValue, badgeColor;
+                    
+                    if (set.type === 'free') {
+                        badgeType = 'free';
+                        badgeLabel = 'Free';
+                        badgeValue = 'MIỄN PHÍ';
+                        badgeColor = '#27ae60';
+                    } else {
+                        badgeType = 'premium';
+                        badgeLabel = 'Premium';
+                        badgeColor = '#F0A610';
+                        
+                        if (downloadMethod === 'free_only') {
+                            badgeValue = 'MIỄN PHÍ';
+                            badgeColor = '#27ae60';
+                        } else if (downloadMethod === 'coins_only') {
+                            badgeValue = (set.price || '0') + ' XU';
+                        } else {
+                            badgeValue = (set.price || '0') + ' XU';
+                        }
+                    }
                     
                     const setId = set.id || set.set_id || null;
 
                     badgeContainer.innerHTML = `
                         <div class="custom-badge">
                             <div class="custom-badge-value" style="background-color: ${badgeColor}; color: #fff;">
-                                ${badgeValue} XU
+                                ${badgeValue}
                             </div>
                             <div class="custom-badge-divider"></div>
                             <div class="custom-badge-label" style="background-color: ${badgeColor}; color: #fff;">
@@ -1187,7 +1204,6 @@
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
 
-                // Xóa ?set= khỏi URL nếu có
                 const url = new URL(window.location);
                 if (url.searchParams.has('set')) {
                     url.searchParams.delete('set');
@@ -1419,7 +1435,6 @@
             function showDownloadConfirmModal(data, setId) {
                 const set = data.set;
                 let message = data.message;
-                let confirmButtonText = 'Xác nhận tải';
 
                 let htmlContent = `
                     <div class="text-start">
@@ -1427,19 +1442,127 @@
                 `;
 
                 if (data.already_purchased) {
-                    htmlContent +=
-                        `<p class="text-success"><i class="fas fa-check-circle me-2"></i>Bạn đã mua file này</p>`;
-                    confirmButtonText = 'Tải ngay';
-                } else if (data.is_free) {
-                    if (data.unlimited) {
-                        htmlContent +=
-                            `<p class="text-success"><i class="fas fa-infinity me-2"></i>File miễn phí - Tải không giới hạn (VIP)</p>`;
-                    } else if (data.free_downloads_left) {
-                        htmlContent +=
-                            `<p class="text-info"><i class="fas fa-gift me-2"></i>File miễn phí - Còn ${data.free_downloads_left} lượt tải</p>`;
+                    htmlContent += `<p class="text-success"><i class="fas fa-check-circle me-2"></i>Bạn đã mua file này</p>`;
+                    
+                    showSwal({
+                        title: 'Tải file',
+                        html: htmlContent + `</div>`,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Tải ngay',
+                        cancelButtonText: 'Hủy',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            confirmPurchaseAndDownload(setId, 'coins');
+                        }
+                    });
+                    return;
+                }
+
+                if (data.is_free && data.no_charge) {
+                    htmlContent += `<p class="text-success"><i class="fas fa-gift me-2"></i>File miễn phí - Tải ngay không giới hạn</p>`;
+                    
+                    showSwal({
+                        title: 'Tải file miễn phí',
+                        html: htmlContent + `</div>`,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Tải ngay',
+                        cancelButtonText: 'Hủy',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            confirmPurchaseAndDownload(setId, 'free');
+                        }
+                    });
+                    return;
+                }
+
+                if (data.has_multiple_options) {
+                    htmlContent += `
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-info-circle me-2"></i>Bạn có 2 lựa chọn:</strong>
+                        </div>
+                    `;
+
+                    if (data.can_use_coins) {
+                        htmlContent += `
+                            <div class="alert alert-warning mb-3">
+                                <strong>Lựa chọn 1: Mua bằng xu</strong><br>
+                                Giá: <strong>${set.price} XU</strong><br>
+                                Xu hiện tại: <strong>${data.user.coins} XU</strong><br>
+                                Xu còn lại: <strong>${data.user.remaining_coins} XU</strong>
+                            </div>
+                        `;
                     }
-                    confirmButtonText = 'Tải ngay';
-                } else if (data.requires_purchase) {
+
+                    htmlContent += `
+                        <div class="alert alert-success">
+                            <strong>Lựa chọn 2: Dùng lượt miễn phí</strong><br>
+                            Lượt miễn phí còn lại: <strong>${data.free_downloads_left} lượt</strong><br>
+                            <small class="text-muted">Sau khi dùng còn: ${data.free_downloads_left - 1} lượt</small>
+                        </div>
+                    `;
+
+                    htmlContent += `</div>`;
+
+                    showSwal({
+                        title: 'Chọn phương thức tải',
+                        html: htmlContent,
+                        icon: 'question',
+                        showCancelButton: true,
+                        showDenyButton: data.can_use_coins,
+                        confirmButtonColor: '#28a745',
+                        denyButtonColor: '#667eea',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '<i class="fas fa-gift me-2"></i>Dùng lượt miễn phí',
+                        denyButtonText: '<i class="fas fa-coins me-2"></i>Mua bằng xu',
+                        cancelButtonText: 'Hủy',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            confirmPurchaseAndDownload(setId, 'free_download');
+                        } else if (result.isDenied) {
+                            confirmPurchaseAndDownload(setId, 'coins');
+                        }
+                    });
+                    return;
+                }
+
+                if (data.requires_free_download) {
+                    htmlContent += `
+                        <div class="alert alert-success">
+                            <strong><i class="fas fa-gift me-2"></i>File chỉ có thể tải bằng lượt miễn phí</strong><br>
+                            Lượt miễn phí còn lại: <strong>${data.free_downloads_left} lượt</strong><br>
+                            <small class="text-muted">Sau khi tải còn: ${data.free_downloads_left - 1} lượt</small>
+                        </div>
+                    `;
+                    htmlContent += `</div>`;
+
+                    showSwal({
+                        title: 'Tải file bằng lượt miễn phí',
+                        html: htmlContent,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '<i class="fas fa-gift me-2"></i>Dùng lượt miễn phí',
+                        cancelButtonText: 'Hủy',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            confirmPurchaseAndDownload(setId, 'free_download');
+                        }
+                    });
+                    return;
+                }
+
+                if (data.requires_purchase) {
                     htmlContent += `
                         <div class="alert alert-warning">
                             <strong>Mua file Premium</strong><br>
@@ -1448,34 +1571,57 @@
                             Xu còn lại sau khi mua: <strong>${data.user.remaining_coins} XU</strong>
                         </div>
                     `;
-                    confirmButtonText = 'Xác nhận mua';
+                    htmlContent += `</div>`;
+
+                    showSwal({
+                        title: 'Xác nhận mua file',
+                        html: htmlContent,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#667eea',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '<i class="fas fa-coins me-2"></i>Xác nhận mua',
+                        cancelButtonText: 'Hủy',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            confirmPurchaseAndDownload(setId, 'coins');
+                        }
+                    });
+                    return;
                 }
 
-                htmlContent += `</div>`;
-
+                htmlContent += `<p>${message}</p></div>`;
                 showSwal({
-                    title: data.already_purchased ? 'Tải file' : (data.is_free ? 'Tải file miễn phí' :
-                        'Xác nhận mua file'),
+                    title: 'Tải file',
                     html: htmlContent,
-                    icon: data.already_purchased || data.is_free ? 'success' : 'question',
+                    icon: 'info',
                     showCancelButton: true,
                     confirmButtonColor: '#667eea',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: confirmButtonText,
+                    confirmButtonText: 'Tải ngay',
                     cancelButtonText: 'Hủy',
                     allowOutsideClick: false
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        confirmPurchaseAndDownload(setId);
+                        confirmPurchaseAndDownload(setId, 'coins');
                     }
                 });
             }
 
-            function confirmPurchaseAndDownload(setId) {
+            function confirmPurchaseAndDownload(setId, paymentMethod = 'coins') {
+                const finalPaymentMethod = paymentMethod || 'coins';
+                
                 const setNameEl = document.querySelector('#imageModal .modal-title');
                 const setName = setNameEl ? setNameEl.textContent.trim() : 'File';
+                
                 if (window.startDownloadWithPopup) {
-                    window.startDownloadWithPopup({ endpoint: `/user/purchase/confirm/${setId}`, setId, setName });
+                    window.startDownloadWithPopup({ 
+                        endpoint: `/user/purchase/confirm/${setId}`, 
+                        setId: setId, 
+                        setName: setName, 
+                        paymentMethod: finalPaymentMethod 
+                    });
                 } else {
                     fetch(`/user/purchase/confirm/${setId}`, {
                         method: 'POST',
@@ -1485,7 +1631,10 @@
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        body: JSON.stringify({ user_confirmed: true })
+                        body: JSON.stringify({ 
+                            user_confirmed: true,
+                            payment_method: finalPaymentMethod
+                        })
                     });
                 }
             }

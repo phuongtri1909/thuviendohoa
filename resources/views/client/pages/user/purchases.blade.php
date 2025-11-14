@@ -409,7 +409,8 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    user_confirmed: true
+                    user_confirmed: true,
+                    payment_method: 'coins' // File đã mua rồi nên không trừ gì nữa
                 })
             })
             .then(response => {

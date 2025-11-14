@@ -176,7 +176,31 @@
                                                 <span class="text-muted">Không có</span>
                                             @endif
                                         </td>
-                                        <td>{{ $set->type }}</td>
+                                        <td>
+                                            @if($set->type === \App\Models\Set::TYPE_FREE)
+                                                <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Free</span>
+                                            @else
+                                                <div class="d-flex flex-column gap-1">
+                                                    <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">Premium</span>
+                                                    @php
+                                                        $downloadMethod = $set->download_method ?? \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY;
+                                                    @endphp
+                                                    @if($downloadMethod === \App\Models\Set::DOWNLOAD_METHOD_BOTH)
+                                                        <span class="badge bg-info-subtle text-info-emphasis rounded-pill" style="font-size: 10px;" title="User có thể chọn: mua bằng xu hoặc dùng lượt miễn phí">
+                                                            <i class="fas fa-exchange-alt me-1"></i>Cả 2 cách
+                                                        </span>
+                                                    @elseif($downloadMethod === \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY)
+                                                        <span class="badge bg-success-subtle text-success-emphasis rounded-pill" style="font-size: 10px;" title="User chỉ có thể dùng lượt miễn phí">
+                                                            <i class="fas fa-gift me-1"></i>Chỉ lượt miễn phí
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill" style="font-size: 10px;" title="User bắt buộc phải mua bằng xu">
+                                                            <i class="fas fa-coins me-1"></i>Chỉ mua xu
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </td>
                                         <td>{{ $set->status ? 'Kích hoạt' : 'Tắt' }}</td>
                                         <td>{{ $set->size }}</td>
                                         <td>{{ number_format($set->price) }}</td>

@@ -33,107 +33,213 @@ class PurchaseSetController extends Controller
             ];
         }
 
-        // Check purchased
-        if (!$set->isFree()) {
-            if ($user->hasPurchasedSet($set->id)) {
-                return [
-                    'success' => true,
-                    'can_download' => true,
-                    'already_purchased' => true,
-                    'message' => 'Bạn đã mua file này',
-                    'set' => [
-                        'id' => $set->id,
-                        'name' => $set->name,
-                        'type' => $set->type,
-                        'price' => $set->price ?? 0
-                    ]
-                ];
-            }
+        if ($user->hasPurchasedSet($set->id)) {
+            return [
+                'success' => true,
+                'can_download' => true,
+                'already_purchased' => true,
+                'message' => 'Bạn đã mua file này',
+                'set' => [
+                    'id' => $set->id,
+                    'name' => $set->name,
+                    'type' => $set->type,
+                    'price' => $set->price ?? 0,
+                    'can_use_free_downloads' => $set->can_use_free_downloads ?? false
+                ]
+            ];
         }
 
-        // Free set
         if ($set->isFree()) {
-            if ($user->hasUnlimitedDownloads()) {
-                return [
-                    'success' => true,
-                    'can_download' => true,
-                    'is_free' => true,
-                    'unlimited' => true,
-                    'message' => 'File miễn phí - Tải ngay (VIP)',
-                    'set' => [
-                        'id' => $set->id,
-                        'name' => $set->name,
-                        'type' => $set->type,
-                        'price' => 0
-                    ]
-                ];
-            } elseif ($user->canDownloadFree()) {
-                return [
-                    'success' => true,
-                    'can_download' => true,
-                    'is_free' => true,
-                    'free_downloads_left' => $user->free_downloads,
-                    'message' => "File miễn phí - Còn {$user->free_downloads} lượt tải",
-                    'set' => [
-                        'id' => $set->id,
-                        'name' => $set->name,
-                        'type' => $set->type,
-                        'price' => 0
-                    ]
-                ];
-            } else {
+            return [
+                'success' => true,
+                'can_download' => true,
+                'is_free' => true,
+                'no_charge' => true,
+                'message' => 'File miễn phí - Tải ngay',
+                'set' => [
+                    'id' => $set->id,
+                    'name' => $set->name,
+                    'type' => $set->type,
+                    'price' => 0,
+                    'can_use_free_downloads' => false
+                ]
+            ];
+        }
+
+        $price = $set->price ?? 0;
+        $downloadMethod = $set->download_method ?? Set::DOWNLOAD_METHOD_COINS_ONLY;
+        $canUseFreeDownloads = $set->canUseFreeDownloads();
+        $canUseCoins = $set->canUseCoins();
+        $hasFreeDownloads = $user->canDownloadFree();
+
+        if ($downloadMethod === Set::DOWNLOAD_METHOD_FREE_ONLY) {
+            if (!$hasFreeDownloads) {
                 return [
                     'success' => false,
                     'can_download' => false,
-                    'message' => 'Bạn đã hết lượt tải miễn phí. Vui lòng nạp gói để tiếp tục.',
-                    'require_package' => true,
+                    'message' => "File này chỉ có thể tải bằng lượt miễn phí. Bạn đã hết lượt tải miễn phí. Vui lòng nạp gói để tiếp tục.",
+                    'no_free_downloads' => true,
                     'code' => 'NO_FREE_DOWNLOADS'
                 ];
             }
-        }
 
-        // Premium set
-        $price = $set->price ?? 0;
-
-        if ($user->package_id && !$user->hasValidPackage()) {
             return [
-                'success' => false,
-                'can_download' => false,
-                'message' => 'Gói ' . $user->package->getPlanPluralName() . ' của bạn đã hết hạn. Vui lòng gia hạn.',
-                'package_expired' => true,
-                'code' => 'PACKAGE_EXPIRED'
+                'success' => true,
+                'can_download' => true,
+                'is_premium' => true,
+                'requires_free_download' => true,
+                'free_downloads_left' => $user->free_downloads,
+                'message' => "File này chỉ có thể tải bằng lượt miễn phí. Bạn còn {$user->free_downloads} lượt.",
+                'set' => [
+                    'id' => $set->id,
+                    'name' => $set->name,
+                    'type' => $set->type,
+                    'price' => $price,
+                    'download_method' => $downloadMethod
+                ],
+                'user' => [
+                    'free_downloads' => $user->free_downloads
+                ]
             ];
         }
 
-        if ($user->coins < $price) {
+        if ($downloadMethod === Set::DOWNLOAD_METHOD_COINS_ONLY) {
+            if (!$user->canPurchaseWithCoins()) {
+                if (!$user->package_id) {
+                    return [
+                        'success' => false,
+                        'can_download' => false,
+                        'message' => "File này chỉ có thể mua bằng xu. Bạn cần mua gói để có thể mua file bằng xu.",
+                        'no_package' => true,
+                        'code' => 'NO_PACKAGE'
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'can_download' => false,
+                        'message' => "Gói của bạn đã hết hạn. Vui lòng nạp gói mới để tiếp tục mua file bằng xu.",
+                        'package_expired' => true,
+                        'code' => 'PACKAGE_EXPIRED'
+                    ];
+                }
+            }
+
+            if ($user->coins < $price) {
+                return [
+                    'success' => false,
+                    'can_download' => false,
+                    'message' => "File này chỉ có thể mua bằng xu. Bạn không đủ xu để mua file này. Cần {$price} xu, bạn có {$user->coins} xu.",
+                    'insufficient_coins' => true,
+                    'required_coins' => $price,
+                    'current_coins' => $user->coins,
+                    'code' => 'INSUFFICIENT_COINS'
+                ];
+            }
+
             return [
-                'success' => false,
-                'can_download' => false,
-                'message' => "Bạn không đủ xu để mua file này. Cần {$price} xu, bạn có {$user->coins} xu.",
-                'insufficient_coins' => true,
-                'required_coins' => $price,
-                'current_coins' => $user->coins,
-                'code' => 'INSUFFICIENT_COINS'
+                'success' => true,
+                'can_download' => true,
+                'is_premium' => true,
+                'requires_purchase' => true,
+                'message' => "File này chỉ có thể mua bằng xu. Mua file này với {$price} xu?",
+                'set' => [
+                    'id' => $set->id,
+                    'name' => $set->name,
+                    'type' => $set->type,
+                    'price' => $price,
+                    'download_method' => $downloadMethod
+                ],
+                'user' => [
+                    'coins' => $user->coins,
+                    'remaining_coins' => $user->coins - $price
+                ]
             ];
         }
 
-        return [
-            'success' => true,
-            'can_download' => true,
-            'is_premium' => true,
-            'requires_purchase' => true,
-            'message' => "Mua file này với {$price} xu?",
-            'set' => [
-                'id' => $set->id,
-                'name' => $set->name,
-                'type' => $set->type,
-                'price' => $price
-            ],
-            'user' => [
-                'coins' => $user->coins,
-                'remaining_coins' => $user->coins - $price
-            ]
-        ];
+        if ($canUseFreeDownloads && $hasFreeDownloads) {
+            $canPurchaseWithCoins = $user->canPurchaseWithCoins() && $user->coins >= $price;
+            
+            return [
+                'success' => true,
+                'can_download' => true,
+                'is_premium' => true,
+                'has_multiple_options' => true,
+                'can_use_free_download' => true,
+                'can_use_coins' => $canPurchaseWithCoins,
+                'free_downloads_left' => $user->free_downloads,
+                'message' => $canPurchaseWithCoins 
+                    ? "Bạn có thể mua file này với {$price} xu hoặc dùng 1 lượt miễn phí (còn {$user->free_downloads} lượt)"
+                    : "Bạn có thể dùng 1 lượt miễn phí để tải file này (còn {$user->free_downloads} lượt)",
+                'set' => [
+                    'id' => $set->id,
+                    'name' => $set->name,
+                    'type' => $set->type,
+                    'price' => $price,
+                    'download_method' => $downloadMethod
+                ],
+                'user' => [
+                    'coins' => $user->coins,
+                    'free_downloads' => $user->free_downloads,
+                    'remaining_coins' => $user->coins - $price
+                ]
+            ];
+        }
+
+        if ($canUseFreeDownloads && !$hasFreeDownloads) {
+            if (!$user->canPurchaseWithCoins()) {
+                if (!$user->package_id) {
+                    return [
+                        'success' => false,
+                        'can_download' => false,
+                        'message' => "Bạn đã hết lượt tải miễn phí. Bạn cần mua gói để có thể mua file bằng xu.",
+                        'no_package' => true,
+                        'no_free_downloads' => true,
+                        'code' => 'NO_PACKAGE'
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'can_download' => false,
+                        'message' => "Bạn đã hết lượt tải miễn phí và gói của bạn đã hết hạn. Vui lòng nạp gói mới để tiếp tục mua file bằng xu.",
+                        'package_expired' => true,
+                        'no_free_downloads' => true,
+                        'code' => 'PACKAGE_EXPIRED'
+                    ];
+                }
+            }
+
+            if ($user->coins < $price) {
+                return [
+                    'success' => false,
+                    'can_download' => false,
+                    'message' => "Bạn đã hết lượt tải miễn phí và không đủ xu để mua file này. Cần {$price} xu, bạn có {$user->coins} xu.",
+                    'insufficient_coins' => true,
+                    'no_free_downloads' => true,
+                    'required_coins' => $price,
+                    'current_coins' => $user->coins,
+                    'code' => 'INSUFFICIENT_RESOURCES'
+                ];
+            }
+
+            return [
+                'success' => true,
+                'can_download' => true,
+                'is_premium' => true,
+                'requires_purchase' => true,
+                'message' => "Bạn đã hết lượt tải miễn phí. Mua file này với {$price} xu?",
+                'set' => [
+                    'id' => $set->id,
+                    'name' => $set->name,
+                    'type' => $set->type,
+                    'price' => $price,
+                    'download_method' => $downloadMethod
+                ],
+                'user' => [
+                    'coins' => $user->coins,
+                    'remaining_coins' => $user->coins - $price
+                ]
+            ];
+        }
     }
 
     /**
@@ -218,7 +324,7 @@ class PurchaseSetController extends Controller
                     DB::rollBack();
                     $statusCode = match ($validation['code'] ?? null) {
                         'SET_NOT_FOUND' => 404,
-                        'NO_FREE_DOWNLOADS', 'PACKAGE_EXPIRED', 'INSUFFICIENT_COINS' => 403,
+                        'NO_FREE_DOWNLOADS', 'PACKAGE_EXPIRED', 'NO_PACKAGE', 'INSUFFICIENT_COINS' => 403,
                         default => 400
                     };
                     return response()->json($validation, $statusCode);
@@ -229,35 +335,132 @@ class PurchaseSetController extends Controller
                     return $this->processDownload($set, $user);
                 }
 
-                // Xử lý giao dịch
+                $downloadMethod = $set->download_method ?? Set::DOWNLOAD_METHOD_COINS_ONLY;
+
                 if ($set->isFree()) {
-                    if (!$user->hasUnlimitedDownloads() && $user->canDownloadFree()) {
-                        $user->decrement('free_downloads');
+                    $paymentMethod = 'free';
+                } elseif ($downloadMethod === Set::DOWNLOAD_METHOD_FREE_ONLY) {
+                    $paymentMethod = 'free_download';
+                } elseif ($downloadMethod === Set::DOWNLOAD_METHOD_COINS_ONLY) {
+                    $paymentMethod = 'coins';
+                } else {
+                    $requestPaymentMethod = $request->input('payment_method');
+                    
+                    if (in_array($requestPaymentMethod, ['coins', 'free_download'])) {
+                        $paymentMethod = $requestPaymentMethod;
+                    } else {
+                        $paymentMethod = 'coins';
                     }
+                }
+
+                if ($set->isFree()) {
                 } else {
                     $price = $set->price ?? 0;
-                    $user->decrement('coins', $price);
 
-                    $purchase = PurchaseSet::create([
-                        'user_id' => $user->id,
-                        'set_id' => $set->id,
-                        'coins' => $price
-                    ]);
+                    if ($paymentMethod === 'free_download') {
+                        if (!$set->canUseFreeDownloads()) {
+                            DB::rollBack();
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'File này không cho phép dùng lượt miễn phí'
+                            ], 400);
+                        }
+                        
+                        $user->refresh();
+                        
+                        if (!$user->canDownloadFree()) {
+                            DB::rollBack();
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Bạn đã hết lượt tải miễn phí. Có thể bạn đã tải file khác ở tab khác.'
+                            ], 403);
+                        }
+                    } elseif ($paymentMethod === 'coins') {
+                        if (!$set->canUseCoins()) {
+                            DB::rollBack();
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'File này không cho phép mua bằng xu'
+                            ], 400);
+                        }
+                        
+                        $user->refresh();
+                        
+                        if (!$user->canPurchaseWithCoins()) {
+                            DB::rollBack();
+                            if (!$user->package_id) {
+                                return response()->json([
+                                    'success' => false,
+                                    'message' => 'Bạn cần mua gói để có thể mua file bằng xu.'
+                                ], 403);
+                            } else {
+                                return response()->json([
+                                    'success' => false,
+                                    'message' => 'Gói của bạn đã hết hạn. Vui lòng nạp gói mới để tiếp tục mua file bằng xu.'
+                                ], 403);
+                            }
+                        }
+                        
+                        if ($user->coins < $price) {
+                            DB::rollBack();
+                            return response()->json([
+                                'success' => false,
+                                'message' => "Bạn không đủ xu để mua file này. Cần {$price} xu, bạn hiện có {$user->coins} xu. Có thể bạn đã mua file khác ở tab khác."
+                            ], 403);
+                        }
+                    }
 
-                    \App\Models\CoinHistory::create([
-                        'user_id' => $user->id,
-                        'amount' => -$price,
-                        'type' => \App\Models\CoinHistory::TYPE_PURCHASE,
-                        'source' => $purchase->id,
-                        'reason' => 'Mua file premium',
-                        'description' => "Mua file '{$set->name}' với {$price} xu",
-                        'metadata' => json_encode([
-                            'purchase_id' => $purchase->id,
+                    if ($paymentMethod === 'free_download') {
+                        $user->decrement('free_downloads');
+
+                        $purchase = PurchaseSet::create([
+                            'user_id' => $user->id,
                             'set_id' => $set->id,
-                            'set_name' => $set->name,
-                            'set_type' => $set->type
-                        ])
-                    ]);
+                            'coins' => 0,
+                            'payment_method' => 'free_download'
+                        ]);
+
+                        \App\Models\CoinHistory::create([
+                            'user_id' => $user->id,
+                            'amount' => 0,
+                            'type' => \App\Models\CoinHistory::TYPE_FREE_DOWNLOAD,
+                            'source' => $purchase->id,
+                            'reason' => 'Tải file bằng lượt miễn phí',
+                            'description' => "Tải file '{$set->name}' bằng lượt miễn phí (còn {$user->free_downloads} lượt)",
+                            'metadata' => json_encode([
+                                'purchase_id' => $purchase->id,
+                                'set_id' => $set->id,
+                                'set_name' => $set->name,
+                                'set_type' => $set->type,
+                                'payment_method' => 'free_download'
+                            ])
+                        ]);
+                    } else {
+                        $user->decrement('coins', $price);
+
+                        $purchase = PurchaseSet::create([
+                            'user_id' => $user->id,
+                            'set_id' => $set->id,
+                            'coins' => $price,
+                            'payment_method' => 'coins'
+                        ]);
+
+                        \App\Models\CoinHistory::create([
+                            'user_id' => $user->id,
+                            'amount' => -$price,
+                            'type' => \App\Models\CoinHistory::TYPE_PURCHASE,
+                            'source' => $purchase->id,
+                            'reason' => 'Mua file premium',
+                            'description' => "Mua file '{$set->name}' với {$price} xu",
+                            'metadata' => json_encode([
+                                'purchase_id' => $purchase->id,
+                                'set_id' => $set->id,
+                                'set_name' => $set->name,
+                                'set_type' => $set->type,
+                                'payment_method' => 'coins'
+                            ])
+                        ]);
+                    }
                 }
 
                 DB::commit();

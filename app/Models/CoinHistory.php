@@ -32,6 +32,7 @@ class CoinHistory extends Model
     const TYPE_MANUAL = 'manual';
     const TYPE_MONTHLY_BONUS = 'monthly_bonus';
     const TYPE_GETLINK = 'getlink';
+    const TYPE_FREE_DOWNLOAD = 'free_download';
 
     // Relationships
     public function user()
@@ -80,6 +81,7 @@ class CoinHistory extends Model
             self::TYPE_MANUAL => 'Thủ công',
             self::TYPE_MONTHLY_BONUS => 'Thưởng tháng',
             self::TYPE_GETLINK => 'Get link',
+            self::TYPE_FREE_DOWNLOAD => 'Dùng lượt miễn phí',
             default => 'Khác'
         };
     }

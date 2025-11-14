@@ -399,6 +399,9 @@
                                         @case('getlink')
                                             <i class="fas fa-link"></i>
                                             @break
+                                        @case('free_download')
+                                            <i class="fas fa-download"></i>
+                                            @break
                                         @default
                                             <i class="fas fa-coins"></i>
                                     @endswitch
@@ -420,6 +423,9 @@
                                                 @break
                                             @case('getlink')
                                                 Get link
+                                                @break
+                                            @case('free_download')
+                                                Dùng lượt miễn phí
                                                 @break
                                             @default
                                                 {{ ucfirst($type) }}

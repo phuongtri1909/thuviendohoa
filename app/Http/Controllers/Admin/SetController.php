@@ -133,6 +133,8 @@ class SetController extends Controller
             'tag_ids' => 'nullable|array',
             'tag_ids.*' => 'integer|exists:tags,id',
             'order' => 'nullable|integer|min:0',
+            'can_use_free_downloads' => 'nullable|boolean',
+            'download_method' => 'nullable|in:' . Set::DOWNLOAD_METHOD_BOTH . ',' . Set::DOWNLOAD_METHOD_COINS_ONLY . ',' . Set::DOWNLOAD_METHOD_FREE_ONLY,
         ], [
             'name.required' => 'Tên set là bắt buộc',
             'name.unique' => 'Tên set đã tồn tại',
@@ -193,6 +195,10 @@ class SetController extends Controller
             'price' => $request->price,
             'is_featured' => (bool) $request->is_featured,
             'order' => $request->order ?? (Set::max('order') ?? 0) + 1,
+            'can_use_free_downloads' => (bool) $request->can_use_free_downloads,
+            'download_method' => $request->type === Set::TYPE_PREMIUM 
+                ? ($request->download_method ?? Set::DOWNLOAD_METHOD_COINS_ONLY)
+                : null,
         ]);
 
         // create relations
@@ -274,6 +280,8 @@ class SetController extends Controller
             'tag_ids' => 'nullable|array',
             'tag_ids.*' => 'integer|exists:tags,id',
             'order' => 'nullable|integer|min:0',
+            'can_use_free_downloads' => 'nullable|boolean',
+            'download_method' => 'nullable|in:' . Set::DOWNLOAD_METHOD_BOTH . ',' . Set::DOWNLOAD_METHOD_COINS_ONLY . ',' . Set::DOWNLOAD_METHOD_FREE_ONLY,
         ], [
             'name.required' => 'Tên set là bắt buộc',
             'name.unique' => 'Tên set đã tồn tại',
@@ -335,6 +343,10 @@ class SetController extends Controller
             'price' => $request->price,
             'is_featured' => (bool) $request->is_featured,
             'order' => $request->order ?? $set->order,
+            'can_use_free_downloads' => (bool) $request->can_use_free_downloads,
+            'download_method' => $request->type === Set::TYPE_PREMIUM 
+                ? ($request->download_method ?? $set->download_method ?? Set::DOWNLOAD_METHOD_COINS_ONLY)
+                : null,
         ];
 
         if ($request->hasFile('image')) {
