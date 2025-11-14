@@ -6,8 +6,9 @@
 3. [Cấu hình Laravel](#3-cấu-hình-laravel)
 4. [Index dữ liệu](#4-index-dữ-liệu)
 5. [Testing](#5-testing)
-6. [Troubleshooting](#6-troubleshooting)
-7. [Maintenance](#7-maintenance)
+6. [Queue Worker (nếu dùng SCOUT_QUEUE=true)](#6-queue-worker-nếu-dùng-scout_queuetrue)
+7. [Troubleshooting](#7-troubleshooting)
+8. [Maintenance](#8-maintenance)
 
 ---
 
@@ -153,10 +154,14 @@ MEILISEARCH_KEY=
 **Production (aaPanel):**
 ```env
 SCOUT_DRIVER=meilisearch
-SCOUT_QUEUE=true
+SCOUT_QUEUE=false
 MEILISEARCH_HOST=http://127.0.0.1:7700
 MEILISEARCH_KEY=your_master_key_here
 ```
+
+**Lưu ý:** 
+- `SCOUT_QUEUE=false`: Import và sync sẽ chạy ngay (khuyến nghị nếu chưa setup queue worker)
+- `SCOUT_QUEUE=true`: Import vào queue, cần chạy `php artisan queue:work` để process (tốt hơn cho production nhưng cần setup queue worker)
 
 **Lưu ý**: Thay `your_master_key_here` bằng master key đã tạo ở bước 3 phần aaPanel.
 
@@ -185,9 +190,11 @@ php artisan scout:import "App\Models\Set"
 # Import Blogs
 php artisan scout:import "App\Models\Blog"
 
-# Sync index settings từ config/scout.php
+# Sync index settings từ config/scout.php (QUAN TRỌNG - phải chạy sau khi import!)
 php artisan scout:sync-index-settings
 ```
+
+**Lưu ý:** Sau khi import, **BẮT BUỘC** phải chạy `scout:sync-index-settings` để đồng bộ cấu hình (searchableAttributes, rankingRules, synonyms, etc.) vào Meilisearch. Nếu không sync, search sẽ không hoạt động đúng!
 
 ### Cách 3: Flush và re-index (nếu cần)
 ```bash
@@ -198,7 +205,32 @@ php artisan scout:flush "App\Models\Blog"
 # Import lại
 php artisan scout:import "App\Models\Set"
 php artisan scout:import "App\Models\Blog"
+
+# Sync settings (QUAN TRỌNG!)
+php artisan scout:sync-index-settings
 ```
+
+**Debug nếu search không có kết quả:**
+```bash
+# 1. Kiểm tra Meilisearch đang chạy
+curl http://127.0.0.1:7700/health
+# Kết quả: {"status":"available"}
+
+# 2. Kiểm tra index có data (Production cần master key)
+# Lấy master key từ service file hoặc .env
+curl -H "Authorization: Bearer YOUR_MASTER_KEY" http://127.0.0.1:7700/indexes/sets/stats
+
+# Hoặc test từ Laravel (tự động dùng key từ .env)
+php artisan tinker
+App\Models\Set::search('*')->get()->count()
+
+# 3. Nếu vẫn không có, re-import và sync lại
+php artisan scout:flush "App\Models\Set"
+php artisan scout:import "App\Models\Set"
+php artisan scout:sync-index-settings
+```
+
+**Lưu ý Production:** Meilisearch ở production mode yêu cầu master key. Laravel sẽ tự động dùng key từ `.env` (MEILISEARCH_KEY), nhưng khi test bằng curl cần thêm header Authorization.
 
 ---
 
@@ -324,7 +356,7 @@ php artisan queue:work
 
 ---
 
-## 7. Maintenance
+## 8. Maintenance
 
 ### Commands hữu ích:
 
@@ -379,9 +411,70 @@ Scout tự động sync khi:
 - ✅ Update Set/Blog
 - ✅ Xóa Set/Blog
 
+**Nếu set `SCOUT_QUEUE=false` (khuyến nghị):**
+- Sync chạy ngay lập tức, không cần queue worker
+- Phù hợp nếu chưa setup queue worker
+
 **Nếu set `SCOUT_QUEUE=true`:**
-- Cần chạy queue worker: `php artisan queue:work`
-- Hoặc setup supervisor cho production
+- Sync vào queue, cần chạy queue worker để process
+- **Lưu ý:** Nếu không chạy queue worker, data sẽ không được sync vào Meilisearch!
+
+### Cách chạy Queue Worker:
+
+#### Cách 1: Chạy thủ công (test/development)
+```bash
+# Chạy queue worker (giữ terminal mở)
+php artisan queue:work
+
+# Hoặc với options
+php artisan queue:work --tries=3 --timeout=60
+```
+
+#### Cách 2: Chạy background (production - tạm thời)
+```bash
+# Chạy trong background
+nohup php artisan queue:work > /dev/null 2>&1 &
+
+# Hoặc với screen/tmux
+screen -S queue
+php artisan queue:work
+# Nhấn Ctrl+A, D để detach
+```
+
+#### Cách 3: Setup Supervisor (production - khuyến nghị)
+Tạo file supervisor config:
+```bash
+sudo nano /etc/supervisor/conf.d/laravel-queue-worker.conf
+```
+
+Nội dung:
+```ini
+[program:laravel-queue-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /www/wwwroot/vietfile.vn/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/www/wwwroot/vietfile.vn/storage/logs/queue-worker.log
+stopwaitsecs=3600
+```
+
+Sau đó:
+```bash
+# Reload supervisor
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-queue-worker:*
+
+# Kiểm tra status
+sudo supervisorctl status
+```
+
+**Lưu ý:** Thay `/www/wwwroot/vietfile.vn` bằng đường dẫn thực tế của project.
 
 ---
 
