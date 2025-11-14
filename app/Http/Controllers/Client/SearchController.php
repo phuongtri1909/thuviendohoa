@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Helpers\BannerHelper;
+use App\Helpers\VietnameseHelper;
 use App\Models\Set;
 use App\Models\Category;
 use App\Models\Album;
@@ -85,64 +86,120 @@ class SearchController extends Controller
         TwitterCard::setType('summary_large_image');
         TwitterCard::addImage($thumbnail);
         
-        $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
-            ->with([
-                'photos' => function($query) {
-                    $query->select('id', 'set_id', 'path')->take(1);
-                },
-                'software.software:id,name,logo,logo_hover,logo_active'
-            ])
-            ->where('status', Set::STATUS_ACTIVE);
-        
+        // Sử dụng Meilisearch Scout nếu có query text search
         if ($query) {
-            $setsQuery->where(function(Builder $q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%")
-                  ->orWhere('keywords', 'like', "%{$query}%");
-            });
+            // Normalize query: thử cả có dấu và không dấu
+            $searchTerms = VietnameseHelper::getSearchTerms($query);
+            $searchQuery = $searchTerms[0]; // Dùng term đầu tiên (có dấu)
+            
+            // Tách query thành các từ và tìm từng phần để tăng khả năng match
+            $queryWords = explode(' ', trim($query));
+            
+            // Nếu query dài, thử tìm với từ đầu tiên (có thể là typo của từ gốc)
+            if (count($queryWords) > 1 || strlen($query) > 5) {
+                $firstWord = $queryWords[0];
+                if (strlen($firstWord) >= 3) {
+                    $searchQuery = $firstWord;
+                }
+            }
+            
+            $setsQuery = Set::search($searchQuery)
+                ->query(function(Builder $builder) use ($categorySlug, $albumSlug, $type, $tagSlug, $tags, $colors, $software) {
+                    $builder->select('id', 'name', 'image', 'created_at', 'type', 'price')
+                        ->with([
+                            'photos' => function($q) {
+                                $q->select('id', 'set_id', 'path')->take(1);
+                            },
+                            'software.software:id,name,logo,logo_hover,logo_active'
+                        ])
+                        ->where('status', Set::STATUS_ACTIVE);
+                    
+                    // Apply filters
+                    if ($categorySlug) {
+                        $builder->whereHas('categories.category', fn($q) => $q->where('slug', $categorySlug));
+                    }
+                    
+                    if ($albumSlug) {
+                        $builder->whereHas('albums.album', fn($q) => $q->where('slug', $albumSlug));
+                    }
+                    
+                    if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+                        $builder->where('type', $type);
+                    }
+                    
+                    if ($tagSlug) {
+                        $builder->whereHas('tags.tag', fn($q) => $q->where('slug', $tagSlug));
+                    }
+                    
+                    if (!empty($tags)) {
+                        $builder->whereHas('tags.tag', fn($q) => $q->whereIn('slug', $tags));
+                    }
+                    
+                    if (!empty($colors)) {
+                        $builder->whereHas('colors.color', fn($q) => $q->whereIn('value', $colors));
+                    }
+                    
+                    if (!empty($software)) {
+                        $builder->whereHas('software.software', fn($q) => $q->whereIn('id', $software));
+                    }
+                    
+                    return $builder;
+                });
+            
+            $sets = $setsQuery->paginate(30);
+        } else {
+            // Không có text search, dùng query builder thông thường
+            $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                ->with([
+                    'photos' => function($q) {
+                        $q->select('id', 'set_id', 'path')->take(1);
+                    },
+                    'software.software:id,name,logo,logo_hover,logo_active'
+                ])
+                ->where('status', Set::STATUS_ACTIVE);
+            
+            if ($categorySlug) {
+                $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
+                    $q->where('slug', $categorySlug);
+                });
+            }
+            
+            if ($albumSlug) {
+                $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
+                    $q->where('slug', $albumSlug);
+                });
+            }
+            
+            if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+                $setsQuery->where('type', $type);
+            }
+            
+            if ($tagSlug) {
+                $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tagSlug) {
+                    $q->where('slug', $tagSlug);
+                });
+            }
+            
+            if (!empty($tags)) {
+                $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tags) {
+                    $q->whereIn('slug', $tags);
+                });
+            }
+            
+            if (!empty($colors)) {
+                $setsQuery->whereHas('colors.color', function(Builder $q) use ($colors) {
+                    $q->whereIn('value', $colors);
+                });
+            }
+            
+            if (!empty($software)) {
+                $setsQuery->whereHas('software.software', function(Builder $q) use ($software) {
+                    $q->whereIn('id', $software);
+                });
+            }
+            
+            $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(30);
         }
-        
-        if ($categorySlug) {
-            $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
-                $q->where('slug', $categorySlug);
-            });
-        }
-        
-        if ($albumSlug) {
-            $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
-                $q->where('slug', $albumSlug);
-            });
-        }
-        
-        if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
-            $setsQuery->where('type', $type);
-        }
-        
-        if ($tagSlug) {
-            $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tagSlug) {
-                $q->where('slug', $tagSlug);
-            });
-        }
-        
-        if (!empty($tags)) {
-            $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tags) {
-                $q->whereIn('slug', $tags);
-            });
-        }
-        
-        if (!empty($colors)) {
-            $setsQuery->whereHas('colors.color', function(Builder $q) use ($colors) {
-                $q->whereIn('value', $colors);
-            });
-        }
-        
-        if (!empty($software)) {
-            $setsQuery->whereHas('software.software', function(Builder $q) use ($software) {
-                $q->whereIn('id', $software);
-            });
-        }
-        
-        $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(30);
         
         $selectedCategory = $categorySlug ? Category::where('slug', $categorySlug)->first() : null;
         $selectedAlbum = $albumSlug ? Album::where('slug', $albumSlug)->first() : null;
@@ -233,67 +290,126 @@ class SearchController extends Controller
         $type = $request->get('type');
         $page = $request->get('page', 1);
         
-        $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
-            ->with([
-                'photos' => function($query) {
-                    $query->select('id', 'set_id', 'path')->take(1);
-                },
-                'software.software:id,name,logo,logo_hover,logo_active',
-                'bookmarks' => function($query) {
-                    $query->select('id', 'set_id', 'user_id');
-                }
-            ])
-            ->where('status', Set::STATUS_ACTIVE);
-        
+        // Sử dụng Scout search nếu có query
         if ($query) {
-            $setsQuery->where(function(Builder $q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%")
-                  ->orWhere('keywords', 'like', "%{$query}%");
-            });
+            // Normalize query: thử cả có dấu và không dấu
+            $searchTerms = VietnameseHelper::getSearchTerms($query);
+            $searchQuery = $searchTerms[0]; // Dùng term đầu tiên (có dấu)
+            
+            // Tách query thành các từ và tìm từng phần để tăng khả năng match
+            $queryWords = explode(' ', trim($query));
+            
+            // Nếu query dài, thử tìm với từ đầu tiên (có thể là typo của từ gốc)
+            if (count($queryWords) > 1 || strlen($query) > 5) {
+                $firstWord = $queryWords[0];
+                if (strlen($firstWord) >= 3) {
+                    $searchQuery = $firstWord;
+                }
+            }
+            
+            $setsQuery = Set::search($searchQuery)
+                ->query(function(Builder $builder) use ($categorySlug, $albumSlug, $type, $tagSlug, $tags, $colors, $software) {
+                    $builder->select('id', 'name', 'image', 'created_at', 'type', 'price')
+                        ->with([
+                            'photos' => function($q) {
+                                $q->select('id', 'set_id', 'path')->take(1);
+                            },
+                            'software.software:id,name,logo,logo_hover,logo_active',
+                            'bookmarks' => function($q) {
+                                $q->select('id', 'set_id', 'user_id');
+                            }
+                        ])
+                        ->where('status', Set::STATUS_ACTIVE);
+                    
+                    // Filters
+                    if ($categorySlug) {
+                        $builder->whereHas('categories.category', fn($q) => $q->where('slug', $categorySlug));
+                    }
+                    
+                    if ($albumSlug) {
+                        $builder->whereHas('albums.album', fn($q) => $q->where('slug', $albumSlug));
+                    }
+                    
+                    if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+                        $builder->where('type', $type);
+                    }
+                    
+                    if ($tagSlug) {
+                        $builder->whereHas('tags.tag', fn($q) => $q->where('slug', $tagSlug));
+                    }
+                    
+                    if (!empty($tags)) {
+                        $builder->whereHas('tags.tag', fn($q) => $q->whereIn('slug', $tags));
+                    }
+                    
+                    if (!empty($colors)) {
+                        $builder->whereHas('colors.color', fn($q) => $q->whereIn('value', $colors));
+                    }
+                    
+                    if (!empty($software)) {
+                        $builder->whereHas('software.software', fn($q) => $q->whereIn('id', $software));
+                    }
+                    
+                    return $builder;
+                });
+        } else {
+            $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                ->with([
+                    'photos' => function($query) {
+                        $query->select('id', 'set_id', 'path')->take(1);
+                    },
+                    'software.software:id,name,logo,logo_hover,logo_active',
+                    'bookmarks' => function($query) {
+                        $query->select('id', 'set_id', 'user_id');
+                    }
+                ])
+                ->where('status', Set::STATUS_ACTIVE);
         }
         
-        if ($categorySlug) {
-            $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
-                $q->where('slug', $categorySlug);
-            });
+        // Apply filters for non-Scout queries
+        if (!$query) {
+            if ($categorySlug) {
+                $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
+                    $q->where('slug', $categorySlug);
+                });
+            }
+            
+            if ($albumSlug) {
+                $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
+                    $q->where('slug', $albumSlug);
+                });
+            }
+            
+            if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+                $setsQuery->where('type', $type);
+            }
+            
+            if ($tagSlug) {
+                $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tagSlug) {
+                    $q->where('slug', $tagSlug);
+                });
+            }
+            
+            if (!empty($tags)) {
+                $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tags) {
+                    $q->whereIn('slug', $tags);
+                });
+            }
+            
+            if (!empty($colors)) {
+                $setsQuery->whereHas('colors.color', function(Builder $q) use ($colors) {
+                    $q->whereIn('value', $colors);
+                });
+            }
+            
+            if (!empty($software)) {
+                $setsQuery->whereHas('software.software', function(Builder $q) use ($software) {
+                    $q->whereIn('id', $software);
+                });
+            }
         }
         
-        if ($albumSlug) {
-            $setsQuery->whereHas('albums.album', function(Builder $q) use ($albumSlug) {
-                $q->where('slug', $albumSlug);
-            });
-        }
-        
-        if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
-            $setsQuery->where('type', $type);
-        }
-        
-        if ($tagSlug) {
-            $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tagSlug) {
-                $q->where('slug', $tagSlug);
-            });
-        }
-        
-        if (!empty($tags)) {
-            $setsQuery->whereHas('tags.tag', function(Builder $q) use ($tags) {
-                $q->whereIn('slug', $tags);
-            });
-        }
-        
-        if (!empty($colors)) {
-            $setsQuery->whereHas('colors.color', function(Builder $q) use ($colors) {
-                $q->whereIn('value', $colors);
-            });
-        }
-        
-        if (!empty($software)) {
-            $setsQuery->whereHas('software.software', function(Builder $q) use ($software) {
-                $q->whereIn('id', $software);
-            });
-        }
-        
-        $sets = $setsQuery->orderBy('created_at', 'desc')->paginate(30);
+        $sets = $query ? $setsQuery->paginate(30) : $setsQuery->orderBy('created_at', 'desc')->paginate(30);
         
         return response()->json([
             'success' => true,

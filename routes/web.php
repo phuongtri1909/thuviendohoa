@@ -35,6 +35,8 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::post('/search/filter', [SearchController::class, 'filter'])->name('search.filter');
 Route::get('/search/set/{setSlug}', [SearchController::class, 'getSetDetailsBySlug'])->name('search.set.details');
 Route::get('/search/set/id/{setId}', [SearchController::class, 'getSetDetails'])->name('search.set.details.id');
+Route::get('/search/autocomplete', [\App\Http\Controllers\Client\AutocompleteController::class, 'suggest'])->name('search.autocomplete');
+Route::get('/search/popular', [\App\Http\Controllers\Client\AutocompleteController::class, 'popular'])->name('search.popular');
 
 Route::get('/albums', [AlbumsController::class, 'index'])->name('albums');
 

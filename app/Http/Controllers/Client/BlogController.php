@@ -131,13 +131,17 @@ class BlogController extends Controller
     {
         $query = $request->get('q', '');
         
-        $blogs = Blog::when($query, function($q) use ($query) {
-                $q->where('title', 'like', '%' . $query . '%')
-                  ->orWhere('content', 'like', '%' . $query . '%');
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(8)
-            ->withQueryString();
+        // Sử dụng Scout nếu có query, nếu không dùng query builder
+        if ($query) {
+            $blogs = Blog::search($query)
+                ->query(fn($builder) => $builder->orderBy('created_at', 'desc'))
+                ->paginate(8)
+                ->withQueryString();
+        } else {
+            $blogs = Blog::orderBy('created_at', 'desc')
+                ->paginate(8)
+                ->withQueryString();
+        }
         
         if ($request->ajax()) {
             $html = '';
