@@ -22,7 +22,7 @@
 .blog-sidebar .category-blog {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
 }
 
 .blog-sidebar .category-blog .category-blog-item {

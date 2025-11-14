@@ -1,5 +1,5 @@
 <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-    <a href="{{ route('blog.item', $blog->slug) }}" class="blog-item text-decoration-none d-inline-block">
+    <a href="{{ route('blog.item', $blog->slug) }}" class="blog-item text-decoration-none d-inline-block w-100">
         <img class="img-blog-item img-fluid" 
              src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('images/d/dev/blogs/blog1.png') }}" 
              alt="{{ $blog->title }}">

@@ -137,7 +137,7 @@
                                         @endif
                                     @endif
                                 </div>
-                                <p class="fw-bold mb-1">{{ $feature['title'] ?? '' }}</p>
+                                <p class="fw-bold mb-3">{{ $feature['title'] ?? '' }}</p>
                                 <p class="mb-0">{{ $feature['description'] ?? '' }}</p>
                             </div>
                         @endforeach

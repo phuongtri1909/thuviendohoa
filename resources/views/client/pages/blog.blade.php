@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <div class="mt-5 blogs-knowledge">
+        <div class="mt-5 mb-3 blogs-knowledge">
             <div class="d-flex align-items-baseline title-blog-knowledge">
                 <div class="d-flex align-items-baseline">
                     <img class="me-3" src="{{ asset('/images/svg/blogs/blog.svg') }}" alt="Blog">
