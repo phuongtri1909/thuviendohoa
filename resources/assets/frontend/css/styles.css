@@ -18,7 +18,7 @@
 
     --bg-gradient-bronze: linear-gradient(180deg, #e6a07a 0%, #b4633e 100%);
     --bg-gradient-silver: linear-gradient(180deg, #bfbfbf 0%, #666666 100%);
-    --bg-gradient-gold:   linear-gradient(180deg, #FFD964 0%, #ECB818 100%);
+    --bg-gradient-gold: linear-gradient(180deg, #FFD964 0%, #ECB818 100%);
     --bg-gradient-platinum: linear-gradient(180deg, #d680f7 0%, #a832db 100%);
     --color-bronze: #cd8053;
     --color-silver: #7e7e7e;
@@ -82,76 +82,51 @@
     --color-bg-light: rgba(242, 245, 252, 1);
 }
 
-@font-face {
-    font-family: 'UTM Neo Sans Intel';
-    src: url('../fonts/UTMNeoSansIntel-BoldItalic.woff2') format('woff2'),
-        url('../fonts/UTMNeoSansIntel-BoldItalic.woff') format('woff');
-    font-weight: bold;
-    font-style: italic;
-    font-display: swap;
-}
-
+/* Regular */
 @font-face {
     font-family: 'UTM Neo Sans Intel';
     src: url('../fonts/UTMNeoSansIntel.woff2') format('woff2'),
         url('../fonts/UTMNeoSansIntel.woff') format('woff');
-    font-weight: normal;
+    font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
+/* Bold */
 @font-face {
     font-family: 'UTM Neo Sans Intel';
     src: url('../fonts/UTMNeoSansIntelBold.woff2') format('woff2'),
         url('../fonts/UTMNeoSansIntelBold.woff') format('woff');
-    font-weight: bold;
+    font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 
+/* Italic */
 @font-face {
     font-family: 'UTM Neo Sans Intel';
     src: url('../fonts/UTMNeoSansIntel-Italic.woff2') format('woff2'),
         url('../fonts/UTMNeoSansIntel-Italic.woff') format('woff');
-    font-weight: normal;
+    font-weight: 400;
     font-style: italic;
     font-display: swap;
 }
 
-
-body {
-    margin-top: 56px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    line-height: 1.2;
-    font-encoding: unicode;
-}
-
-* {
-    font-feature-settings: normal;
-    font-variant-ligatures: normal;
-    font-kerning: normal;
-    unicode-bidi: normal;
-    text-transform: none;
-}
-
+/* Bold Italic */
 @font-face {
-    font-family: 'System Font Fallback';
-    src: local('Arial'), local('Helvetica'), local('sans-serif');
-    unicode-range: U+007C;
-    font-weight: normal;
-    font-style: normal;
+    font-family: 'UTM Neo Sans Intel';
+    src: url('../fonts/UTMNeoSansIntel-BoldItalic.woff2') format('woff2'),
+        url('../fonts/UTMNeoSansIntel-BoldItalic.woff') format('woff');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
 }
 
+/* Body */
 body {
-    font-family: 'UTM Neo Sans Intel', 'System Font Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-@supports (font-variant-emoji: emoji) {
-    body {
-        font-variant-emoji: emoji;
-    }
+    font-family: 'UTM Neo Sans Intel', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Custom Container - Rộng hơn, padding nhỏ hơn */
