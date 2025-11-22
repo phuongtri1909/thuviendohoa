@@ -39,19 +39,29 @@
         </div>
     </div>
     <div class="bg-white rounded-6 p-2 p-md-4 mt-2">
-        <div>
+        <div class="tags-container-wrapper">
             <span class="fw-semibold fs-6 text-xs-1 me-2">Tags phân loại: </span>
-            @if ($relatedTags->count() > 0)
-                @foreach ($relatedTags as $tag)
-                    <button
-                        class="badge-tag-product me-2 tag-btn badge bg-primary-10 color-primary-11 rounded-4 mt-2 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
-                        data-tag="{{ $tag->slug }}" title="Chọn tag {{ $tag->name }}">
-                        {{ $tag->name }}
-                    </button>
-                @endforeach
-            @else
-                <span class="text-muted">Không có tag nào liên quan</span>
-            @endif
+            <div class="tags-scroll-container">
+                <button class="tags-scroll-btn tags-scroll-btn-prev" id="tagsScrollPrev" aria-label="Scroll left">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="tags-scroll-wrapper" id="tagsScrollWrapper">
+                    @if ($relatedTags->count() > 0)
+                        @foreach ($relatedTags as $tag)
+                            <button
+                                class="badge-tag-product me-2 tag-btn badge bg-primary-10 color-primary-11 rounded-4 border-0 {{ in_array($tag->slug, $selectedTags) ? 'active' : '' }}"
+                                data-tag="{{ $tag->slug }}" title="Chọn tag {{ $tag->name }}">
+                                {{ $tag->name }}
+                            </button>
+                        @endforeach
+                    @else
+                        <span class="text-muted">Không có tag nào liên quan</span>
+                    @endif
+                </div>
+                <button class="tags-scroll-btn tags-scroll-btn-next" id="tagsScrollNext" aria-label="Scroll right">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
         </div>
 
         <div id="search-results-container">
@@ -235,6 +245,69 @@
                 });
             });
 
+            // Tags scroll functionality
+            function initTagsScroll() {
+                const tagsScrollWrapper = document.getElementById('tagsScrollWrapper');
+                const tagsScrollPrev = document.getElementById('tagsScrollPrev');
+                const tagsScrollNext = document.getElementById('tagsScrollNext');
+
+                if (!tagsScrollWrapper) return;
+
+                function updateTagsScrollButtons() {
+                    const isScrollable = tagsScrollWrapper.scrollWidth > tagsScrollWrapper.clientWidth;
+                    
+                    if (tagsScrollPrev) {
+                        tagsScrollPrev.style.display = isScrollable ? 'flex' : 'none';
+                        tagsScrollPrev.disabled = tagsScrollWrapper.scrollLeft <= 0;
+                    }
+                    
+                    if (tagsScrollNext) {
+                        tagsScrollNext.style.display = isScrollable ? 'flex' : 'none';
+                        const maxScroll = tagsScrollWrapper.scrollWidth - tagsScrollWrapper.clientWidth;
+                        tagsScrollNext.disabled = tagsScrollWrapper.scrollLeft >= maxScroll - 1;
+                    }
+                }
+
+                // Initial check
+                setTimeout(() => {
+                    updateTagsScrollButtons();
+                }, 100);
+
+                // Update on scroll
+                tagsScrollWrapper.addEventListener('scroll', updateTagsScrollButtons);
+
+                // Scroll left
+                if (tagsScrollPrev) {
+                    // Remove old listeners by replacing
+                    const newPrev = tagsScrollPrev.cloneNode(true);
+                    tagsScrollPrev.parentNode.replaceChild(newPrev, tagsScrollPrev);
+                    newPrev.addEventListener('click', function() {
+                        const scrollAmount = tagsScrollWrapper.clientWidth * 0.6;
+                        tagsScrollWrapper.scrollBy({
+                            left: -scrollAmount,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+
+                // Scroll right
+                if (tagsScrollNext) {
+                    // Remove old listeners by replacing
+                    const newNext = tagsScrollNext.cloneNode(true);
+                    tagsScrollNext.parentNode.replaceChild(newNext, tagsScrollNext);
+                    newNext.addEventListener('click', function() {
+                        const scrollAmount = tagsScrollWrapper.clientWidth * 0.6;
+                        tagsScrollWrapper.scrollBy({
+                            left: scrollAmount,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+            }
+
+            // Initialize tags scroll on page load
+            initTagsScroll();
+
             softwareBtns.forEach(btn => {
                 const img = btn.querySelector('img');
                 const softwareValue = btn.getAttribute('data-software');
@@ -380,6 +453,7 @@
                                 initMasonry();
                                 attachImageClickEvents();
                                 attachPaginationEvents();
+                                initTagsScroll();
                             }, 100);
                         }
                     })
@@ -506,6 +580,7 @@
                                 initMasonry();
                                 attachImageClickEvents();
                                 attachPaginationEvents();
+                                initTagsScroll();
                             }, 100);
                         }
                     })
