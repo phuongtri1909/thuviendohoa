@@ -88,13 +88,23 @@ class SearchController extends Controller
         
         if ($query) {
             $searchQuery = trim($query);
+            $queryLength = mb_strlen($searchQuery);
             
-            // Tạo các search patterns: exact, không dấu, fuzzy
             $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
-            $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+            $fuzzyPatterns = [];
+            if ($queryLength >= 3) {
+                $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+            }
             $allPatterns = array_unique(array_merge($searchTerms, $fuzzyPatterns));
             
-            // Tạo query builder với search tối ưu
+            $filteredPatterns = array_filter($allPatterns, function($pattern) use ($searchQuery) {
+                if ($pattern === $searchQuery || in_array($pattern, VietnameseHelper::getSearchTerms($searchQuery))) {
+                    return true;
+                }
+                return mb_strlen($pattern) >= 3 
+                    && VietnameseHelper::isRelevantPattern($pattern, $searchQuery);
+            });
+            
             $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
                 ->with([
                     'photos' => function($q) {
@@ -103,37 +113,50 @@ class SearchController extends Controller
                     'software.software:id,name,logo,logo_hover,logo_active'
                 ])
                 ->where('status', Set::STATUS_ACTIVE)
-                ->where(function(Builder $q) use ($searchQuery, $allPatterns) {
-                    // Ưu tiên 1: Exact match trong name
+                ->where(function(Builder $q) use ($searchQuery, $filteredPatterns, $queryLength) {
                     $q->where('name', 'LIKE', $searchQuery)
-                      // Ưu tiên 2: Starts with trong name
-                      ->orWhere('name', 'LIKE', $searchQuery . '%')
-                      // Ưu tiên 3: Contains trong name
-                      ->orWhere('name', 'LIKE', '%' . $searchQuery . '%')
-                      // Ưu tiên 4: Tìm trong keywords
-                      ->orWhere('keywords', 'LIKE', '%' . $searchQuery . '%')
-                      // Ưu tiên 5: Tìm trong tags (exact match)
-                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
-                          $tagQ->where('name', 'LIKE', $searchQuery)
-                               ->orWhere('name', 'LIKE', $searchQuery . '%')
-                               ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
-                      })
-                      ->orWhere(function(Builder $subQ) use ($allPatterns, $searchQuery) {
-                          foreach ($allPatterns as $pattern) {
-                              if ($pattern !== $searchQuery) {
-                                  $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
-                                       ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
-                              }
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->where('name', 'LIKE', $searchQuery . '%');
                           }
                       })
-                      // Ưu tiên 7: Tìm không dấu và fuzzy patterns trong tags
-                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($allPatterns, $searchQuery) {
-                          foreach ($allPatterns as $pattern) {
-                              if ($pattern !== $searchQuery) {
-                                  $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
-                              }
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->where('name', 'LIKE', '%' . $searchQuery . '%');
+                          }
+                      })
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->where('keywords', 'LIKE', '%' . $searchQuery . '%');
+                          }
+                      })
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->whereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
+                                  $tagQ->where('name', 'LIKE', $searchQuery)
+                                       ->orWhere('name', 'LIKE', $searchQuery . '%')
+                                       ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
+                              });
                           }
                       });
+                    
+                    if (!empty($filteredPatterns) && $queryLength >= 3) {
+                        $q->orWhere(function(Builder $subQ) use ($filteredPatterns) {
+                            foreach ($filteredPatterns as $pattern) {
+                                if (mb_strlen($pattern) >= 3) {
+                                    $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                         ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
+                                }
+                            }
+                        })
+                        ->orWhereHas('tags.tag', function(Builder $tagQ) use ($filteredPatterns) {
+                            foreach ($filteredPatterns as $pattern) {
+                                if (mb_strlen($pattern) >= 3) {
+                                    $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
+                                }
+                            }
+                        });
+                    }
                 });
             
             // Apply filters
@@ -327,11 +350,20 @@ class SearchController extends Controller
         
         if ($query) {
             $searchQuery = trim($query);
+            $queryLength = mb_strlen($searchQuery);
             
-            // Tạo các search patterns: exact, không dấu, fuzzy
+            // Chỉ tạo fuzzy patterns nếu query có độ dài >= 3
             $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
-            $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+            $fuzzyPatterns = [];
+            if ($queryLength >= 3) {
+                $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+            }
             $allPatterns = array_unique(array_merge($searchTerms, $fuzzyPatterns));
+            
+            // Lọc patterns: chỉ giữ những pattern có độ dài >= 3 và khác query gốc
+            $filteredPatterns = array_filter($allPatterns, function($pattern) use ($searchQuery) {
+                return mb_strlen($pattern) >= 3 && $pattern !== $searchQuery;
+            });
             
             // Tạo query builder với search tối ưu
             $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
@@ -345,38 +377,58 @@ class SearchController extends Controller
                     }
                 ])
                 ->where('status', Set::STATUS_ACTIVE)
-                ->where(function(Builder $q) use ($searchQuery, $allPatterns) {
+                ->where(function(Builder $q) use ($searchQuery, $filteredPatterns, $queryLength) {
                     // Ưu tiên 1: Exact match trong name
                     $q->where('name', 'LIKE', $searchQuery)
-                      // Ưu tiên 2: Starts with trong name
-                      ->orWhere('name', 'LIKE', $searchQuery . '%')
-                      // Ưu tiên 3: Contains trong name
-                      ->orWhere('name', 'LIKE', '%' . $searchQuery . '%')
-                      // Ưu tiên 4: Tìm trong keywords
-                      ->orWhere('keywords', 'LIKE', '%' . $searchQuery . '%')
-                      // Ưu tiên 5: Tìm trong tags (exact match)
-                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
-                          $tagQ->where('name', 'LIKE', $searchQuery)
-                               ->orWhere('name', 'LIKE', $searchQuery . '%')
-                               ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
-                      })
-                      // Ưu tiên 6: Tìm không dấu và fuzzy patterns trong name/keywords
-                      ->orWhere(function(Builder $subQ) use ($allPatterns, $searchQuery) {
-                          foreach ($allPatterns as $pattern) {
-                              if ($pattern !== $searchQuery) {
-                                  $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
-                                       ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
-                              }
+                      // Ưu tiên 2: Starts with trong name (chỉ khi query >= 3 ký tự)
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->where('name', 'LIKE', $searchQuery . '%');
                           }
                       })
-                      // Ưu tiên 7: Tìm không dấu và fuzzy patterns trong tags
-                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($allPatterns, $searchQuery) {
-                          foreach ($allPatterns as $pattern) {
-                              if ($pattern !== $searchQuery) {
-                                  $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
-                              }
+                      // Ưu tiên 3: Contains trong name (chỉ khi query >= 3 ký tự)
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->where('name', 'LIKE', '%' . $searchQuery . '%');
+                          }
+                      })
+                      // Ưu tiên 4: Tìm trong keywords (chỉ khi query >= 3 ký tự)
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->where('keywords', 'LIKE', '%' . $searchQuery . '%');
+                          }
+                      })
+                      // Ưu tiên 5: Tìm trong tags (chỉ khi query >= 3 ký tự)
+                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
+                          if ($queryLength >= 3) {
+                              $subQ->whereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
+                                  $tagQ->where('name', 'LIKE', $searchQuery)
+                                       ->orWhere('name', 'LIKE', $searchQuery . '%')
+                                       ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
+                              });
                           }
                       });
+                    
+                    // Chỉ thêm fuzzy patterns nếu có và query đủ dài
+                    if (!empty($filteredPatterns) && $queryLength >= 3) {
+                        // Ưu tiên 6: Fuzzy patterns trong name/keywords (chỉ patterns dài >= 3)
+                        $q->orWhere(function(Builder $subQ) use ($filteredPatterns) {
+                            foreach ($filteredPatterns as $pattern) {
+                                if (mb_strlen($pattern) >= 3) {
+                                    $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                         ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
+                                }
+                            }
+                        })
+                        // Ưu tiên 7: Fuzzy patterns trong tags
+                        ->orWhereHas('tags.tag', function(Builder $tagQ) use ($filteredPatterns) {
+                            foreach ($filteredPatterns as $pattern) {
+                                if (mb_strlen($pattern) >= 3) {
+                                    $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
+                                }
+                            }
+                        });
+                    }
                 });
             
             // Apply filters

@@ -83,53 +83,78 @@ class VietnameseHelper
         return array_unique($terms);
     }
 
-    /**
-     * Tạo fuzzy search patterns để xử lý sai chính tả
-     * Ví dụ: "meof" -> ["meo", "mèo", "meoo", "meooo"]
-     */
     public static function createFuzzyPatterns(string $query): array
     {
         $patterns = [];
         $query = trim($query);
+        $queryLength = mb_strlen($query);
+        
+        if ($queryLength < 3) {
+            return [$query];
+        }
+        
         $normalized = self::normalizeQuery($query);
         
-        // Thêm query gốc
         $patterns[] = $query;
-        $patterns[] = $normalized;
+        if ($normalized !== $query) {
+            $patterns[] = $normalized;
+        }
         
-        // Xử lý các ký tự lặp lại (ví dụ: meooo -> meo)
         $deduplicated = preg_replace('/(.)\1{2,}/', '$1$1', $normalized);
-        if ($deduplicated !== $normalized) {
+        if ($deduplicated !== $normalized && mb_strlen($deduplicated) >= max(3, $queryLength * 0.7)) {
             $patterns[] = $deduplicated;
         }
         
-        // Xử lý các ký tự thường gặp khi gõ sai
-        $commonTypos = [
-            'f' => ['ph', 'p'],
-            'ph' => ['f', 'p'],
-            'c' => ['k', 'q'],
-            'k' => ['c', 'q'],
-            'q' => ['c', 'k'],
-            'd' => ['đ'],
-            'đ' => ['d'],
-            'z' => ['s'],
-            's' => ['z', 'x'],
-            'x' => ['s'],
-        ];
-        
-        // Tạo các biến thể với typo phổ biến
-        foreach ($commonTypos as $char => $replacements) {
-            if (strpos($normalized, $char) !== false) {
-                foreach ($replacements as $replacement) {
-                    $variant = str_replace($char, $replacement, $normalized);
-                    if ($variant !== $normalized) {
-                        $patterns[] = $variant;
+        if ($queryLength >= 4) {
+            $commonTypos = [
+                'f' => ['ph'],
+                'ph' => ['f'],
+                'd' => ['đ'],
+                'đ' => ['d'],
+            ];
+            
+            foreach ($commonTypos as $char => $replacements) {
+                if (strpos($normalized, $char) !== false) {
+                    foreach ($replacements as $replacement) {
+                        $variant = str_replace($char, $replacement, $normalized);
+                        if ($variant !== $normalized && mb_strlen($variant) >= max(3, $queryLength * 0.7)) {
+                            $patterns[] = $variant;
+                        }
                     }
                 }
             }
         }
         
         return array_unique($patterns);
+    }
+    
+    public static function isRelevantPattern(string $pattern, string $originalQuery): bool
+    {
+        $patternLength = mb_strlen($pattern);
+        $queryLength = mb_strlen($originalQuery);
+        
+        if ($patternLength < 3) {
+            return false;
+        }
+        
+        $lengthRatio = $patternLength / max($queryLength, 1);
+        if ($lengthRatio < 0.5 || $lengthRatio > 1.5) {
+            return false;
+        }
+        
+        $normalizedPattern = self::normalizeQuery($pattern);
+        $normalizedQuery = self::normalizeQuery($originalQuery);
+        
+        $commonChars = 0;
+        $queryChars = str_split($normalizedQuery);
+        foreach ($queryChars as $char) {
+            if (strpos($normalizedPattern, $char) !== false) {
+                $commonChars++;
+            }
+        }
+        
+        $similarity = $commonChars / max(count($queryChars), 1);
+        return $similarity >= 0.7;
     }
 }
 
