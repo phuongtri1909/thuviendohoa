@@ -248,7 +248,7 @@
 
                     <!-- Cấu hình hệ thống -->
                     <li
-                        class="has-submenu {{ Route::currentRouteNamed(['admin.socials.*', 'admin.logo-site.*', 'admin.languages.*', 'admin.seo.*', 'admin.setting.*', 'admin.pages.*', 'admin.footer-setting.*']) ? 'open' : '' }}">
+                        class="has-submenu {{ Route::currentRouteNamed(['admin.socials.*', 'admin.logo-site.*', 'admin.languages.*', 'admin.seo.*', 'admin.setting.*', 'admin.pages.*', 'admin.footer-setting.*', 'admin.about-contents.*']) ? 'open' : '' }}">
                         <a href="#" class="submenu-toggle">
                             <i class="fas fa-cogs"></i>
                             <span>Cấu hình hệ thống</span>
@@ -289,6 +289,12 @@
                                 <a href="{{ route('admin.seo.index') }}">
                                     <i class="fas fa-cog"></i>
                                     <span>SEO</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteNamed('admin.about-contents.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.about-contents.index') }}">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>About Content</span>
                                 </a>
                             </li>
                         </ul>

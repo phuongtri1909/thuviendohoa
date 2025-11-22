@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\ContentImageController;
 use App\Http\Controllers\Admin\DesktopContentController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\FooterSettingController;
+use App\Http\Controllers\Admin\AboutContentController;
 
 Route::group(['as' => 'admin.'], function () {
     Route::get('/clear-cache', function () {
@@ -134,5 +135,8 @@ Route::group(['as' => 'admin.'], function () {
         Route::get('footer-setting', [FooterSettingController::class, 'edit'])->name('footer-setting.edit');
         Route::put('footer-setting', [FooterSettingController::class, 'update'])->name('footer-setting.update');
         Route::delete('footer-setting/delete-partner', [FooterSettingController::class, 'deletePartner'])->name('footer-setting.delete-partner');
+        
+        // About Content routes
+        Route::resource('about-contents', AboutContentController::class)->except(['create', 'store', 'destroy', 'show']);
     });
 });

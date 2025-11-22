@@ -213,6 +213,35 @@
             text-align: center;
             font-style: italic;
         }
+
+        /* Text Alignment Styles */
+        .cke_editable {
+            text-align: left;
+        }
+
+        .cke_editable[style*="text-align: left"],
+        .cke_editable p[style*="text-align: left"],
+        .cke_editable div[style*="text-align: left"] {
+            text-align: left !important;
+        }
+
+        .cke_editable[style*="text-align: center"],
+        .cke_editable p[style*="text-align: center"],
+        .cke_editable div[style*="text-align: center"] {
+            text-align: center !important;
+        }
+
+        .cke_editable[style*="text-align: right"],
+        .cke_editable p[style*="text-align: right"],
+        .cke_editable div[style*="text-align: right"] {
+            text-align: right !important;
+        }
+
+        .cke_editable[style*="text-align: justify"],
+        .cke_editable p[style*="text-align: justify"],
+        .cke_editable div[style*="text-align: justify"] {
+            text-align: justify !important;
+        }
     </style>
 @endpush
 
@@ -286,6 +315,7 @@
 
         CKEDITOR.replace('content', {
             height: 400,
+            toolbarGroups: null,
             filebrowserUploadUrl: "{{ route('admin.blogs.upload-image') }}?_token={{ csrf_token() }}",
             filebrowserUploadMethod: 'form',
             toolbar: [
@@ -294,7 +324,8 @@
                 { name: 'editing', items: ['Find', 'Replace', '-', 'SelectAll'] },
                 '/',
                 { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+                { name: 'align', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv'] },
                 { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
                 { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar'] },
                 '/',
@@ -304,7 +335,7 @@
             ],
             removeButtons: '',
             removePlugins: 'image',
-            extraPlugins: 'uploadimage,image2',
+            extraPlugins: 'uploadimage,image2,justify',
             uploadUrl: "{{ route('admin.blogs.upload-image') }}?_token={{ csrf_token() }}",
             imageUploadUrl: "{{ route('admin.blogs.upload-image') }}?_token={{ csrf_token() }}",
             filebrowserImageUploadUrl: "{{ route('admin.blogs.upload-image') }}?_token={{ csrf_token() }}",

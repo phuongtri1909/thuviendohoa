@@ -1,6 +1,7 @@
 <?php
 
 return [
+    App\Providers\AboutContentServiceProvider::class,
     App\Providers\AlbumHeaderServiceProvider::class,
     App\Providers\AppServiceProvider::class,
     App\Providers\ContentImageServiceProvider::class,

@@ -39,7 +39,7 @@
 /* Fixed height for content image */
 #contentImage {
     width: 100%;
-    height: 470px;
+    height: 500px;
     object-fit: cover;
     object-position: center;
     flex-shrink: 0;
