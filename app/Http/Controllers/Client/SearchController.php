@@ -86,22 +86,8 @@ class SearchController extends Controller
         TwitterCard::setType('summary_large_image');
         TwitterCard::addImage($thumbnail);
         
-        // Sử dụng Meilisearch Scout nếu có query text search
         if ($query) {
-            // Normalize query: thử cả có dấu và không dấu
-            $searchTerms = VietnameseHelper::getSearchTerms($query);
-            $searchQuery = $searchTerms[0]; // Dùng term đầu tiên (có dấu)
-            
-            // Tách query thành các từ và tìm từng phần để tăng khả năng match
-            $queryWords = explode(' ', trim($query));
-            
-            // Nếu query dài, thử tìm với từ đầu tiên (có thể là typo của từ gốc)
-            if (count($queryWords) > 1 || strlen($query) > 5) {
-                $firstWord = $queryWords[0];
-                if (strlen($firstWord) >= 3) {
-                    $searchQuery = $firstWord;
-                }
-            }
+            $searchQuery = trim($query);
             
             $setsQuery = Set::search($searchQuery)
                 ->query(function(Builder $builder) use ($categorySlug, $albumSlug, $type, $tagSlug, $tags, $colors, $software) {
@@ -290,22 +276,8 @@ class SearchController extends Controller
         $type = $request->get('type');
         $page = $request->get('page', 1);
         
-        // Sử dụng Scout search nếu có query
         if ($query) {
-            // Normalize query: thử cả có dấu và không dấu
-            $searchTerms = VietnameseHelper::getSearchTerms($query);
-            $searchQuery = $searchTerms[0]; // Dùng term đầu tiên (có dấu)
-            
-            // Tách query thành các từ và tìm từng phần để tăng khả năng match
-            $queryWords = explode(' ', trim($query));
-            
-            // Nếu query dài, thử tìm với từ đầu tiên (có thể là typo của từ gốc)
-            if (count($queryWords) > 1 || strlen($query) > 5) {
-                $firstWord = $queryWords[0];
-                if (strlen($firstWord) >= 3) {
-                    $searchQuery = $firstWord;
-                }
-            }
+            $searchQuery = trim($query);
             
             $setsQuery = Set::search($searchQuery)
                 ->query(function(Builder $builder) use ($categorySlug, $albumSlug, $type, $tagSlug, $tags, $colors, $software) {

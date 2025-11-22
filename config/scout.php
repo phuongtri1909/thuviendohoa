@@ -120,11 +120,11 @@ return [
                 'sortableAttributes' => ['created_at', 'price', 'views'],
                 'searchableAttributes' => ['name', 'name_no_accent', 'keywords', 'keywords_no_accent'], // Search theo name và keywords
                 'rankingRules' => [
-                    'exactness', // Ưu tiên match chính xác trước (ví dụ: "cá" match "cá" tốt hơn "cãi")
-                    'words', // Sau đó ưu tiên số từ match
-                    'typo', // Ưu tiên ít typo hơn
-                    'proximity', // Ưu tiên từ gần nhau
-                    'attribute', // Ưu tiên theo thứ tự searchableAttributes (name trước, description sau)
+                    'words',
+                    'proximity',
+                    'exactness',
+                    'typo',
+                    'attribute',
                     'sort',
                 ],
                 'typoTolerance' => [
