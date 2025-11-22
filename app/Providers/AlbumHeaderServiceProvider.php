@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Album;
-use App\Models\Set;
+use App\Models\Category;
 
 class AlbumHeaderServiceProvider extends ServiceProvider
 {
@@ -23,24 +23,18 @@ class AlbumHeaderServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('client.layouts.partials.header', function ($view) {
+            // VIP: Load tất cả Albums
             $vipAlbums = Album::select('id', 'name', 'slug', 'image', 'icon')
-                ->whereHas('albumSets.set', function($query) {
-                    $query->where('type', Set::TYPE_PREMIUM)
-                          ->where('status', Set::STATUS_ACTIVE);
-                })
                 ->orderBy('name', 'asc')
                 ->get();
 
-            $freeAlbums = Album::select('id', 'name', 'slug', 'image', 'icon')
-                ->whereHas('albumSets.set', function($query) {
-                    $query->where('type', Set::TYPE_FREE)
-                          ->where('status', Set::STATUS_ACTIVE);
-                })
+            // FREE: Load tất cả Categories
+            $freeCategories = Category::select('id', 'name', 'slug', 'image')
                 ->orderBy('name', 'asc')
                 ->get();
 
             $view->with('headerVipAlbums', $vipAlbums);
-            $view->with('headerFreeAlbums', $freeAlbums);
+            $view->with('headerFreeCategories', $freeCategories);
         });
     }
 }
