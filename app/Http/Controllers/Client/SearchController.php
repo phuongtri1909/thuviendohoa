@@ -89,48 +89,97 @@ class SearchController extends Controller
         if ($query) {
             $searchQuery = trim($query);
             
-            $setsQuery = Set::search($searchQuery)
-                ->query(function(Builder $builder) use ($categorySlug, $albumSlug, $type, $tagSlug, $tags, $colors, $software) {
-                    $builder->select('id', 'name', 'image', 'created_at', 'type', 'price')
-                        ->with([
-                            'photos' => function($q) {
-                                $q->select('id', 'set_id', 'path')->take(1);
-                            },
-                            'software.software:id,name,logo,logo_hover,logo_active'
-                        ])
-                        ->where('status', Set::STATUS_ACTIVE);
-                    
-                    // Apply filters
-                    if ($categorySlug) {
-                        $builder->whereHas('categories.category', fn($q) => $q->where('slug', $categorySlug));
-                    }
-                    
-                    if ($albumSlug) {
-                        $builder->whereHas('albums.album', fn($q) => $q->where('slug', $albumSlug));
-                    }
-                    
-                    if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
-                        $builder->where('type', $type);
-                    }
-                    
-                    if ($tagSlug) {
-                        $builder->whereHas('tags.tag', fn($q) => $q->where('slug', $tagSlug));
-                    }
-                    
-                    if (!empty($tags)) {
-                        $builder->whereHas('tags.tag', fn($q) => $q->whereIn('slug', $tags));
-                    }
-                    
-                    if (!empty($colors)) {
-                        $builder->whereHas('colors.color', fn($q) => $q->whereIn('value', $colors));
-                    }
-                    
-                    if (!empty($software)) {
-                        $builder->whereHas('software.software', fn($q) => $q->whereIn('id', $software));
-                    }
-                    
-                    return $builder;
+            // Tạo các search patterns: exact, không dấu, fuzzy
+            $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
+            $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+            $allPatterns = array_unique(array_merge($searchTerms, $fuzzyPatterns));
+            
+            // Tạo query builder với search tối ưu
+            $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                ->with([
+                    'photos' => function($q) {
+                        $q->select('id', 'set_id', 'path')->take(1);
+                    },
+                    'software.software:id,name,logo,logo_hover,logo_active'
+                ])
+                ->where('status', Set::STATUS_ACTIVE)
+                ->where(function(Builder $q) use ($searchQuery, $allPatterns) {
+                    // Ưu tiên 1: Exact match trong name
+                    $q->where('name', 'LIKE', $searchQuery)
+                      // Ưu tiên 2: Starts with trong name
+                      ->orWhere('name', 'LIKE', $searchQuery . '%')
+                      // Ưu tiên 3: Contains trong name
+                      ->orWhere('name', 'LIKE', '%' . $searchQuery . '%')
+                      // Ưu tiên 4: Tìm trong keywords
+                      ->orWhere('keywords', 'LIKE', '%' . $searchQuery . '%')
+                      // Ưu tiên 5: Tìm trong tags (exact match)
+                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
+                          $tagQ->where('name', 'LIKE', $searchQuery)
+                               ->orWhere('name', 'LIKE', $searchQuery . '%')
+                               ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
+                      })
+                      ->orWhere(function(Builder $subQ) use ($allPatterns, $searchQuery) {
+                          foreach ($allPatterns as $pattern) {
+                              if ($pattern !== $searchQuery) {
+                                  $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                       ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
+                              }
+                          }
+                      })
+                      // Ưu tiên 7: Tìm không dấu và fuzzy patterns trong tags
+                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($allPatterns, $searchQuery) {
+                          foreach ($allPatterns as $pattern) {
+                              if ($pattern !== $searchQuery) {
+                                  $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
+                              }
+                          }
+                      });
                 });
+            
+            // Apply filters
+            if ($categorySlug) {
+                $setsQuery->whereHas('categories.category', fn($q) => $q->where('slug', $categorySlug));
+            }
+            
+            if ($albumSlug) {
+                $setsQuery->whereHas('albums.album', fn($q) => $q->where('slug', $albumSlug));
+            }
+            
+            if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+                $setsQuery->where('type', $type);
+            }
+            
+            if ($tagSlug) {
+                $setsQuery->whereHas('tags.tag', fn($q) => $q->where('slug', $tagSlug));
+            }
+            
+            if (!empty($tags)) {
+                $setsQuery->whereHas('tags.tag', fn($q) => $q->whereIn('slug', $tags));
+            }
+            
+            if (!empty($colors)) {
+                $setsQuery->whereHas('colors.color', fn($q) => $q->whereIn('value', $colors));
+            }
+            
+            if (!empty($software)) {
+                $setsQuery->whereHas('software.software', fn($q) => $q->whereIn('id', $software));
+            }
+            
+            // Order by relevance: exact match -> starts with -> contains -> tags -> others
+            $exactMatch = $searchQuery;
+            $startsWith = $searchQuery . '%';
+            $contains = '%' . $searchQuery . '%';
+            $setsQuery->orderByRaw("
+                CASE 
+                    WHEN name = ? THEN 1
+                    WHEN name LIKE ? THEN 2
+                    WHEN name LIKE ? THEN 3
+                    WHEN keywords LIKE ? THEN 4
+                    WHEN EXISTS(SELECT 1 FROM tag_sets ts INNER JOIN tags t ON ts.tag_id = t.id WHERE ts.set_id = sets.id AND t.name LIKE ?) THEN 5
+                    ELSE 6
+                END ASC
+            ", [$exactMatch, $startsWith, $contains, $contains, $contains])
+            ->orderBy('created_at', 'desc');
             
             $sets = $setsQuery->paginate(30);
         } else {
@@ -279,51 +328,101 @@ class SearchController extends Controller
         if ($query) {
             $searchQuery = trim($query);
             
-            $setsQuery = Set::search($searchQuery)
-                ->query(function(Builder $builder) use ($categorySlug, $albumSlug, $type, $tagSlug, $tags, $colors, $software) {
-                    $builder->select('id', 'name', 'image', 'created_at', 'type', 'price')
-                        ->with([
-                            'photos' => function($q) {
-                                $q->select('id', 'set_id', 'path')->take(1);
-                            },
-                            'software.software:id,name,logo,logo_hover,logo_active',
-                            'bookmarks' => function($q) {
-                                $q->select('id', 'set_id', 'user_id');
-                            }
-                        ])
-                        ->where('status', Set::STATUS_ACTIVE);
-                    
-                    // Filters
-                    if ($categorySlug) {
-                        $builder->whereHas('categories.category', fn($q) => $q->where('slug', $categorySlug));
+            // Tạo các search patterns: exact, không dấu, fuzzy
+            $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
+            $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+            $allPatterns = array_unique(array_merge($searchTerms, $fuzzyPatterns));
+            
+            // Tạo query builder với search tối ưu
+            $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                ->with([
+                    'photos' => function($q) {
+                        $q->select('id', 'set_id', 'path')->take(1);
+                    },
+                    'software.software:id,name,logo,logo_hover,logo_active',
+                    'bookmarks' => function($q) {
+                        $q->select('id', 'set_id', 'user_id');
                     }
-                    
-                    if ($albumSlug) {
-                        $builder->whereHas('albums.album', fn($q) => $q->where('slug', $albumSlug));
-                    }
-                    
-                    if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
-                        $builder->where('type', $type);
-                    }
-                    
-                    if ($tagSlug) {
-                        $builder->whereHas('tags.tag', fn($q) => $q->where('slug', $tagSlug));
-                    }
-                    
-                    if (!empty($tags)) {
-                        $builder->whereHas('tags.tag', fn($q) => $q->whereIn('slug', $tags));
-                    }
-                    
-                    if (!empty($colors)) {
-                        $builder->whereHas('colors.color', fn($q) => $q->whereIn('value', $colors));
-                    }
-                    
-                    if (!empty($software)) {
-                        $builder->whereHas('software.software', fn($q) => $q->whereIn('id', $software));
-                    }
-                    
-                    return $builder;
+                ])
+                ->where('status', Set::STATUS_ACTIVE)
+                ->where(function(Builder $q) use ($searchQuery, $allPatterns) {
+                    // Ưu tiên 1: Exact match trong name
+                    $q->where('name', 'LIKE', $searchQuery)
+                      // Ưu tiên 2: Starts with trong name
+                      ->orWhere('name', 'LIKE', $searchQuery . '%')
+                      // Ưu tiên 3: Contains trong name
+                      ->orWhere('name', 'LIKE', '%' . $searchQuery . '%')
+                      // Ưu tiên 4: Tìm trong keywords
+                      ->orWhere('keywords', 'LIKE', '%' . $searchQuery . '%')
+                      // Ưu tiên 5: Tìm trong tags (exact match)
+                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
+                          $tagQ->where('name', 'LIKE', $searchQuery)
+                               ->orWhere('name', 'LIKE', $searchQuery . '%')
+                               ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
+                      })
+                      // Ưu tiên 6: Tìm không dấu và fuzzy patterns trong name/keywords
+                      ->orWhere(function(Builder $subQ) use ($allPatterns, $searchQuery) {
+                          foreach ($allPatterns as $pattern) {
+                              if ($pattern !== $searchQuery) {
+                                  $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                       ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
+                              }
+                          }
+                      })
+                      // Ưu tiên 7: Tìm không dấu và fuzzy patterns trong tags
+                      ->orWhereHas('tags.tag', function(Builder $tagQ) use ($allPatterns, $searchQuery) {
+                          foreach ($allPatterns as $pattern) {
+                              if ($pattern !== $searchQuery) {
+                                  $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
+                              }
+                          }
+                      });
                 });
+            
+            // Apply filters
+            if ($categorySlug) {
+                $setsQuery->whereHas('categories.category', fn($q) => $q->where('slug', $categorySlug));
+            }
+            
+            if ($albumSlug) {
+                $setsQuery->whereHas('albums.album', fn($q) => $q->where('slug', $albumSlug));
+            }
+            
+            if ($type && in_array($type, [Set::TYPE_PREMIUM, Set::TYPE_FREE])) {
+                $setsQuery->where('type', $type);
+            }
+            
+            if ($tagSlug) {
+                $setsQuery->whereHas('tags.tag', fn($q) => $q->where('slug', $tagSlug));
+            }
+            
+            if (!empty($tags)) {
+                $setsQuery->whereHas('tags.tag', fn($q) => $q->whereIn('slug', $tags));
+            }
+            
+            if (!empty($colors)) {
+                $setsQuery->whereHas('colors.color', fn($q) => $q->whereIn('value', $colors));
+            }
+            
+            if (!empty($software)) {
+                $setsQuery->whereHas('software.software', fn($q) => $q->whereIn('id', $software));
+            }
+            
+            // Order by relevance: exact match -> starts with -> contains -> tags -> others
+            $exactMatch = $searchQuery;
+            $startsWith = $searchQuery . '%';
+            $contains = '%' . $searchQuery . '%';
+            $setsQuery->orderByRaw("
+                CASE 
+                    WHEN name = ? THEN 1
+                    WHEN name LIKE ? THEN 2
+                    WHEN name LIKE ? THEN 3
+                    WHEN keywords LIKE ? THEN 4
+                    WHEN EXISTS(SELECT 1 FROM tag_sets ts INNER JOIN tags t ON ts.tag_id = t.id WHERE ts.set_id = sets.id AND t.name LIKE ?) THEN 5
+                    ELSE 6
+                END ASC
+            ", [$exactMatch, $startsWith, $contains, $contains, $contains])
+            ->orderBy('created_at', 'desc');
         } else {
             $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
                 ->with([
@@ -336,10 +435,8 @@ class SearchController extends Controller
                     }
                 ])
                 ->where('status', Set::STATUS_ACTIVE);
-        }
-        
-        // Apply filters for non-Scout queries
-        if (!$query) {
+            
+            // Apply filters
             if ($categorySlug) {
                 $setsQuery->whereHas('categories.category', function(Builder $q) use ($categorySlug) {
                     $q->where('slug', $categorySlug);
@@ -379,9 +476,11 @@ class SearchController extends Controller
                     $q->whereIn('id', $software);
                 });
             }
+            
+            $setsQuery->orderBy('created_at', 'desc');
         }
         
-        $sets = $query ? $setsQuery->paginate(30) : $setsQuery->orderBy('created_at', 'desc')->paginate(30);
+        $sets = $setsQuery->paginate(30);
         
         return response()->json([
             'success' => true,

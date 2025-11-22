@@ -82,5 +82,54 @@ class VietnameseHelper
         
         return array_unique($terms);
     }
+
+    /**
+     * Tạo fuzzy search patterns để xử lý sai chính tả
+     * Ví dụ: "meof" -> ["meo", "mèo", "meoo", "meooo"]
+     */
+    public static function createFuzzyPatterns(string $query): array
+    {
+        $patterns = [];
+        $query = trim($query);
+        $normalized = self::normalizeQuery($query);
+        
+        // Thêm query gốc
+        $patterns[] = $query;
+        $patterns[] = $normalized;
+        
+        // Xử lý các ký tự lặp lại (ví dụ: meooo -> meo)
+        $deduplicated = preg_replace('/(.)\1{2,}/', '$1$1', $normalized);
+        if ($deduplicated !== $normalized) {
+            $patterns[] = $deduplicated;
+        }
+        
+        // Xử lý các ký tự thường gặp khi gõ sai
+        $commonTypos = [
+            'f' => ['ph', 'p'],
+            'ph' => ['f', 'p'],
+            'c' => ['k', 'q'],
+            'k' => ['c', 'q'],
+            'q' => ['c', 'k'],
+            'd' => ['đ'],
+            'đ' => ['d'],
+            'z' => ['s'],
+            's' => ['z', 'x'],
+            'x' => ['s'],
+        ];
+        
+        // Tạo các biến thể với typo phổ biến
+        foreach ($commonTypos as $char => $replacements) {
+            if (strpos($normalized, $char) !== false) {
+                foreach ($replacements as $replacement) {
+                    $variant = str_replace($char, $replacement, $normalized);
+                    if ($variant !== $normalized) {
+                        $patterns[] = $variant;
+                    }
+                }
+            }
+        }
+        
+        return array_unique($patterns);
+    }
 }
 
