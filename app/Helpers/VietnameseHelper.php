@@ -133,17 +133,42 @@ class VietnameseHelper
         $patternLength = mb_strlen($pattern);
         $queryLength = mb_strlen($originalQuery);
         
-        if ($patternLength < 3) {
+        if ($patternLength < 3 || $queryLength < 3) {
             return false;
         }
         
         $lengthRatio = $patternLength / max($queryLength, 1);
-        if ($lengthRatio < 0.5 || $lengthRatio > 1.5) {
+        if ($lengthRatio < 0.6 || $lengthRatio > 1.4) {
             return false;
         }
         
         $normalizedPattern = self::normalizeQuery($pattern);
         $normalizedQuery = self::normalizeQuery($originalQuery);
+        
+        if ($normalizedPattern === $normalizedQuery) {
+            return true;
+        }
+        
+        $queryWords = explode(' ', trim($normalizedQuery));
+        $patternWords = explode(' ', trim($normalizedPattern));
+        
+        $matchedWords = 0;
+        foreach ($queryWords as $queryWord) {
+            if (mb_strlen($queryWord) >= 2) {
+                foreach ($patternWords as $patternWord) {
+                    if (mb_strlen($patternWord) >= 2) {
+                        if (strpos($patternWord, $queryWord) !== false || strpos($queryWord, $patternWord) !== false) {
+                            $matchedWords++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (count($queryWords) > 0 && $matchedWords / count($queryWords) >= 0.5) {
+            return true;
+        }
         
         $commonChars = 0;
         $queryChars = str_split($normalizedQuery);
@@ -154,7 +179,7 @@ class VietnameseHelper
         }
         
         $similarity = $commonChars / max(count($queryChars), 1);
-        return $similarity >= 0.7;
+        return $similarity >= 0.8;
     }
 }
 

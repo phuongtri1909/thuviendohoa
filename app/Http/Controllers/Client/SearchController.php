@@ -90,74 +90,67 @@ class SearchController extends Controller
             $searchQuery = trim($query);
             $queryLength = mb_strlen($searchQuery);
             
-            $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
-            $fuzzyPatterns = [];
-            if ($queryLength >= 3) {
-                $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
-            }
-            $allPatterns = array_unique(array_merge($searchTerms, $fuzzyPatterns));
-            
-            $filteredPatterns = array_filter($allPatterns, function($pattern) use ($searchQuery) {
-                if ($pattern === $searchQuery || in_array($pattern, VietnameseHelper::getSearchTerms($searchQuery))) {
-                    return true;
+            if ($queryLength < 2) {
+                $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                    ->with([
+                        'photos' => function($q) {
+                            $q->select('id', 'set_id', 'path')->take(1);
+                        },
+                        'software.software:id,name,logo,logo_hover,logo_active'
+                    ])
+                    ->where('status', Set::STATUS_ACTIVE)
+                    ->where('name', 'LIKE', $searchQuery);
+            } else {
+                $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
+                $primaryPatterns = array_unique($searchTerms);
+                
+                $secondaryPatterns = [];
+                if ($queryLength >= 4) {
+                    $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+                    $secondaryPatterns = array_filter($fuzzyPatterns, function($pattern) use ($searchQuery, $searchTerms) {
+                        if ($pattern === $searchQuery || in_array($pattern, $searchTerms)) {
+                            return false;
+                        }
+                        return mb_strlen($pattern) >= 3 && VietnameseHelper::isRelevantPattern($pattern, $searchQuery);
+                    });
                 }
-                return mb_strlen($pattern) >= 3 
-                    && VietnameseHelper::isRelevantPattern($pattern, $searchQuery);
-            });
-            
-            $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
-                ->with([
-                    'photos' => function($q) {
-                        $q->select('id', 'set_id', 'path')->take(1);
-                    },
-                    'software.software:id,name,logo,logo_hover,logo_active'
-                ])
-                ->where('status', Set::STATUS_ACTIVE)
-                ->where(function(Builder $q) use ($searchQuery, $filteredPatterns, $queryLength) {
-                    $q->where('name', 'LIKE', $searchQuery)
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->where('name', 'LIKE', $searchQuery . '%');
-                          }
-                      })
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->where('name', 'LIKE', '%' . $searchQuery . '%');
-                          }
-                      })
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->where('keywords', 'LIKE', '%' . $searchQuery . '%');
-                          }
-                      })
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->whereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
-                                  $tagQ->where('name', 'LIKE', $searchQuery)
-                                       ->orWhere('name', 'LIKE', $searchQuery . '%')
-                                       ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
-                              });
-                          }
-                      });
-                    
-                    if (!empty($filteredPatterns) && $queryLength >= 3) {
-                        $q->orWhere(function(Builder $subQ) use ($filteredPatterns) {
-                            foreach ($filteredPatterns as $pattern) {
-                                if (mb_strlen($pattern) >= 3) {
-                                    $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
-                                         ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
-                                }
-                            }
-                        })
-                        ->orWhereHas('tags.tag', function(Builder $tagQ) use ($filteredPatterns) {
-                            foreach ($filteredPatterns as $pattern) {
-                                if (mb_strlen($pattern) >= 3) {
-                                    $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
-                                }
+                
+                $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                    ->with([
+                        'photos' => function($q) {
+                            $q->select('id', 'set_id', 'path')->take(1);
+                        },
+                        'software.software:id,name,logo,logo_hover,logo_active'
+                    ])
+                    ->where('status', Set::STATUS_ACTIVE)
+                    ->where(function(Builder $q) use ($primaryPatterns, $secondaryPatterns) {
+                        $q->where(function(Builder $primaryQ) use ($primaryPatterns) {
+                            foreach ($primaryPatterns as $pattern) {
+                                $primaryQ->orWhere('name', 'LIKE', $pattern)
+                                         ->orWhere('name', 'LIKE', $pattern . '%')
+                                         ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                         ->orWhere('keywords', 'LIKE', '%' . $pattern . '%')
+                                         ->orWhereHas('tags.tag', function(Builder $tagQ) use ($pattern) {
+                                             $tagQ->where('name', 'LIKE', $pattern)
+                                                  ->orWhere('name', 'LIKE', $pattern . '%')
+                                                  ->orWhere('name', 'LIKE', '%' . $pattern . '%');
+                                         });
                             }
                         });
-                    }
-                });
+                        
+                        if (!empty($secondaryPatterns)) {
+                            $q->orWhere(function(Builder $secondaryQ) use ($secondaryPatterns) {
+                                foreach ($secondaryPatterns as $pattern) {
+                                    $secondaryQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                               ->orWhere('keywords', 'LIKE', '%' . $pattern . '%')
+                                               ->orWhereHas('tags.tag', function(Builder $tagQ) use ($pattern) {
+                                                   $tagQ->where('name', 'LIKE', '%' . $pattern . '%');
+                                               });
+                                }
+                            });
+                        }
+                    });
+            }
             
             // Apply filters
             if ($categorySlug) {
@@ -352,84 +345,73 @@ class SearchController extends Controller
             $searchQuery = trim($query);
             $queryLength = mb_strlen($searchQuery);
             
-            // Chỉ tạo fuzzy patterns nếu query có độ dài >= 3
-            $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
-            $fuzzyPatterns = [];
-            if ($queryLength >= 3) {
-                $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
-            }
-            $allPatterns = array_unique(array_merge($searchTerms, $fuzzyPatterns));
-            
-            // Lọc patterns: chỉ giữ những pattern có độ dài >= 3 và khác query gốc
-            $filteredPatterns = array_filter($allPatterns, function($pattern) use ($searchQuery) {
-                return mb_strlen($pattern) >= 3 && $pattern !== $searchQuery;
-            });
-            
-            // Tạo query builder với search tối ưu
-            $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
-                ->with([
-                    'photos' => function($q) {
-                        $q->select('id', 'set_id', 'path')->take(1);
-                    },
-                    'software.software:id,name,logo,logo_hover,logo_active',
-                    'bookmarks' => function($q) {
-                        $q->select('id', 'set_id', 'user_id');
-                    }
-                ])
-                ->where('status', Set::STATUS_ACTIVE)
-                ->where(function(Builder $q) use ($searchQuery, $filteredPatterns, $queryLength) {
-                    // Ưu tiên 1: Exact match trong name
-                    $q->where('name', 'LIKE', $searchQuery)
-                      // Ưu tiên 2: Starts with trong name (chỉ khi query >= 3 ký tự)
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->where('name', 'LIKE', $searchQuery . '%');
-                          }
-                      })
-                      // Ưu tiên 3: Contains trong name (chỉ khi query >= 3 ký tự)
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->where('name', 'LIKE', '%' . $searchQuery . '%');
-                          }
-                      })
-                      // Ưu tiên 4: Tìm trong keywords (chỉ khi query >= 3 ký tự)
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->where('keywords', 'LIKE', '%' . $searchQuery . '%');
-                          }
-                      })
-                      // Ưu tiên 5: Tìm trong tags (chỉ khi query >= 3 ký tự)
-                      ->orWhere(function(Builder $subQ) use ($searchQuery, $queryLength) {
-                          if ($queryLength >= 3) {
-                              $subQ->whereHas('tags.tag', function(Builder $tagQ) use ($searchQuery) {
-                                  $tagQ->where('name', 'LIKE', $searchQuery)
-                                       ->orWhere('name', 'LIKE', $searchQuery . '%')
-                                       ->orWhere('name', 'LIKE', '%' . $searchQuery . '%');
-                              });
-                          }
-                      });
-                    
-                    // Chỉ thêm fuzzy patterns nếu có và query đủ dài
-                    if (!empty($filteredPatterns) && $queryLength >= 3) {
-                        // Ưu tiên 6: Fuzzy patterns trong name/keywords (chỉ patterns dài >= 3)
-                        $q->orWhere(function(Builder $subQ) use ($filteredPatterns) {
-                            foreach ($filteredPatterns as $pattern) {
-                                if (mb_strlen($pattern) >= 3) {
-                                    $subQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
-                                         ->orWhere('keywords', 'LIKE', '%' . $pattern . '%');
-                                }
-                            }
-                        })
-                        // Ưu tiên 7: Fuzzy patterns trong tags
-                        ->orWhereHas('tags.tag', function(Builder $tagQ) use ($filteredPatterns) {
-                            foreach ($filteredPatterns as $pattern) {
-                                if (mb_strlen($pattern) >= 3) {
-                                    $tagQ->orWhere('name', 'LIKE', '%' . $pattern . '%');
-                                }
+            if ($queryLength < 2) {
+                $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                    ->with([
+                        'photos' => function($q) {
+                            $q->select('id', 'set_id', 'path')->take(1);
+                        },
+                        'software.software:id,name,logo,logo_hover,logo_active',
+                        'bookmarks' => function($q) {
+                            $q->select('id', 'set_id', 'user_id');
+                        }
+                    ])
+                    ->where('status', Set::STATUS_ACTIVE)
+                    ->where('name', 'LIKE', $searchQuery);
+            } else {
+                $searchTerms = VietnameseHelper::getSearchTerms($searchQuery);
+                $primaryPatterns = array_unique($searchTerms);
+                
+                $secondaryPatterns = [];
+                if ($queryLength >= 4) {
+                    $fuzzyPatterns = VietnameseHelper::createFuzzyPatterns($searchQuery);
+                    $secondaryPatterns = array_filter($fuzzyPatterns, function($pattern) use ($searchQuery, $searchTerms) {
+                        if ($pattern === $searchQuery || in_array($pattern, $searchTerms)) {
+                            return false;
+                        }
+                        return mb_strlen($pattern) >= 3 && VietnameseHelper::isRelevantPattern($pattern, $searchQuery);
+                    });
+                }
+                
+                $setsQuery = Set::select('id', 'name', 'image', 'created_at', 'type', 'price')
+                    ->with([
+                        'photos' => function($q) {
+                            $q->select('id', 'set_id', 'path')->take(1);
+                        },
+                        'software.software:id,name,logo,logo_hover,logo_active',
+                        'bookmarks' => function($q) {
+                            $q->select('id', 'set_id', 'user_id');
+                        }
+                    ])
+                    ->where('status', Set::STATUS_ACTIVE)
+                    ->where(function(Builder $q) use ($primaryPatterns, $secondaryPatterns) {
+                        $q->where(function(Builder $primaryQ) use ($primaryPatterns) {
+                            foreach ($primaryPatterns as $pattern) {
+                                $primaryQ->orWhere('name', 'LIKE', $pattern)
+                                         ->orWhere('name', 'LIKE', $pattern . '%')
+                                         ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                         ->orWhere('keywords', 'LIKE', '%' . $pattern . '%')
+                                         ->orWhereHas('tags.tag', function(Builder $tagQ) use ($pattern) {
+                                             $tagQ->where('name', 'LIKE', $pattern)
+                                                  ->orWhere('name', 'LIKE', $pattern . '%')
+                                                  ->orWhere('name', 'LIKE', '%' . $pattern . '%');
+                                         });
                             }
                         });
-                    }
-                });
+                        
+                        if (!empty($secondaryPatterns)) {
+                            $q->orWhere(function(Builder $secondaryQ) use ($secondaryPatterns) {
+                                foreach ($secondaryPatterns as $pattern) {
+                                    $secondaryQ->orWhere('name', 'LIKE', '%' . $pattern . '%')
+                                               ->orWhere('keywords', 'LIKE', '%' . $pattern . '%')
+                                               ->orWhereHas('tags.tag', function(Builder $tagQ) use ($pattern) {
+                                                   $tagQ->where('name', 'LIKE', '%' . $pattern . '%');
+                                               });
+                                }
+                            });
+                        }
+                    });
+            }
             
             // Apply filters
             if ($categorySlug) {
