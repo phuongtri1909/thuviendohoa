@@ -122,9 +122,9 @@ return [
                 'rankingRules' => [
                     'words',
                     'proximity',
+                    'attribute',
                     'exactness',
                     'typo',
-                    'attribute',
                     'sort',
                 ],
                 'typoTolerance' => [
