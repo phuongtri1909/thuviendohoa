@@ -1,6 +1,6 @@
 @php
     $height = $height ?? 260; // fixed item height
-    $speed = $speed ?? 0.5; // px per frame
+    $speed = $speed ?? 0.2; // px per frame
     $dragEnabled = $dragEnabled ?? true; // enable drag
 @endphp
 
@@ -59,6 +59,7 @@
             object-fit: contain;
             object-position: center;
             display: block;
+            border-radius: 6px;
         }
 
 
@@ -76,7 +77,7 @@
                     this.host = host;
                     this.wrapper = document.getElementById(wrapperId);
                     this.container = this.wrapper ? this.wrapper.parentElement : null;
-                    this.speed = parseFloat(host.getAttribute('data-speed') || '0.5');
+                    this.speed = parseFloat(host.getAttribute('data-speed') || '0.2');
                     this.dragEnabled = host.getAttribute('data-drag') !== '0';
 
                     this.current = 0;

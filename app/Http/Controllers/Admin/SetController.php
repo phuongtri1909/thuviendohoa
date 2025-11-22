@@ -198,7 +198,7 @@ class SetController extends Controller
             'can_use_free_downloads' => (bool) $request->can_use_free_downloads,
             'download_method' => $request->type === Set::TYPE_PREMIUM 
                 ? ($request->download_method ?? Set::DOWNLOAD_METHOD_COINS_ONLY)
-                : null,
+                : Set::DOWNLOAD_METHOD_FREE_ONLY,
         ]);
 
         // create relations
@@ -346,7 +346,7 @@ class SetController extends Controller
             'can_use_free_downloads' => (bool) $request->can_use_free_downloads,
             'download_method' => $request->type === Set::TYPE_PREMIUM 
                 ? ($request->download_method ?? $set->download_method ?? Set::DOWNLOAD_METHOD_COINS_ONLY)
-                : null,
+                : Set::DOWNLOAD_METHOD_FREE_ONLY,
         ];
 
         if ($request->hasFile('image')) {

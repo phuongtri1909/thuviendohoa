@@ -214,7 +214,7 @@
 
 
                         <x-client.image-slider-auto title="Thiết kế nổi bật" id="sliderAuto1" :slides="$slidesAuto"
-                            :height="260" :speed="5" :drag-enabled="true" />
+                            :height="260" :speed="2" :drag-enabled="true" />
 
                     </div>
                 </div>

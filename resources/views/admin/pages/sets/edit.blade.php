@@ -689,6 +689,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.chip-select').forEach(initChipDropdown);
 
+            // Initialize download_method value based on current type
+            const typeSelect = document.getElementById('type');
+            const downloadMethodSelect = document.getElementById('download_method');
+            if (typeSelect.value === 'free' && !downloadMethodSelect.value) {
+                downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY }}';
+            }
+
             document.getElementById('image').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 const preview = document.getElementById('logo-preview');
@@ -720,7 +727,8 @@
                     priceInput.value = '';
                     downloadMethodOption.style.display = 'none';
                     downloadMethodSelect.required = false;
-                    downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY }}';
+                    // Set giá trị mặc định cho FREE type
+                    downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY }}';
                 }
             });
 

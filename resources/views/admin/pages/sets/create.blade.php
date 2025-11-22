@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
             priceInput.value = '';
             downloadMethodOption.style.display = 'none';
             downloadMethodSelect.required = false;
-            downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_COINS_ONLY }}';
+            downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY }}';
         }
     });
     
@@ -578,6 +578,8 @@ document.addEventListener('DOMContentLoaded', function() {
             priceInput.required = true;
             downloadMethodOption.style.display = 'block';
             downloadMethodSelect.required = true;
+        } else {
+            downloadMethodSelect.value = '{{ \App\Models\Set::DOWNLOAD_METHOD_FREE_ONLY }}';
         }
     });
     

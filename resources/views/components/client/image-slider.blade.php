@@ -59,6 +59,7 @@
             object-fit: contain;
             object-position: center;
             display: block;
+            border-radius: 6px;
         }
 
         .slider-nav {

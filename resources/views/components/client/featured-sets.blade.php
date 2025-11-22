@@ -10,6 +10,6 @@
                 'height' => 300,
                 'link' => url('/search?set=' . $set->id)
             ];
-        })" :height="260" :speed="5" :drag-enabled="true" />
+        })" :height="260" :speed="2" :drag-enabled="true" />
     </div>
 @endif
